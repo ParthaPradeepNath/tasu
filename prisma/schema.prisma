@@ -1,0 +1,213 @@
+// Tasu — support, handled.
+// Prisma schema for Neon Postgres. Better Auth owns user/session/account/verification.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─────────────────────────────────────────────────────────────
+// Better Auth
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Better Auth admin plugin
+  role       String    @default("employee")
+  banned     Boolean   @default(false)
+  banReason  String?
+  banExpires DateTime?
+
+  // Tasu profile
+  department  String?
+  title       String?
+  avatarColor String?
+
+  sessions        Session[]
+  accounts        Account[]
+  requestedTickets Ticket[]  @relation("RequestedTickets")
+  assignedTickets  Ticket[]  @relation("AssignedTickets")
+  replies          Reply[]
+  articles         KnowledgeArticle[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ─────────────────────────────────────────────────────────────
+// Tasu
+// ─────────────────────────────────────────────────────────────
+
+model Counter {
+  id  String @id // "ticket"
+  seq Int    @default(0)
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  title       String
+  description String
+
+  status   TicketStatus @default(OPEN)
+  priority Priority     @default(NONE)
+  category Category     @default(OTHER)
+  tags     String[]     @default([])
+
+  requesterId String
+  requester   User   @relation("RequestedTickets", fields: [requesterId], references: [id])
+  assigneeId  String?
+  assignee    User?  @relation("AssignedTickets", fields: [assigneeId], references: [id])
+
+  slaFirstResponseDueAt DateTime?
+  slaResolveDueAt       DateTime?
+  firstResponseAt       DateTime?
+  resolvedAt            DateTime?
+  closedAt              DateTime?
+
+  replyCount     Int      @default(0)
+  lastActivityAt DateTime @default(now())
+  attachments    Json     @default("[]")
+  deletedAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  replies Reply[]
+
+  @@index([status, lastActivityAt])
+  @@index([assigneeId, status])
+  @@index([requesterId, createdAt])
+  @@index([priority, slaResolveDueAt])
+  @@map("ticket")
+}
+
+model Reply {
+  id       String    @id @default(cuid())
+  ticketId String
+  ticket   Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User      @relation(fields: [authorId], references: [id])
+
+  body       String
+  isInternal Boolean @default(false)
+  type       ReplyType @default(REPLY)
+  attachments Json   @default("[]")
+
+  createdAt DateTime  @default(now())
+  editedAt  DateTime?
+
+  @@index([ticketId, createdAt])
+  @@map("reply")
+}
+
+model KnowledgeArticle {
+  id   String @id @default(cuid())
+  slug String @unique
+
+  title       String
+  body        String
+  category    Category @default(OTHER)
+  tags        String[] @default([])
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  isPublished Boolean  @default(true)
+
+  views          Int @default(0)
+  helpfulCount   Int @default(0)
+  notHelpfulCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@map("knowledge_article")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_ON_USER
+  RESOLVED
+  CLOSED
+}
+
+enum Priority {
+  NONE
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum Category {
+  HARDWARE
+  SOFTWARE
+  NETWORK
+  ACCESS
+  OTHER
+}
+
+enum ReplyType {
+  REPLY
+  SYSTEM
+}
