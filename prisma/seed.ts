@@ -1,12 +1,12 @@
 import { hashPassword } from "better-auth/crypto";
-import { prisma } from "../src/lib/prisma";
+import { prisma } from "../lib/prisma";
 import type {
   Category,
   Priority,
   ReplyType,
   TicketStatus,
-} from "../src/generated/prisma/enums";
-import { avatarColor } from "../src/lib/utils";
+} from "../generated/prisma/enums";
+import { avatarColor } from "../lib/utils";
 
 const DEMO_PASSWORD = "tasu-demo";
 const DAY = 24 * 60 * 60 * 1000;
