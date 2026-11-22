@@ -252,24 +252,3 @@ export async function getStaffDashboard() {
     volume,
   };
 }
-
-export async function getRecentActivity(
-  viewer: Viewer,
-  limit = 8,
-) {
-  return prisma.reply.findMany({
-    where: {
-      ...(viewer.role === "employee" ? { isInternal: false } : {}),
-      ticket: {
-        deletedAt: null,
-        ...(viewer.role === "employee" ? { requesterId: viewer.id } : {}),
-      },
-    },
-    orderBy: { createdAt: "desc" },
-    take: limit,
-    include: {
-      author: { select: { name: true, avatarColor: true, role: true } },
-      ticket: { select: { key: true, title: true, status: true } },
-    },
-  });
-}

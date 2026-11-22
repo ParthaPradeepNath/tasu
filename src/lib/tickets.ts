@@ -214,8 +214,6 @@ export async function getTicketByKey(
   });
 }
 
-export type TicketDetail = NonNullable<Awaited<ReturnType<typeof getTicketByKey>>>;
-
 export async function getTicketCounts(
   viewer: { id: string; role: Role },
 ) {
@@ -258,5 +256,3 @@ export async function getTicketCounts(
     breaching,
   };
 }
-
-export const ticketDetailHref = (key: string) => `/app/tickets/${key}`;

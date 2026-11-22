@@ -2,29 +2,12 @@ import {
   differenceInMinutes,
   format,
   formatDistanceToNowStrict,
-  isToday,
-  isYesterday,
 } from "date-fns";
 
 export function relativeTime(date: Date | string | null | undefined) {
   if (!date) return "—";
   const value = typeof date === "string" ? new Date(date) : date;
   return formatDistanceToNowStrict(value, { addSuffix: true });
-}
-
-export function shortDate(date: Date | string | null | undefined) {
-  if (!date) return "—";
-  const value = typeof date === "string" ? new Date(date) : date;
-  if (isToday(value)) return `Today, ${format(value, "h:mm a")}`;
-  if (isYesterday(value)) return `Yesterday, ${format(value, "h:mm a")}`;
-  return format(value, "MMM d, h:mm a");
-}
-
-export function dayLabel(date: Date | string) {
-  const value = typeof date === "string" ? new Date(date) : date;
-  if (isToday(value)) return "Today";
-  if (isYesterday(value)) return "Yesterday";
-  return format(value, "EEEE, MMMM d");
 }
 
 export function formatDateTime(date: Date | string | null | undefined) {

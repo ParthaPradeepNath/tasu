@@ -1,5 +1,4 @@
 import type { TicketStatus } from "@/generated/prisma/enums";
-import * as React from "react";
 import { cn } from "@/lib/utils";
 import { GlassBadge } from "@/components/liquid-glass";
 import {

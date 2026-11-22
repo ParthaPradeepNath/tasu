@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, MessageSquareText, Sparkles } from "lucide-react";
+import { MessageSquareText, Sparkles } from "lucide-react";
 import type { TicketStatus } from "@/generated/prisma/enums";
 import { relativeTime } from "@/lib/dates";
 import { Avatar } from "@/components/ui/avatar";
@@ -108,34 +108,6 @@ export function ActivityFeed({
         );
       })}
     </ol>
-  );
-}
-
-export function AttentionRow({
-  key: ticketKey,
-  title,
-  status,
-  meta,
-}: {
-  key: string;
-  title: string;
-  status: TicketStatus;
-  meta: string;
-}) {
-  return (
-    <Link
-      href={`/app/tickets/${ticketKey}`}
-      className="group flex items-center gap-3 px-4 py-3 transition-colors duration-100 hover:bg-surface-hover"
-    >
-      <StatusDot status={status} />
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[12.5px] font-medium text-label">
-          {title}
-        </span>
-        <span className="mt-0.5 block text-[11px] text-label-3">{meta}</span>
-      </span>
-      <ArrowUpRight className="size-3.5 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
-    </Link>
   );
 }
 

@@ -248,5 +248,3 @@ export async function getReports(range: ReportRange) {
     topArticles,
   };
 }
-
-export type ReportData = Awaited<ReturnType<typeof getReports>>;

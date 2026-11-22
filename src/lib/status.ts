@@ -105,10 +105,3 @@ export function firstName(name: string | null | undefined) {
   if (!name) return "someone";
   return name.split(" ")[0];
 }
-
-export function statusLabel(status: TicketStatus, viewer: "requester" | "agent") {
-  if (viewer === "requester" && status === "WAITING_ON_USER") return "Waiting on you";
-  if (viewer === "requester" && status === "RESOLVED") return "Confirm fix";
-  if (viewer === "agent" && status === "OPEN") return "Unassigned";
-  return STATUS_META[status].label;
-}

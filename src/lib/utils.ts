@@ -35,17 +35,3 @@ export function avatarColor(seed: string) {
   }
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
-
-export function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 80);
-}
-
-export function pluralize(count: number, singular: string, plural?: string) {
-  return count === 1 ? singular : (plural ?? `${singular}s`);
-}

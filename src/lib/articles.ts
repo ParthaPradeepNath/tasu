@@ -69,17 +69,6 @@ export async function getArticleBySlug(slug: string, includeDrafts = false) {
   }) as Promise<ArticleCard | null>;
 }
 
-export async function getArticleCategories() {
-  const groups = await prisma.knowledgeArticle.groupBy({
-    by: ["category"],
-    where: { isPublished: true },
-    _count: { _all: true },
-  });
-  return groups
-    .map((group) => ({ category: group.category, count: group._count._all }))
-    .sort((a, b) => b.count - a.count);
-}
-
 export async function suggestArticles(
   ticket: {
     id: string;
