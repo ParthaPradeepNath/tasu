@@ -13,7 +13,7 @@ export function TicketSection({
 }) {
   return (
     <section className={cn("min-w-0", className)}>
-      <div className="sticky top-[52px] z-10 flex h-8 items-center justify-between border-b border-separator bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] px-4 backdrop-blur-md">
+      <div className="sticky top-[var(--topbar-h)] z-10 flex h-8 items-center justify-between border-b border-separator bg-[color-mix(in_srgb,var(--bg)_88%,transparent)] px-4 backdrop-blur-md">
         <h2 className="eyebrow m-0">{label}</h2>
         <span className="num text-[11px] text-label-3">{count}</span>
       </div>

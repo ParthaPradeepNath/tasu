@@ -122,7 +122,7 @@ export function TableOfContents({
   if (headings.length === 0) return null;
 
   return (
-    <div className="surface-card overflow-hidden">
+    <div className="surface-card overflow-clip">
       <header className="flex h-10 items-center border-b border-separator px-3.5">
         <h2 className="m-0 text-[12px] font-semibold text-label">On this page</h2>
       </header>
@@ -134,7 +134,7 @@ export function TableOfContents({
                 href={`#${heading.id}`}
                 aria-current={active === heading.id ? "location" : undefined}
                 className={cn(
-                  "block rounded-[6px] py-1 pr-2 text-[11.5px] leading-[1.45] transition-colors duration-150",
+                  "block rounded-[6px] py-1 pr-2 text-[11.5px] leading-[1.45] transition-colors duration-100",
                   heading.level === 3 ? "pl-5" : "pl-2",
                   active === heading.id
                     ? "bg-accent-soft font-medium text-accent"

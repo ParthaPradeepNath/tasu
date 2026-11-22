@@ -3,15 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { useActionState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { useFormStatus } from "react-dom";
 import {
   ArrowLeft,
   Check,
   CornerDownLeft,
   Eye,
-  Globe,
   Loader2,
-  Lock,
   Pencil,
   Save,
   Sparkles,
@@ -22,6 +21,7 @@ import type { Category } from "@/generated/prisma/enums";
 import { saveArticle, type ActionState } from "@/app/app/actions";
 import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/status";
 import { Button } from "@/components/ui/button";
+import { GlassBadge } from "@/components/liquid-glass";
 import { Kbd } from "@/components/ui/kbd";
 import { PropertySelect, type SelectOption } from "@/components/ui/property-select";
 import { Markdown } from "@/components/markdown";
@@ -45,6 +45,7 @@ const CATEGORY_OPTIONS: SelectOption[] = CATEGORY_ORDER.map((category) => ({
 }));
 
 export function ArticleEditor({ article }: { article?: EditableArticle }) {
+  const reduced = useReducedMotion();
   const [state, formAction] = useActionState(saveArticle, initialState);
   const [title, setTitle] = React.useState(article?.title ?? "");
   const [body, setBody] = React.useState(article?.body ?? "");
@@ -92,17 +93,14 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
           <ArrowLeft className="size-3.5" />
           {article ? "Back to article" : "Knowledge"}
         </Link>
-        <span
-          className={cn(
-            "inline-flex h-5 items-center gap-1 rounded-full px-2 text-[10px] font-medium",
-            published
-              ? "bg-success-soft text-success"
-              : "bg-warning-soft text-warning",
-          )}
+        <GlassBadge
+          tone={published ? "success" : "warning"}
+          width={published ? 92 : 60}
+          height={20}
+          className="align-middle text-[10px]"
         >
-          {published ? <Globe className="size-2.5" /> : <Lock className="size-2.5" />}
           {published ? "Published" : "Draft"}
-        </span>
+        </GlassBadge>
         <div className="ml-auto flex items-center gap-2">
           <Button asChild variant="ghost" size="md">
             <Link
@@ -116,7 +114,7 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
       </div>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_268px]">
-        <div className="surface-card overflow-hidden">
+        <div className="surface-card overflow-clip">
           <div className="px-5 pt-5">
             <label htmlFor="article-title" className="sr-only">
               Article title
@@ -132,14 +130,14 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
               required
               className="w-full bg-transparent text-[22px] font-semibold leading-7 tracking-[-0.025em] text-label outline-none placeholder:text-label-3"
             />
-            <div className="mt-1.5 flex items-center gap-2 text-[11px] text-label-3">
-              <Pencil className="size-3" />
-              <span>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-label-3">
+              <Pencil className="size-3 shrink-0" />
+              <span className="min-w-0 truncate">
                 {article
                   ? "Editing an existing guide"
                   : "New guide · visible to everyone once published"}
               </span>
-              <span className="num ml-auto">{title.length}/160</span>
+              <span className="num ml-auto shrink-0">{title.length}/160</span>
             </div>
           </div>
 
@@ -195,8 +193,8 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
           )}
         </div>
 
-        <aside className="space-y-3 lg:sticky lg:top-[76px]">
-          <div className="surface-card overflow-hidden">
+        <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
+          <div className="surface-card overflow-clip">
             <header className="flex h-10 items-center border-b border-separator px-3.5">
               <h2 className="m-0 text-[12px] font-semibold text-label">
                 Properties
@@ -237,15 +235,19 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
                     aria-label="Published"
                     onClick={() => setPublished((value) => !value)}
                     className={cn(
-                      "press relative h-[22px] w-[38px] shrink-0 rounded-full transition-colors duration-200",
+                      "press relative h-[22px] w-[38px] shrink-0 rounded-full transition-colors duration-100",
                       published ? "bg-success" : "bg-fill-strong",
                     )}
                   >
-                    <span
-                      className={cn(
-                        "absolute top-[2px] size-[18px] rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)] transition-[left] duration-200 [transition-timing-function:var(--ease-spring)]",
-                        published ? "left-[18px]" : "left-[2px]",
-                      )}
+                    <motion.span
+                      initial={false}
+                      animate={{ transform: `translateX(${published ? 16 : 0}px)` }}
+                      transition={
+                        reduced
+                          ? { duration: 0 }
+                          : { type: "spring", stiffness: 800, damping: 42 }
+                      }
+                      className="absolute left-[2px] top-[2px] size-[18px] rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
                     />
                   </button>
                 </div>
@@ -305,7 +307,7 @@ function TabButton({
       disabled={disabled}
       aria-pressed={active}
       className={cn(
-        "press inline-flex items-center gap-1.5 rounded-[6px] px-2 py-1 text-[11.5px] font-medium transition-colors duration-150 disabled:opacity-40",
+        "press inline-flex items-center gap-1.5 rounded-[6px] px-2 py-1 text-[11.5px] font-medium transition-colors duration-100 disabled:opacity-40",
         active
           ? "bg-surface-solid text-label shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
           : "text-label-2 hover:text-label",
@@ -343,7 +345,7 @@ function TagEditor({
             key={tag}
             className="inline-flex h-6 items-center gap-1 rounded-full bg-fill pl-2 pr-1 text-[11px] font-medium text-label-2"
           >
-            {tag}
+            <span className="max-w-[180px] truncate">{tag}</span>
             <button
               type="button"
               aria-label={`Remove ${tag}`}

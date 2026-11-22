@@ -20,6 +20,7 @@ import { suggestArticles } from "@/lib/articles";
 import { SLA_LABEL, isFirstResponseOverdue, slaProgress, slaState } from "@/lib/sla";
 import { prisma } from "@/lib/prisma";
 import { Avatar } from "@/components/ui/avatar";
+import { MeterBar } from "@/components/ui/meter-bar";
 import { StatusChip } from "@/components/tickets/status-chip";
 import { TicketActions } from "@/components/tickets/ticket-actions";
 import { TicketProperties } from "@/components/tickets/ticket-properties";
@@ -106,6 +107,7 @@ export default async function TicketDetailPage({
         </span>
         <span className="num font-mono text-[11.5px] text-label-3">{ticket.key}</span>
         <StatusChip
+          premium
           status={ticket.status}
           viewer={staff ? "agent" : "requester"}
           assigneeName={ticket.assignee?.name}
@@ -125,7 +127,7 @@ export default async function TicketDetailPage({
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0">
           <header className="mb-5">
-            <h1 className="m-0 text-[23px] font-semibold leading-[1.25] tracking-[-0.026em] text-label text-balance">
+            <h1 className="m-0 text-[23px] font-semibold leading-[1.25] tracking-[-0.026em] text-label text-balance break-words [overflow-wrap:anywhere]">
               {ticket.title}
             </h1>
             <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px] text-label-3">
@@ -185,8 +187,8 @@ export default async function TicketDetailPage({
           />
         </div>
 
-        <aside className="space-y-3 lg:sticky lg:top-[76px]">
-          <div className="surface-card overflow-hidden">
+        <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
+          <div className="surface-card overflow-clip">
             <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
               <h2 className="m-0 text-[12px] font-semibold text-label">
                 Service level
@@ -231,21 +233,19 @@ export default async function TicketDetailPage({
                 Resolve target {formatDateTime(ticket.slaResolveDueAt)}
               </p>
 
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-sunken">
-                <div
-                  className={cn(
-                    "h-full rounded-full transition-[width] duration-300",
-                    state === "breached"
-                      ? "bg-danger"
-                      : state === "due_soon"
-                        ? "bg-warning"
-                        : state === "met"
-                          ? "bg-success"
-                          : "bg-accent",
-                  )}
-                  style={{ width: `${done ? 100 : elapsed}%` }}
-                />
-              </div>
+              <MeterBar
+                className="mt-3 h-1.5"
+                fillClassName={
+                  state === "breached"
+                    ? "bg-danger"
+                    : state === "due_soon"
+                      ? "bg-warning"
+                      : state === "met"
+                        ? "bg-success"
+                        : "bg-accent"
+                }
+                value={done ? 1 : elapsed / 100}
+              />
 
               <dl className="mt-3.5 space-y-2">
                 <div className="flex items-center justify-between gap-2">
@@ -302,7 +302,7 @@ export default async function TicketDetailPage({
           />
 
           {suggested.length > 0 && (
-            <div className="surface-card overflow-hidden">
+            <div className="surface-card overflow-clip">
               <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
                 <h2 className="m-0 text-[12px] font-semibold text-label">
                   Related reading

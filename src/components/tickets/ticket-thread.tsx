@@ -226,7 +226,7 @@ export function TicketThread({
       <div className="sticky bottom-4 mt-6">
         <div
           className={cn(
-            "surface-card overflow-hidden transition-[border-color,box-shadow] duration-200",
+            "surface-card overflow-clip transition-[border-color,box-shadow] duration-100",
             internal && "border-warning/30 shadow-[0_0_0_3px_var(--warning-soft)]",
           )}
         >

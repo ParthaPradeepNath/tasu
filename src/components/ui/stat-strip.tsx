@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { GlassCard } from "@/components/liquid-glass";
 
 type Stat = {
   label: string;
@@ -18,9 +19,11 @@ export function StatStrip({
   className?: string;
 }) {
   return (
-    <div
+    <GlassCard
+      tint={0.88}
+      blur={12}
       className={cn(
-        "grid gap-px overflow-hidden rounded-[14px] border border-separator bg-separator shadow-[var(--shadow-card)]",
+        "grid gap-px overflow-hidden rounded-[18px]",
         columns === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2 lg:grid-cols-4",
         className,
       )}
@@ -28,7 +31,7 @@ export function StatStrip({
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="bg-surface-solid px-4 py-4 sm:px-5 sm:py-[18px]"
+          className="bg-surface/55 px-4 py-4 sm:px-5 sm:py-[18px] dark:bg-black/10"
         >
           <p className="m-0 text-[10.5px] font-medium uppercase tracking-[0.055em] text-label-3">
             {stat.label}
@@ -51,6 +54,6 @@ export function StatStrip({
           )}
         </div>
       ))}
-    </div>
+    </GlassCard>
   );
 }

@@ -118,7 +118,7 @@ export function NewTicketForm({
       action={formAction}
       className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]"
     >
-      <div className="surface-card overflow-hidden">
+      <div className="surface-card overflow-clip">
         <div className="px-5 pt-5">
           <label htmlFor="title" className="sr-only">
             Title
@@ -134,11 +134,13 @@ export function NewTicketForm({
             required
             className="w-full bg-transparent text-[20px] font-semibold leading-7 tracking-[-0.02em] text-label outline-none placeholder:text-label-3"
           />
-          <div className="mt-1.5 flex items-center gap-2 text-[11px] text-label-3">
-            <span>Opened by {requesterName}</span>
+          <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-label-3">
+            <span className="min-w-0 truncate">Opened by {requesterName}</span>
             <span aria-hidden>·</span>
-            <span>IT typically replies within {sla.firstResponseHours}h</span>
-            <span className="num ml-auto">{title.length}/140</span>
+            <span className="hidden sm:inline">
+              IT typically replies within {sla.firstResponseHours}h
+            </span>
+            <span className="num ml-auto shrink-0">{title.length}/140</span>
           </div>
         </div>
 
@@ -239,8 +241,8 @@ export function NewTicketForm({
         </div>
       </div>
 
-      <aside className="space-y-3 lg:sticky lg:top-[76px]">
-        <div className="surface-card overflow-hidden">
+      <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
+        <div className="surface-card overflow-clip">
           <header className="flex h-10 items-center border-b border-separator px-3.5">
             <h2 className="m-0 text-[12px] font-semibold text-label">Properties</h2>
           </header>
@@ -332,7 +334,7 @@ function TabButton({
       disabled={disabled}
       aria-pressed={active}
       className={cn(
-        "press rounded-[6px] px-2 py-1 text-[11.5px] font-medium transition-colors duration-150 disabled:opacity-40",
+        "press rounded-[6px] px-2 py-1 text-[11.5px] font-medium transition-colors duration-100 disabled:opacity-40",
         active
           ? "bg-surface-solid text-label shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
           : "text-label-2 hover:text-label",
@@ -370,7 +372,7 @@ function TagEditor({
             key={tag}
             className="inline-flex h-6 items-center gap-1 rounded-full bg-fill pl-2 pr-1 text-[11px] font-medium text-label-2"
           >
-            {tag}
+            <span className="max-w-[180px] truncate">{tag}</span>
             <button
               type="button"
               aria-label={`Remove ${tag}`}

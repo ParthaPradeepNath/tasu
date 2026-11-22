@@ -29,7 +29,7 @@ export default function WorkspaceError({
         back to the overview.
       </p>
       {error.digest && (
-        <p className="num mt-2 font-mono text-[10.5px] text-label-3">
+        <p className="num mt-2 break-all font-mono text-[10.5px] text-label-3">
           {error.digest}
         </p>
       )}

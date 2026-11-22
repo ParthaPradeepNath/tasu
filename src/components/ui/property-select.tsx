@@ -57,7 +57,7 @@ export function PropertySelect({
         <button
           type="button"
           className={cn(
-            "press inline-flex h-7 items-center gap-1.5 rounded-full border border-line bg-surface-solid px-2.5 text-[12px] font-medium text-label shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:bg-surface-hover disabled:opacity-45",
+            "press inline-flex h-7 min-w-0 max-w-full items-center gap-1.5 rounded-full border border-line bg-surface-solid px-2.5 text-[12px] font-medium text-label shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:bg-surface-hover disabled:opacity-45",
             className,
           )}
         >
@@ -73,7 +73,7 @@ export function PropertySelect({
         <button
           type="button"
           className={cn(
-            "group flex h-8 w-full items-center gap-2 rounded-[7px] px-1.5 text-left text-[12.5px] transition-colors duration-150 hover:bg-fill disabled:pointer-events-none disabled:opacity-45",
+            "group flex h-8 w-full items-center gap-2 rounded-[7px] px-1.5 text-left text-[12.5px] transition-colors duration-100 hover:bg-fill disabled:pointer-events-none disabled:opacity-45",
             className,
           )}
         >
@@ -81,7 +81,7 @@ export function PropertySelect({
           <span className="min-w-0 flex-1 truncate text-label">
             {selected?.label ?? emptyLabel}
           </span>
-          <ChevronDown className="size-3 shrink-0 text-label-3 opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
+          <ChevronDown className="size-3 shrink-0 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
         </button>
       </PopoverTrigger>
     );

@@ -10,7 +10,7 @@ export const Input = React.forwardRef<
       ref={ref}
       type={type}
       className={cn(
-        "h-9 w-full rounded-[9px] border border-transparent bg-surface-sunken px-3 text-[13.5px] text-label shadow-[inset_0_1px_1px_rgba(0,0,0,0.03)] outline-none transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-label-3 focus:border-[color-mix(in_srgb,var(--accent)_45%,transparent)] focus:bg-surface-solid focus:shadow-[0_0_0_4px_var(--accent-soft)] disabled:opacity-50",
+        "h-9 w-full rounded-[9px] border border-transparent bg-surface-sunken px-3 text-[13.5px] text-label shadow-[inset_0_1px_1px_rgba(0,0,0,0.03)] outline-none transition-[border-color,box-shadow,background-color] duration-100 placeholder:text-label-3 focus:border-[color-mix(in_srgb,var(--accent)_45%,transparent)] focus:bg-surface-solid focus:shadow-[0_0_0_4px_var(--accent-soft)] disabled:opacity-50",
         className,
       )}
       {...props}
@@ -27,7 +27,7 @@ export const Textarea = React.forwardRef<
     <textarea
       ref={ref}
       className={cn(
-        "w-full resize-none rounded-[10px] border border-transparent bg-surface-sunken px-3 py-2.5 text-[13.5px] leading-6 text-label outline-none transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-label-3 focus:border-[color-mix(in_srgb,var(--accent)_45%,transparent)] focus:bg-surface-solid focus:shadow-[0_0_0_4px_var(--accent-soft)]",
+        "w-full resize-none rounded-[10px] border border-transparent bg-surface-sunken px-3 py-2.5 text-[13.5px] leading-6 text-label outline-none transition-[border-color,box-shadow,background-color] duration-100 placeholder:text-label-3 focus:border-[color-mix(in_srgb,var(--accent)_45%,transparent)] focus:bg-surface-solid focus:shadow-[0_0_0_4px_var(--accent-soft)]",
         className,
       )}
       {...props}

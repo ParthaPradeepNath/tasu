@@ -13,14 +13,15 @@ import { getEmployeeDashboard, getStaffDashboard } from "@/lib/dashboard";
 import { firstName } from "@/lib/status";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatStrip } from "@/components/ui/stat-strip";
+import { MeterBar } from "@/components/ui/meter-bar";
 import { SectionCard } from "@/components/ui/section-card";
 import { Button } from "@/components/ui/button";
+import { GlassButton } from "@/components/liquid-glass";
 import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { TicketList } from "@/components/tickets/ticket-list";
 import { ActivityFeed, EmptyFeed } from "@/components/dashboard/activity-feed";
 import { ChartLegend, VolumeChart } from "@/components/dashboard/volume-chart";
-import { cn } from "@/lib/utils";
 
 export const metadata = {
   title: "Overview",
@@ -55,12 +56,17 @@ export default async function OverviewPage() {
                   <ArrowRight />
                 </Link>
               </Button>
-              <Button asChild variant="primary" size="md">
+              <GlassButton
+                asChild
+                material="tinted"
+                size="md"
+                className="rounded-[10px] border border-white/15 bg-accent text-white"
+              >
                 <Link href="/app/tickets/new">
                   <Plus />
                   New ticket
                 </Link>
-              </Button>
+              </GlassButton>
             </>
           }
         />
@@ -130,16 +136,11 @@ export default async function OverviewPage() {
                       <span className="w-[104px] shrink-0 truncate text-[12.5px] font-medium text-label">
                         {row.name}
                       </span>
-                      <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-sunken">
-                        <span
-                          className={cn(
-                            "block h-full rounded-full bg-accent/80 transition-[width] duration-300",
-                          )}
-                          style={{
-                            width: `${Math.max(6, (row.count / maxWorkload) * 100)}%`,
-                          }}
-                        />
-                      </span>
+                      <MeterBar
+                        className="h-1.5 min-w-0 flex-1"
+                        fillClassName="bg-accent/80"
+                        value={Math.max(0.06, row.count / maxWorkload)}
+                      />
                       <span className="num w-6 text-right text-[12px] font-medium text-label-2">
                         {row.count}
                       </span>
@@ -240,12 +241,17 @@ export default async function OverviewPage() {
             : "Everything is moving. Open a ticket any time something isn't working."
         }
         actions={
-          <Button asChild variant="primary" size="md">
+          <GlassButton
+            asChild
+            material="tinted"
+            size="md"
+            className="rounded-[10px] border border-white/15 bg-accent text-white"
+          >
             <Link href="/app/tickets/new">
               <Plus />
               New ticket
             </Link>
-          </Button>
+          </GlassButton>
         }
       />
 
@@ -334,7 +340,7 @@ export default async function OverviewPage() {
                 <li key={article.slug}>
                   <Link
                     href={`/app/knowledge/${article.slug}`}
-                    className="group flex items-start gap-3 px-4 py-3 transition-colors duration-150 hover:bg-surface-hover"
+                    className="group flex items-start gap-3 px-4 py-3 transition-colors duration-100 hover:bg-surface-hover"
                   >
                     <span className="mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-fill text-label-3">
                       <BookOpen className="size-3.5" strokeWidth={1.7} />

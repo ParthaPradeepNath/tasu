@@ -40,7 +40,7 @@ export function TicketRow({
       onMouseEnter={onMouseEnter}
       data-ticket-row
       className={cn(
-        "group relative flex items-center gap-3 px-4 outline-none transition-colors duration-150",
+        "group relative flex items-center gap-3 px-4 outline-none transition-colors duration-100",
         compact ? "h-[37px] gap-2.5 px-3.5" : "h-[46px] sm:gap-3.5",
         selected
           ? "bg-accent-soft shadow-[inset_0_0_0_1px_rgba(0,113,227,0.12)]"
@@ -59,8 +59,8 @@ export function TicketRow({
 
       <span
         className={cn(
-          "num hidden shrink-0 font-mono text-label-3 sm:block",
-          compact ? "w-[52px] text-[10.5px]" : "w-[62px] text-[11px]",
+          "num hidden shrink-0 whitespace-nowrap font-mono text-label-3 sm:block",
+          compact ? "w-[68px] text-[10.5px]" : "w-[76px] text-[11px]",
         )}
       >
         {ticket.key}
@@ -96,7 +96,7 @@ export function TicketRow({
       />
 
       {!compact && (
-        <span className="hidden w-[104px] justify-end lg:flex">
+        <span className="hidden w-[120px] justify-end lg:flex">
           <StatusMini status={ticket.status} role={role} />
         </span>
       )}
@@ -121,8 +121,8 @@ export function TicketRow({
         dateTime={ticket.lastActivityAt.toISOString()}
         suppressHydrationWarning
         className={cn(
-          "num shrink-0 text-right text-label-3",
-          compact ? "w-[34px] text-[10.5px]" : "w-[52px] text-[11px]",
+          "num shrink-0 whitespace-nowrap text-right text-label-3",
+          compact ? "w-[34px] text-[10.5px]" : "w-[68px] text-[11px]",
         )}
       >
         {compact
@@ -154,7 +154,7 @@ function StatusMini({
             : "Closed";
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-[11px] text-label-2">
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-[11px] text-label-2">
       <span className="truncate">{label}</span>
     </span>
   );

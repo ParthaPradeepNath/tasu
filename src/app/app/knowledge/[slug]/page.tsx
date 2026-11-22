@@ -19,6 +19,7 @@ import { relativeTime } from "@/lib/dates";
 import { extractHeadings, Markdown, readingMinutes } from "@/components/markdown";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { GlassBadge } from "@/components/liquid-glass";
 import { CategoryIcon } from "@/components/tickets/category-icon";
 import { ArticleFeedback, TableOfContents } from "./article-feedback";
 import { cn } from "@/lib/utils";
@@ -82,9 +83,14 @@ export default async function ArticlePage({
           {CATEGORY_META[article.category].label}
         </span>
         {!article.isPublished && (
-          <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10.5px] font-medium text-warning">
+          <GlassBadge
+            tone="warning"
+            width={56}
+            height={20}
+            className="ml-0.5 align-middle text-[10px]"
+          >
             Draft
-          </span>
+          </GlassBadge>
         )}
         {staff && (
           <div className="ml-auto">
@@ -101,7 +107,7 @@ export default async function ArticlePage({
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_252px]">
         <div className="min-w-0">
           <header className="mb-5">
-            <h1 className="m-0 max-w-[680px] text-[29px] font-semibold leading-[1.16] tracking-[-0.03em] text-label text-balance">
+            <h1 className="m-0 max-w-[680px] text-[29px] font-semibold leading-[1.16] tracking-[-0.03em] text-label text-balance break-words [overflow-wrap:anywhere]">
               {article.title}
             </h1>
 
@@ -167,10 +173,10 @@ export default async function ArticlePage({
           )}
         </div>
 
-        <aside className="space-y-3 lg:sticky lg:top-[76px]">
+        <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
           <TableOfContents headings={headings} />
 
-          <div className="surface-card overflow-hidden">
+          <div className="surface-card overflow-clip">
             <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
               <h2 className="m-0 text-[12px] font-semibold text-label">
                 More in {CATEGORY_META[article.category].label.toLowerCase()}

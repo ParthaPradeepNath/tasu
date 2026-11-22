@@ -166,7 +166,7 @@ export default async function QueuePage({
         />
       </div>
 
-      <div className="surface-card overflow-hidden">
+      <div className="surface-card overflow-clip">
         {items.length === 0 ? (
           filtered ? (
             <EmptyState

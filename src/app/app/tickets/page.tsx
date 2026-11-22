@@ -171,7 +171,7 @@ export default async function TicketsPage({
         <TicketFilterBar assignees={assignees} showAssignee={staff} />
       </div>
 
-      <div className="surface-card overflow-hidden">
+      <div className="surface-card overflow-clip">
         {items.length === 0 ? (
           q || filtered ? (
             <EmptyState

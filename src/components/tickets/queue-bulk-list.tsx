@@ -25,6 +25,7 @@ import {
 } from "@/lib/status";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { GlassBadge } from "@/components/liquid-glass";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -155,11 +156,14 @@ export function QueueBulkList({
           label="Select all tickets"
         />
         <span className="text-[11px] font-medium text-label-2">Select all</span>
-        {selected.size > 0 && (
-          <span className="num text-[10.5px] text-label-3">
-            {selected.size} of {items.length}
-          </span>
-        )}
+        <span
+          className={cn(
+            "num min-w-[64px] text-[10.5px] text-label-3",
+            selected.size === 0 && "invisible",
+          )}
+        >
+          {selected.size} of {items.length}
+        </span>
         <span className="num ml-auto text-[10.5px] text-label-3">
           {items.length} {items.length === 1 ? "ticket" : "tickets"}
         </span>
@@ -176,7 +180,7 @@ export function QueueBulkList({
             <li key={ticket.id} className="group/row relative">
               <span
                 className={cn(
-                  "absolute inset-y-0 left-0 z-10 flex w-10 items-center justify-center transition-colors duration-150",
+                  "absolute inset-y-0 left-0 z-10 flex w-10 items-center justify-center transition-colors duration-100",
                   checked ? "bg-accent-soft" : "group-hover/row:bg-surface-hover",
                 )}
               >
@@ -209,12 +213,15 @@ export function QueueBulkList({
           aria-label="Bulk ticket actions"
           className="motion-pop fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[620px] items-center gap-1.5 rounded-[14px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] p-1.5 shadow-[var(--shadow-pop)] backdrop-blur-2xl sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2"
         >
-          <span className="num inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-accent px-2 text-[11.5px] font-semibold text-white">
-            {selected.size}
-          </span>
-          <span className="text-[11.5px] font-medium text-label-2">
-            selected
-          </span>
+          <GlassBadge
+            tone="accent"
+            width={104}
+            height={28}
+            speed={0.75}
+            className="num text-[11.5px] font-semibold"
+          >
+            {`${selected.size} selected`}
+          </GlassBadge>
           {pending && (
             <Loader2 className="size-3.5 animate-spin text-label-3" aria-hidden />
           )}
@@ -330,7 +337,7 @@ function SelectionCheckbox({
         onChange={onChange}
         aria-label={label}
         className={cn(
-          "focus-ring size-[15px] cursor-pointer appearance-none rounded-[4px] border transition-[background-color,border-color,box-shadow] duration-150",
+          "focus-ring size-[15px] cursor-pointer appearance-none rounded-[4px] border transition-[background-color,border-color,box-shadow] duration-100",
           checked || indeterminate
             ? "border-accent bg-accent"
             : "border-line bg-surface-solid shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] hover:border-label-3",

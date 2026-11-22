@@ -3,6 +3,7 @@ import { ArrowUpRight, MessageSquareText, Sparkles } from "lucide-react";
 import type { TicketStatus } from "@/generated/prisma/enums";
 import { relativeTime } from "@/lib/dates";
 import { Avatar } from "@/components/ui/avatar";
+import { GlassBadge } from "@/components/liquid-glass";
 import { StatusDot } from "@/components/tickets/status-chip";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +37,7 @@ export function ActivityFeed({
         return (
           <li
             key={item.id}
-            className="flex items-start gap-2.5 px-4 py-3 transition-colors duration-150 hover:bg-surface-hover"
+            className="flex items-start gap-2.5 px-4 py-3 transition-colors duration-100 hover:bg-surface-hover"
           >
             {system ? (
               <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-fill text-label-3">
@@ -62,9 +63,15 @@ export function ActivityFeed({
                     </span>{" "}
                     replied
                     {item.isInternal && (
-                      <span className="ml-1.5 rounded-[4px] bg-warning-soft px-1 py-0.5 text-[9.5px] font-medium uppercase tracking-[0.04em] text-warning">
-                        internal
-                      </span>
+                      <GlassBadge
+                        tone="warning"
+                        width={66}
+                        height={17}
+                        speed={0.45}
+                        className="ml-1.5 align-middle text-[9px] uppercase tracking-[0.04em]"
+                      >
+                        Internal
+                      </GlassBadge>
                     )}
                     {showTicket && (
                       <>
@@ -91,7 +98,7 @@ export function ActivityFeed({
               <time
                 dateTime={item.createdAt.toISOString()}
                 suppressHydrationWarning
-                className="num text-[10.5px] text-label-3"
+                className="num whitespace-nowrap text-[10.5px] text-label-3"
               >
                 {relativeTime(item.createdAt)}
               </time>
@@ -118,7 +125,7 @@ export function AttentionRow({
   return (
     <Link
       href={`/app/tickets/${ticketKey}`}
-      className="group flex items-center gap-3 px-4 py-3 transition-colors duration-150 hover:bg-surface-hover"
+      className="group flex items-center gap-3 px-4 py-3 transition-colors duration-100 hover:bg-surface-hover"
     >
       <StatusDot status={status} />
       <span className="min-w-0 flex-1">
@@ -127,7 +134,7 @@ export function AttentionRow({
         </span>
         <span className="mt-0.5 block text-[11px] text-label-3">{meta}</span>
       </span>
-      <ArrowUpRight className="size-3.5 text-label-3 opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
+      <ArrowUpRight className="size-3.5 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
     </Link>
   );
 }

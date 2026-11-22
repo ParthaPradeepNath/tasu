@@ -92,7 +92,7 @@ export function TicketFilterBar({
         className,
       )}
     >
-      <div className="relative flex h-7 min-w-[168px] flex-1 items-center gap-1.5 rounded-full border border-separator bg-surface-solid/70 pl-2.5 pr-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-150 focus-within:border-[color-mix(in_srgb,var(--accent)_35%,transparent)] focus-within:shadow-[0_0_0_3px_var(--accent-soft)] sm:max-w-[260px]">
+      <div className="relative flex h-7 min-w-[168px] flex-1 items-center gap-1.5 rounded-full border border-separator bg-surface-solid/70 pl-2.5 pr-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-100 focus-within:border-[color-mix(in_srgb,var(--accent)_35%,transparent)] focus-within:shadow-[0_0_0_3px_var(--accent-soft)] sm:max-w-[260px]">
         <Search className="size-3.5 shrink-0 text-label-3" />
         <input
           data-search-input

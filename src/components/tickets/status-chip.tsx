@@ -1,6 +1,7 @@
 import type { TicketStatus } from "@/generated/prisma/enums";
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { GlassBadge } from "@/components/liquid-glass";
 import {
   firstName,
   STATUS_META,
@@ -14,12 +15,14 @@ export function StatusChip({
   assigneeName,
   requesterName,
   className,
+  premium = false,
 }: {
   status: TicketStatus;
   viewer?: "requester" | "agent";
   assigneeName?: string | null;
   requesterName?: string | null;
   className?: string;
+  premium?: boolean;
 }) {
   const meta = STATUS_META[status];
   let label = meta.label;
@@ -36,6 +39,23 @@ export function StatusChip({
       label = requesterName
         ? `Waiting on ${firstName(requesterName)}`
         : "Waiting on requester";
+  }
+
+  if (premium) {
+    const glassTone =
+      tone === "info" || tone === "purple" ? "accent" : tone;
+
+    return (
+      <GlassBadge
+        tone={glassTone}
+        width={Math.max(78, Math.round(label.length * 6.4 + 28))}
+        height={22}
+        speed={0.75}
+        className={cn("text-[11.5px] font-medium", className)}
+      >
+        {label}
+      </GlassBadge>
+    );
   }
 
   return (

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, CornerDownLeft, Loader2, LockKeyhole, TriangleAlert } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Logo, Wordmark } from "@/components/brand";
-import { Button } from "@/components/ui/button";
+import { GlassButton, GlassCard } from "@/components/liquid-glass";
 import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import { cn } from "@/lib/utils";
@@ -78,7 +78,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="rounded-[22px] border border-white/60 bg-[color-mix(in_srgb,var(--surface-solid)_78%,transparent)] p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_32px_80px_-24px_rgba(0,0,0,0.28)] backdrop-blur-2xl dark:border-white/10">
+      <GlassCard tint={0.72} blur={18} className="rounded-[22px] p-7">
         <div className="mb-6">
           <h1 className="m-0 text-[21px] font-semibold tracking-[-0.025em] text-label">
             Sign in to Tasu
@@ -118,7 +118,7 @@ export function LoginForm() {
           </div>
 
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-1">
               <label
                 htmlFor="password"
                 className="block text-[12px] font-medium text-label-2"
@@ -151,11 +151,11 @@ export function LoginForm() {
             </div>
           )}
 
-          <Button
+          <GlassButton
             type="submit"
-            variant="primary"
+            material="tinted"
             size="lg"
-            className="w-full justify-between"
+            className="w-full justify-between rounded-[12px] border border-white/15 bg-accent text-white"
             disabled={loading}
           >
             <span className="flex items-center gap-2">
@@ -169,7 +169,7 @@ export function LoginForm() {
             <Kbd className="border-white/20 bg-white/10 text-white/70">
               <CornerDownLeft className="size-2.5" />
             </Kbd>
-          </Button>
+          </GlassButton>
         </form>
 
         <div className="mt-6">
@@ -185,7 +185,7 @@ export function LoginForm() {
                 onClick={() => fillDemo(demo.email)}
                 disabled={loading}
                 className={cn(
-                  "group flex h-10 w-full items-center gap-2.5 rounded-[9px] border border-transparent px-2 text-left transition-[background-color,border-color] duration-150 hover:border-separator hover:bg-fill disabled:opacity-50",
+                  "group flex h-10 w-full items-center gap-2.5 rounded-[9px] border border-transparent px-2 text-left transition-[background-color,border-color] duration-100 hover:border-separator hover:bg-fill disabled:opacity-50",
                 )}
               >
                 <span className="flex size-6 items-center justify-center rounded-full bg-fill text-[10px] font-semibold text-label-2">
@@ -202,12 +202,12 @@ export function LoginForm() {
                     {demo.note}
                   </span>
                 </span>
-                <ArrowRight className="size-3.5 text-label-3 opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
+                <ArrowRight className="size-3.5 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
               </button>
             ))}
           </div>
         </div>
-      </div>
+      </GlassCard>
 
       <p className="mt-5 text-center text-[11.5px] text-label-3">
         Trouble signing in? Ask IT — or open a ticket once you&apos;re in.

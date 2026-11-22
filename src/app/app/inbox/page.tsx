@@ -130,7 +130,7 @@ export default async function InboxPage({
       {view === "needs" ? (
         <div className="space-y-4">
           {totalNeeds === 0 && (
-            <div className="surface-card overflow-hidden">
+            <div className="surface-card overflow-clip">
               <EmptyState
                 icon={staff ? CheckCheck : InboxIcon}
                 title={staff ? "Your inbox is clear" : "Nothing needs you"}
@@ -151,12 +151,12 @@ export default async function InboxPage({
           )}
 
           {needs.length > 0 && (
-            <div className="surface-card overflow-hidden">
+            <div className="surface-card overflow-clip">
               <div className="flex items-center justify-between border-b border-separator px-4 py-2.5">
-                <h2 className="m-0 text-[12px] font-semibold text-label">
+                <h2 className="m-0 min-w-0 truncate text-[12px] font-semibold text-label">
                   {staff ? "Assigned to you" : "Waiting on your reply"}
                 </h2>
-                <span className="num text-[10.5px] text-label-3">
+                <span className="num shrink-0 text-[10.5px] text-label-3">
                   {needs.length} {needs.length === 1 ? "ticket" : "tickets"}
                 </span>
               </div>
@@ -170,14 +170,14 @@ export default async function InboxPage({
           )}
 
           {staff && unassigned.length > 0 && (
-            <div className="surface-card overflow-hidden">
+            <div className="surface-card overflow-clip">
               <div className="flex items-center justify-between border-b border-separator px-4 py-2.5">
                 <h2 className="m-0 text-[12px] font-semibold text-label">
                   New · waiting for triage
                 </h2>
                 <Link
                   href="/app/queue?view=unassigned"
-                  className="text-[11px] font-medium text-accent hover:underline"
+                  className="shrink-0 text-[11px] font-medium text-accent hover:underline"
                 >
                   View all
                 </Link>
@@ -194,7 +194,7 @@ export default async function InboxPage({
       ) : (
         <div>
           {replies.length === 0 ? (
-            <div className="surface-card overflow-hidden">
+            <div className="surface-card overflow-clip">
               <EmptyState
                 icon={MessageSquareText}
                 title="No activity yet"
@@ -219,13 +219,13 @@ export default async function InboxPage({
                     </span>
                   </div>
 
-                  <div className="surface-card overflow-hidden">
+                  <div className="surface-card overflow-clip">
                     <ul className="divide-y divide-separator">
                       {group.items.map((reply) => (
                         <li key={reply.id}>
                           <Link
                             href={`/app/tickets/${reply.ticket.key}`}
-                            className="group flex items-start gap-3 px-4 py-3.5 transition-colors duration-150 hover:bg-surface-hover"
+                            className="group flex items-start gap-3 px-4 py-3.5 transition-colors duration-100 hover:bg-surface-hover"
                           >
                             <Avatar
                               name={reply.author.name}
@@ -259,7 +259,7 @@ export default async function InboxPage({
                             <div className="flex shrink-0 flex-col items-end gap-1 pt-0.5">
                               <time
                                 dateTime={reply.createdAt.toISOString()}
-                                className="num text-[10.5px] text-label-3"
+                                className="num whitespace-nowrap text-[10.5px] text-label-3"
                               >
                                 {relativeTime(reply.createdAt)}
                               </time>

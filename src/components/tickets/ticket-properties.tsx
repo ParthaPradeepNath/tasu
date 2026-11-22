@@ -79,7 +79,7 @@ export function TicketProperties({
   return (
     <div
       className={cn(
-        "surface-card overflow-hidden transition-opacity duration-150",
+        "surface-card overflow-clip transition-opacity duration-100",
         pending && "opacity-70",
       )}
     >
@@ -192,7 +192,7 @@ export function TicketProperties({
                   key={tag}
                   className="inline-flex h-5 items-center rounded-[4px] bg-fill px-1.5 text-[10.5px] font-medium text-label-2"
                 >
-                  {tag}
+                  <span className="max-w-[140px] truncate">{tag}</span>
                 </span>
               ))}
             </span>

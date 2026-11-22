@@ -20,6 +20,7 @@ import {
 import { formatDate } from "@/lib/dates";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatStrip } from "@/components/ui/stat-strip";
+import { MeterBar } from "@/components/ui/meter-bar";
 import { SectionCard } from "@/components/ui/section-card";
 import { SegmentedNav } from "@/components/ui/segmented-nav";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,7 @@ export default async function ReportsPage({
         actions={
           <>
             <SegmentedNav
+              className="min-w-0 flex-1 sm:flex-none"
               ariaLabel="Report range"
               segments={REPORT_RANGES.map((key) => ({
                 label: key === "7d" ? "7 days" : key === "30d" ? "30 days" : "90 days",
@@ -178,14 +180,14 @@ export default async function ReportsPage({
                         : `${Math.round((row.count / data.created) * 100)}%`}
                     </span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-surface-sunken">
-                    <div
-                      className="h-full rounded-full bg-accent/75 transition-[width] duration-300"
-                      style={{
-                        width: `${Math.max(row.count === 0 ? 0 : 4, (row.count / maxCategory) * 100)}%`,
-                      }}
-                    />
-                  </div>
+                  <MeterBar
+                    className="h-1.5"
+                    fillClassName="bg-accent/75"
+                    value={Math.max(
+                      row.count === 0 ? 0 : 0.04,
+                      row.count / maxCategory,
+                    )}
+                  />
                 </li>
               ))}
             </ul>
@@ -202,16 +204,16 @@ export default async function ReportsPage({
               First response target
             </span>
           }
-          bodyClassName="overflow-x-auto"
         >
-          <table className="w-full min-w-[520px] border-collapse text-left">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-left">
             <thead>
               <tr className="border-b border-separator text-[10.5px] uppercase tracking-[0.05em] text-label-3">
-                <th className="px-4 py-2 font-medium">Priority</th>
-                <th className="px-3 py-2 text-right font-medium">Tickets</th>
-                <th className="px-3 py-2 text-right font-medium">Avg response</th>
-                <th className="px-3 py-2 text-right font-medium">Target</th>
-                <th className="px-4 py-2 text-right font-medium">Within target</th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium">Priority</th>
+                <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Tickets</th>
+                <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Avg response</th>
+                <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Target</th>
+                <th className="whitespace-nowrap px-4 py-2 text-right font-medium">Within target</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-separator">
@@ -223,31 +225,29 @@ export default async function ReportsPage({
                       {PRIORITY_META[row.priority].label}
                     </span>
                   </td>
-                  <td className="num px-3 py-2.5 text-right">{row.count}</td>
-                  <td className="num px-3 py-2.5 text-right text-label">
+                  <td className="num whitespace-nowrap px-3 py-2.5 text-right">{row.count}</td>
+                  <td className="num whitespace-nowrap px-3 py-2.5 text-right text-label">
                     {row.avgFirstResponseHours === null
                       ? "—"
                       : `${row.avgFirstResponseHours.toFixed(1)}h`}
                   </td>
-                  <td className="num px-3 py-2.5 text-right text-label-3">
+                  <td className="num whitespace-nowrap px-3 py-2.5 text-right text-label-3">
                     {row.targetHours}h
                   </td>
                   <td className="px-4 py-2.5">
                     <div className="flex items-center justify-end gap-2">
-                      <span className="h-1 w-14 overflow-hidden rounded-full bg-surface-sunken">
-                        <span
-                          className={cn(
-                            "block h-full rounded-full",
-                            (row.withinTargetPct ?? 0) >= 90
-                              ? "bg-success"
-                              : (row.withinTargetPct ?? 0) >= 75
-                                ? "bg-warning"
-                                : "bg-danger",
-                          )}
-                          style={{ width: `${row.withinTargetPct ?? 0}%` }}
-                        />
-                      </span>
-                      <span className="num w-9 text-right text-[11px] font-medium text-label">
+                      <MeterBar
+                        className="h-1 w-14"
+                        fillClassName={
+                          (row.withinTargetPct ?? 0) >= 90
+                            ? "bg-success"
+                            : (row.withinTargetPct ?? 0) >= 75
+                              ? "bg-warning"
+                              : "bg-danger"
+                        }
+                        value={(row.withinTargetPct ?? 0) / 100}
+                      />
+                      <span className="num w-9 whitespace-nowrap text-right text-[11px] font-medium text-label">
                         {row.withinTargetPct === null
                           ? "—"
                           : `${row.withinTargetPct}%`}
@@ -258,6 +258,7 @@ export default async function ReportsPage({
               ))}
             </tbody>
           </table>
+          </div>
           <p className="border-t border-separator px-4 py-2.5 text-[11px] leading-4 text-label-3">
             Based on {data.firstResponseSamples} tickets that received a first
             reply in this range. Targets scale with priority.
@@ -284,14 +285,11 @@ export default async function ReportsPage({
                   <span className="w-[92px] shrink-0 truncate text-[12px] font-medium text-label">
                     {row.name}
                   </span>
-                  <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-sunken">
-                    <span
-                      className="block h-full rounded-full bg-accent/80"
-                      style={{
-                        width: `${Math.max(6, (row.count / maxWorkload) * 100)}%`,
-                      }}
-                    />
-                  </span>
+                  <MeterBar
+                    className="h-1.5 min-w-0 flex-1"
+                    fillClassName="bg-accent/80"
+                    value={Math.max(0.06, row.count / maxWorkload)}
+                  />
                   <span className="num w-6 text-right text-[12px] font-medium text-label-2">
                     {row.count}
                   </span>

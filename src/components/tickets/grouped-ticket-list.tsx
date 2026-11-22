@@ -23,7 +23,7 @@ export function GroupedTicketList({
     <div>
       {groups.map((group, index) => (
         <section key={group.status} className={index > 0 ? "border-t border-line" : undefined}>
-          <div className="sticky top-[52px] z-10 flex h-8 items-center gap-2 border-b border-separator bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] px-4 backdrop-blur-md">
+          <div className="sticky top-[var(--topbar-h)] z-10 flex h-8 items-center gap-2 border-b border-separator bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] px-4 backdrop-blur-md">
             <h2 className="eyebrow m-0">{STATUS_META[group.status].label}</h2>
             <span className="num text-[10.5px] text-label-3">
               {group.items.length}
