@@ -13,6 +13,8 @@ import {
   type ButtonHTMLAttributes,
   Children,
   cloneElement,
+  Fragment,
+  isValidElement,
   type ReactElement,
   type ReactNode,
 } from "react";
@@ -51,6 +53,29 @@ const fallback: Record<GlassMaterial, string> = {
   tinted: "",
 };
 
+type GlassChild = ReactElement<{ className?: string; children?: ReactNode }>;
+
+/**
+ * React Server Components can hand a client component its single child as a
+ * one-element array. `Children.only` rejects arrays, so unwrap that shape (and
+ * single-child fragments) before cloning the host element.
+ */
+function asSingleElement(children: ReactNode): GlassChild | null {
+  const nodes = Children.toArray(children);
+  if (nodes.length !== 1) return null;
+
+  const only = nodes[0];
+  if (!isValidElement(only)) return null;
+
+  if (only.type === Fragment) {
+    return asSingleElement(
+      (only as ReactElement<{ children?: ReactNode }>).props.children
+    );
+  }
+
+  return only as GlassChild;
+}
+
 export function GlassButton({
   children,
   material = "clear",
@@ -63,11 +88,11 @@ export function GlassButton({
   type = "button",
   ...rest
 }: GlassButtonProps) {
+  const child = asChild ? asSingleElement(children) : null;
+
   // A pill unless you bring your own corners: any `rounded-*` class replaces `rounded-full`
   // (the stylesheet's order, not the class order, would otherwise decide which one wins).
-  const own = asChild
-    ? `${(Children.only(children) as ReactElement<{ className?: string }>).props.className ?? ""} ${className}`
-    : className;
+  const own = `${child?.props.className ?? ""} ${className}`;
   const corners = /(^|\s)!?rounded-/.test(own) ? "" : "rounded-full";
   const classes = `inline-flex shrink-0 cursor-pointer items-center justify-center ${corners} font-semibold whitespace-nowrap select-none outline-none focus-visible:ring-2 focus-visible:ring-[#3291FF] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:opacity-40 [&_svg]:shrink-0 ${sizes[size]} ${fallback[material]}`;
   // The glass layer must be the host's first child.
@@ -79,11 +104,7 @@ export function GlassButton({
       {icon && iconPosition === "end" && icon}
     </>
   );
-  if (asChild) {
-    const child = Children.only(children) as ReactElement<{
-      className?: string;
-      children?: ReactNode;
-    }>;
+  if (child) {
     return cloneElement(
       child,
       {
