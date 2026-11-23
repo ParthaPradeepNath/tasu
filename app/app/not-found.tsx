@@ -1,17 +1,19 @@
 import Link from "next/link";
+
 import { Compass } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 
 export default function WorkspaceNotFound() {
   return (
     <div className="mx-auto flex max-w-[420px] flex-col items-center py-24 text-center">
-      <span className="inline-flex size-11 items-center justify-center rounded-[12px] bg-fill text-label-3">
+      <span className="bg-fill text-label-3 inline-flex size-11 items-center justify-center rounded-[12px]">
         <Compass className="size-5" />
       </span>
-      <h1 className="mt-4 text-[17px] font-semibold tracking-[-0.02em] text-label">
+      <h1 className="text-label mt-4 text-[17px] font-semibold tracking-[-0.02em]">
         Page not found
       </h1>
-      <p className="mt-1.5 text-[12.5px] leading-5 text-label-2">
+      <p className="text-label-2 mt-1.5 text-[12.5px] leading-5">
         That page doesn&apos;t exist, or it moved. Try the overview or search
         with ⌘K.
       </p>

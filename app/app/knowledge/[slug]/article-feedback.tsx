@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "motion/react";
+
 import { Check, ThumbsDown, ThumbsUp } from "lucide-react";
-import { voteArticle, markArticleView } from "@/app/app/actions";
+import { motion } from "motion/react";
+
+import { markArticleView, voteArticle } from "@/app/app/actions";
 import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { cn } from "@/lib/utils";
 
@@ -59,15 +61,15 @@ export function ArticleFeedback({
               initial={{ scale: 0.6, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 28 }}
-              className="inline-flex size-7 items-center justify-center rounded-full bg-success-soft text-success"
+              className="bg-success-soft text-success inline-flex size-7 items-center justify-center rounded-full"
             >
               <Check className="size-3.5" />
             </motion.span>
             <div className="min-w-0 flex-1">
-              <p className="m-0 text-[12.5px] font-medium text-label">
+              <p className="text-label m-0 text-[12.5px] font-medium">
                 Thanks for the feedback
               </p>
-              <p className="m-0 mt-0.5 text-[11px] text-label-3">
+              <p className="text-label-3 m-0 mt-0.5 text-[11px]">
                 {vote === "up"
                   ? "Glad it helped. IT sees which guides actually work."
                   : "Noted — this article is flagged for a rewrite."}
@@ -77,10 +79,10 @@ export function ArticleFeedback({
         ) : (
           <>
             <div className="min-w-0 flex-1">
-              <p className="m-0 text-[12.5px] font-medium text-label">
+              <p className="text-label m-0 text-[12.5px] font-medium">
                 Did this answer your question?
               </p>
-              <p className="m-0 mt-0.5 text-[11px] text-label-3">
+              <p className="text-label-3 m-0 mt-0.5 text-[11px]">
                 {counts.up} people found this helpful
               </p>
             </div>
@@ -88,7 +90,7 @@ export function ArticleFeedback({
               <button
                 type="button"
                 onClick={() => cast("up")}
-                className="press inline-flex h-7 items-center gap-1.5 rounded-[7px] border border-separator bg-surface-solid px-2.5 text-[11.5px] font-medium text-label-2 hover:border-success/40 hover:bg-success-soft hover:text-success"
+                className="press border-separator bg-surface-solid text-label-2 hover:border-success/40 hover:bg-success-soft hover:text-success inline-flex h-7 items-center gap-1.5 rounded-[7px] border px-2.5 text-[11.5px] font-medium"
               >
                 <ThumbsUp className="size-3" />
                 Yes
@@ -96,7 +98,7 @@ export function ArticleFeedback({
               <button
                 type="button"
                 onClick={() => cast("down")}
-                className="press inline-flex h-7 items-center gap-1.5 rounded-[7px] border border-separator bg-surface-solid px-2.5 text-[11.5px] font-medium text-label-2 hover:border-danger/40 hover:bg-danger-soft hover:text-danger"
+                className="press border-separator bg-surface-solid text-label-2 hover:border-danger/40 hover:bg-danger-soft hover:text-danger inline-flex h-7 items-center gap-1.5 rounded-[7px] border px-2.5 text-[11.5px] font-medium"
               >
                 <ThumbsDown className="size-3" />
                 Not quite
@@ -126,10 +128,12 @@ export function TableOfContents({
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+          .sort(
+            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+          )[0];
         if (visible?.target.id) setActive(visible.target.id);
       },
-      { rootMargin: "-84px 0px -65% 0px", threshold: [0, 1] },
+      { rootMargin: "-84px 0px -65% 0px", threshold: [0, 1] }
     );
 
     for (const element of elements) observer.observe(element);
@@ -140,8 +144,10 @@ export function TableOfContents({
 
   return (
     <div className="surface-card overflow-clip">
-      <header className="flex h-10 items-center border-b border-separator px-3.5">
-        <h2 className="m-0 text-[12px] font-semibold text-label">On this page</h2>
+      <header className="border-separator flex h-10 items-center border-b px-3.5">
+        <h2 className="text-label m-0 text-[12px] font-semibold">
+          On this page
+        </h2>
       </header>
       <nav aria-label="Table of contents" className="p-2">
         <ul className="space-y-0.5">
@@ -154,8 +160,8 @@ export function TableOfContents({
                   "block rounded-[6px] py-1 pr-2 text-[11.5px] leading-[1.45] transition-colors duration-100",
                   heading.level === 3 ? "pl-5" : "pl-2",
                   active === heading.id
-                    ? "bg-accent-soft font-medium text-accent"
-                    : "text-label-2 hover:bg-surface-hover hover:text-label",
+                    ? "bg-accent-soft text-accent font-medium"
+                    : "text-label-2 hover:bg-surface-hover hover:text-label"
                 )}
               >
                 {heading.text}

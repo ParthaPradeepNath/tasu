@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 import { getViewer } from "@/lib/session";
 
@@ -7,7 +8,7 @@ export async function GET(request: Request) {
   if (!viewer) {
     return NextResponse.json(
       { error: { code: "UNAUTHORIZED", message: "Sign in to search." } },
-      { status: 401 },
+      { status: 401 }
     );
   }
 

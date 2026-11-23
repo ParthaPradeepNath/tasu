@@ -1,6 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
+
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -12,21 +13,33 @@ import {
   Timer,
   TriangleAlert,
 } from "lucide-react";
-import { formatDateTime, formatHours, relativeTime, countdown } from "@/lib/dates";
-import { getViewer, requireViewer } from "@/lib/session";
-import { isStaff } from "@/lib/permissions";
-import { getTicketByKey } from "@/lib/tickets";
-import { suggestArticles } from "@/lib/articles";
-import { SLA_LABEL, isFirstResponseOverdue, slaProgress, slaState } from "@/lib/sla";
-import { prisma } from "@/lib/prisma";
-import { Avatar } from "@/components/ui/avatar";
-import { MeterBar } from "@/components/ui/meter-bar";
+
 import { StatusChip } from "@/components/tickets/status-chip";
 import { TicketActions } from "@/components/tickets/ticket-actions";
 import { TicketProperties } from "@/components/tickets/ticket-properties";
 import { TicketThread } from "@/components/tickets/ticket-thread";
-import { CreatedToast } from "./created-toast";
+import { Avatar } from "@/components/ui/avatar";
+import { MeterBar } from "@/components/ui/meter-bar";
+import { suggestArticles } from "@/lib/articles";
+import {
+  countdown,
+  formatDateTime,
+  formatHours,
+  relativeTime,
+} from "@/lib/dates";
+import { isStaff } from "@/lib/permissions";
+import { prisma } from "@/lib/prisma";
+import { getViewer, requireViewer } from "@/lib/session";
+import {
+  isFirstResponseOverdue,
+  SLA_LABEL,
+  slaProgress,
+  slaState,
+} from "@/lib/sla";
+import { getTicketByKey } from "@/lib/tickets";
 import { cn } from "@/lib/utils";
+
+import { CreatedToast } from "./created-toast";
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -41,10 +54,12 @@ export async function generateMetadata({
 
   const ticket = await getTicketByKey(
     { id: viewer.id, role: viewer.role },
-    decodeURIComponent(key),
+    decodeURIComponent(key)
   );
 
-  return { title: ticket ? `${ticket.key} · ${ticket.title}` : "Ticket not found" };
+  return {
+    title: ticket ? `${ticket.key} · ${ticket.title}` : "Ticket not found",
+  };
 }
 
 export default async function TicketDetailPage({
@@ -61,7 +76,7 @@ export default async function TicketDetailPage({
 
   const ticket = await getTicketByKey(
     { id: viewer.id, role: viewer.role },
-    decodeURIComponent(key),
+    decodeURIComponent(key)
   );
 
   if (!ticket) notFound();
@@ -89,15 +104,12 @@ export default async function TicketDetailPage({
 
   return (
     <div className="mx-auto max-w-[1120px]">
-      <CreatedToast
-        ticketKey={ticket.key}
-        created={query.created === "1"}
-      />
+      <CreatedToast ticketKey={ticket.key} created={query.created === "1"} />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Link
           href={staff ? "/app/queue" : "/app/tickets"}
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-label-2 transition-colors hover:text-label"
+          className="text-label-2 hover:text-label inline-flex items-center gap-1.5 text-[12px] font-medium transition-colors"
         >
           <ArrowLeft className="size-3.5" />
           {staff ? "Queue" : "My tickets"}
@@ -105,7 +117,9 @@ export default async function TicketDetailPage({
         <span className="text-label-3" aria-hidden>
           /
         </span>
-        <span className="num font-mono text-[11.5px] text-label-3">{ticket.key}</span>
+        <span className="num text-label-3 font-mono text-[11.5px]">
+          {ticket.key}
+        </span>
         <StatusChip
           premium
           status={ticket.status}
@@ -127,16 +141,16 @@ export default async function TicketDetailPage({
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="min-w-0">
           <header className="mb-5">
-            <h1 className="m-0 text-[23px] font-semibold leading-[1.25] tracking-[-0.026em] text-label text-balance break-words [overflow-wrap:anywhere]">
+            <h1 className="text-label m-0 text-[23px] leading-[1.25] font-semibold tracking-[-0.026em] text-balance [overflow-wrap:anywhere] break-words">
               {ticket.title}
             </h1>
-            <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px] text-label-3">
+            <div className="text-label-3 mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px]">
               <Avatar
                 name={ticket.requester.name}
                 color={ticket.requester.avatarColor}
                 size={18}
               />
-              <span className="font-medium text-label-2">
+              <span className="text-label-2 font-medium">
                 {ticket.requester.name}
               </span>
               {ticket.requester.department && (
@@ -189,8 +203,8 @@ export default async function TicketDetailPage({
 
         <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
           <div className="surface-card overflow-clip">
-            <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
-              <h2 className="m-0 text-[12px] font-semibold text-label">
+            <header className="border-separator flex h-10 items-center justify-between border-b px-3.5">
+              <h2 className="text-label m-0 text-[12px] font-semibold">
                 Service level
               </h2>
               <span
@@ -200,7 +214,7 @@ export default async function TicketDetailPage({
                   state === "due_soon" && "bg-warning-soft text-warning",
                   state === "on_track" && "bg-accent-soft text-accent",
                   state === "met" && "bg-success-soft text-success",
-                  state === "none" && "bg-fill text-label-3",
+                  state === "none" && "bg-fill text-label-3"
                 )}
               >
                 {state === "breached" ? (
@@ -217,10 +231,10 @@ export default async function TicketDetailPage({
             <div className="p-3.5">
               <p
                 className={cn(
-                  "num m-0 text-[22px] font-semibold leading-none tracking-[-0.03em]",
+                  "num m-0 text-[22px] leading-none font-semibold tracking-[-0.03em]",
                   state === "breached" && "text-danger",
                   state === "due_soon" && "text-warning",
-                  state === "met" && "text-success",
+                  state === "met" && "text-success"
                 )}
               >
                 {done
@@ -229,7 +243,7 @@ export default async function TicketDetailPage({
                     : "Resolved"
                   : (remaining ?? "No target")}
               </p>
-              <p className="m-0 mt-1.5 text-[11px] leading-4 text-label-3">
+              <p className="text-label-3 m-0 mt-1.5 text-[11px] leading-4">
                 Resolve target {formatDateTime(ticket.slaResolveDueAt)}
               </p>
 
@@ -249,17 +263,17 @@ export default async function TicketDetailPage({
 
               <dl className="mt-3.5 space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="flex items-center gap-1.5 text-[11.5px] text-label-3">
+                  <dt className="text-label-3 flex items-center gap-1.5 text-[11.5px]">
                     <Clock className="size-3" />
                     First reply
                   </dt>
                   <dd
                     className={cn(
-                      "num text-[11.5px] font-medium text-label-2",
+                      "num text-label-2 text-[11.5px] font-medium",
                       !ticket.firstResponseAt &&
                         ticket.slaFirstResponseDueAt &&
                         firstResponseOverdue &&
-                        "text-danger",
+                        "text-danger"
                     )}
                   >
                     {firstResponseMinutes !== null
@@ -268,14 +282,14 @@ export default async function TicketDetailPage({
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-[11.5px] text-label-3">Created</dt>
-                  <dd className="num text-[11.5px] text-label-2">
+                  <dt className="text-label-3 text-[11.5px]">Created</dt>
+                  <dd className="num text-label-2 text-[11.5px]">
                     {formatDateTime(ticket.createdAt)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <dt className="text-[11.5px] text-label-3">Last activity</dt>
-                  <dd className="num text-[11.5px] text-label-2">
+                  <dt className="text-label-3 text-[11.5px]">Last activity</dt>
+                  <dd className="num text-label-2 text-[11.5px]">
                     {relativeTime(ticket.lastActivityAt)}
                   </dd>
                 </div>
@@ -303,36 +317,36 @@ export default async function TicketDetailPage({
 
           {suggested.length > 0 && (
             <div className="surface-card overflow-clip">
-              <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
-                <h2 className="m-0 text-[12px] font-semibold text-label">
+              <header className="border-separator flex h-10 items-center justify-between border-b px-3.5">
+                <h2 className="text-label m-0 text-[12px] font-semibold">
                   Related reading
                 </h2>
                 <Link
                   href="/app/knowledge"
-                  className="text-[10.5px] font-medium text-accent hover:underline"
+                  className="text-accent text-[10.5px] font-medium hover:underline"
                 >
                   All
                 </Link>
               </header>
-              <ul className="divide-y divide-separator">
+              <ul className="divide-separator divide-y">
                 {suggested.map((article) => (
                   <li key={article.slug}>
                     <Link
                       href={`/app/knowledge/${article.slug}`}
-                      className="group flex items-start gap-2.5 px-3.5 py-2.5 transition-colors hover:bg-surface-hover"
+                      className="group hover:bg-surface-hover flex items-start gap-2.5 px-3.5 py-2.5 transition-colors"
                     >
-                      <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-[6px] bg-fill text-label-3">
+                      <span className="bg-fill text-label-3 mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-[6px]">
                         <BookOpen className="size-3" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[11.5px] font-medium leading-4 text-label">
+                        <span className="text-label block text-[11.5px] leading-4 font-medium">
                           {article.title}
                         </span>
-                        <span className="block text-[10.5px] text-label-3">
+                        <span className="text-label-3 block text-[10.5px]">
                           {article.category.toLowerCase()}
                         </span>
                       </span>
-                      <ArrowUpRight className="mt-0.5 size-3 shrink-0 text-label-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                      <ArrowUpRight className="text-label-3 mt-0.5 size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
                     </Link>
                   </li>
                 ))}
@@ -348,26 +362,26 @@ export default async function TicketDetailPage({
                 size={30}
               />
               <div className="min-w-0">
-                <p className="m-0 truncate text-[12.5px] font-medium text-label">
+                <p className="text-label m-0 truncate text-[12.5px] font-medium">
                   {ticket.requester.name}
                 </p>
-                <p className="m-0 truncate text-[10.5px] text-label-3">
+                <p className="text-label-3 m-0 truncate text-[10.5px]">
                   {ticket.requester.title ?? "Requester"}
                 </p>
               </div>
             </div>
             <dl className="mt-3 space-y-1.5">
-              <div className="flex items-center gap-2 text-[11.5px] text-label-2">
-                <Building2 className="size-3 shrink-0 text-label-3" />
+              <div className="text-label-2 flex items-center gap-2 text-[11.5px]">
+                <Building2 className="text-label-3 size-3 shrink-0" />
                 <span className="truncate">
                   {ticket.requester.department ?? "No department"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-[11.5px] text-label-2">
-                <Mail className="size-3 shrink-0 text-label-3" />
+              <div className="text-label-2 flex items-center gap-2 text-[11.5px]">
+                <Mail className="text-label-3 size-3 shrink-0" />
                 <a
                   href={`mailto:${ticket.requester.email}`}
-                  className="truncate hover:text-accent"
+                  className="hover:text-accent truncate"
                 >
                   {ticket.requester.email}
                 </a>

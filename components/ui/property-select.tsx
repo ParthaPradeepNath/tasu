@@ -1,13 +1,15 @@
 "use client";
 
 import * as React from "react";
+
 import { Check, ChevronDown, Search } from "lucide-react";
-import { useWebHaptics } from "@/hooks/use-web-haptics";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { cn } from "@/lib/utils";
 
 export type SelectOption = {
@@ -43,7 +45,7 @@ export function PropertySelect({
   const selected = options.find((option) => option.value === value);
   const filtered = query
     ? options.filter((option) =>
-        option.label.toLowerCase().includes(query.toLowerCase()),
+        option.label.toLowerCase().includes(query.toLowerCase())
       )
     : options;
   const searchable = options.length > 7;
@@ -59,15 +61,15 @@ export function PropertySelect({
         <button
           type="button"
           className={cn(
-            "press inline-flex h-7 min-w-0 max-w-full items-center gap-1.5 rounded-full border border-line bg-surface-solid px-2.5 text-[12px] font-medium text-label shadow-[0_1px_2px_rgba(0,0,0,0.03)] hover:bg-surface-hover disabled:opacity-45",
-            className,
+            "press border-line bg-surface-solid text-label hover:bg-surface-hover inline-flex h-7 max-w-full min-w-0 items-center gap-1.5 rounded-full border px-2.5 text-[12px] font-medium shadow-[0_1px_2px_rgba(0,0,0,0.03)] disabled:opacity-45",
+            className
           )}
         >
           <span className="text-label-3">{label}</span>
           <span className="max-w-[132px] truncate">
             {selected?.label ?? emptyLabel}
           </span>
-          <ChevronDown className="size-3 text-label-3" />
+          <ChevronDown className="text-label-3 size-3" />
         </button>
       </PopoverTrigger>
     ) : (
@@ -75,15 +77,15 @@ export function PropertySelect({
         <button
           type="button"
           className={cn(
-            "group flex h-8 w-full items-center gap-2 rounded-[7px] px-1.5 text-left text-[12.5px] transition-colors duration-100 hover:bg-fill disabled:pointer-events-none disabled:opacity-45",
-            className,
+            "group hover:bg-fill flex h-8 w-full items-center gap-2 rounded-[7px] px-1.5 text-left text-[12.5px] transition-colors duration-100 disabled:pointer-events-none disabled:opacity-45",
+            className
           )}
         >
-          <span className="w-[74px] shrink-0 text-label-3">{label}</span>
-          <span className="min-w-0 flex-1 truncate text-label">
+          <span className="text-label-3 w-[74px] shrink-0">{label}</span>
+          <span className="text-label min-w-0 flex-1 truncate">
             {selected?.label ?? emptyLabel}
           </span>
-          <ChevronDown className="size-3 shrink-0 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
+          <ChevronDown className="text-label-3 size-3 shrink-0 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
         </button>
       </PopoverTrigger>
     );
@@ -93,20 +95,20 @@ export function PropertySelect({
       {trigger}
       <PopoverContent align={align} className="w-[236px] p-1">
         {searchable && (
-          <div className="flex items-center gap-2 border-b border-separator px-2 pb-1.5 pt-1">
-            <Search className="size-3.5 shrink-0 text-label-3" />
+          <div className="border-separator flex items-center gap-2 border-b px-2 pt-1 pb-1.5">
+            <Search className="text-label-3 size-3.5 shrink-0" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={`Search ${label.toLowerCase()}…`}
-              className="h-6 w-full bg-transparent text-[12px] text-label outline-none placeholder:text-label-3"
+              className="text-label placeholder:text-label-3 h-6 w-full bg-transparent text-[12px] outline-none"
               autoFocus
             />
           </div>
         )}
         <div className="max-h-[260px] overflow-y-auto overscroll-contain py-0.5">
           {filtered.length === 0 && (
-            <p className="px-2 py-3 text-center text-[11.5px] text-label-3">
+            <p className="text-label-3 px-2 py-3 text-center text-[11.5px]">
               Nothing matches.
             </p>
           )}
@@ -125,18 +127,18 @@ export function PropertySelect({
                   "flex w-full items-center gap-2 rounded-[6px] px-2 py-1.5 text-left text-[12.5px] transition-colors duration-100",
                   active
                     ? "bg-fill text-label"
-                    : "text-label-2 hover:bg-fill hover:text-label",
+                    : "text-label-2 hover:bg-fill hover:text-label"
                 )}
               >
                 <span className="min-w-0 flex-1">
                   <span className="block truncate">{option.label}</span>
                   {option.hint && (
-                    <span className="block truncate text-[10.5px] text-label-3">
+                    <span className="text-label-3 block truncate text-[10.5px]">
                       {option.hint}
                     </span>
                   )}
                 </span>
-                {active && <Check className="size-3.5 shrink-0 text-accent" />}
+                {active && <Check className="text-accent size-3.5 shrink-0" />}
               </button>
             );
           })}

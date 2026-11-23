@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+
 import { cn } from "@/lib/utils";
 
 export function MeterBar({
@@ -22,9 +23,9 @@ export function MeterBar({
     <span
       aria-hidden
       className={cn(
-        "relative block w-full overflow-hidden rounded-full bg-surface-sunken",
+        "bg-surface-sunken relative block w-full overflow-hidden rounded-full",
         trackClassName,
-        className,
+        className
       )}
     >
       <motion.span
@@ -36,8 +37,8 @@ export function MeterBar({
             : { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
         }
         className={cn(
-          "block h-full w-full origin-left rounded-full bg-accent",
-          fillClassName,
+          "bg-accent block h-full w-full origin-left rounded-full",
+          fillClassName
         )}
       />
     </span>

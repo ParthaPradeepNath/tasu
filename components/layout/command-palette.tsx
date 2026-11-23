@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
+
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+
 import { Command } from "cmdk";
 import {
   BookOpen,
@@ -18,12 +21,12 @@ import {
   Sun,
   Ticket,
 } from "lucide-react";
-import { useTheme } from "next-themes";
-import { authClient } from "@/lib/auth-client";
+
+import { Kbd } from "@/components/ui/kbd";
 import { useWebHaptics } from "@/hooks/use-web-haptics";
+import { authClient } from "@/lib/auth-client";
 import type { Viewer } from "@/lib/session";
 import { cn } from "@/lib/utils";
-import { Kbd } from "@/components/ui/kbd";
 
 type Results = {
   tickets: { id: string; key: string; title: string; status: string }[];
@@ -65,7 +68,7 @@ export function CommandPalette({ user }: { user: Viewer }) {
       try {
         const response = await fetch(
           `/api/search?q=${encodeURIComponent(term)}`,
-          { signal: controller.signal },
+          { signal: controller.signal }
         );
         if (response.ok) {
           setResults((await response.json()) as Results);
@@ -107,26 +110,26 @@ export function CommandPalette({ user }: { user: Viewer }) {
       shouldFilter
       overlayClassName="motion-overlay fixed inset-0 z-[80] bg-black/30 backdrop-blur-[4px]"
       contentClassName={cn(
-        "motion-dialog fixed left-1/2 top-[16%] z-[81] w-[min(620px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-[16px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] text-label shadow-[var(--shadow-dialog)] backdrop-blur-2xl",
+        "motion-dialog fixed left-1/2 top-[16%] z-[81] w-[min(620px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-[16px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] text-label shadow-[var(--shadow-dialog)] backdrop-blur-2xl"
       )}
     >
-      <div className="flex h-12 items-center gap-2.5 border-b border-separator px-3.5">
+      <div className="border-separator flex h-12 items-center gap-2.5 border-b px-3.5">
         {loading ? (
-          <Loader2 className="size-4 shrink-0 animate-spin text-label-3" />
+          <Loader2 className="text-label-3 size-4 shrink-0 animate-spin" />
         ) : (
-          <Search className="size-4 shrink-0 text-label-3" />
+          <Search className="text-label-3 size-4 shrink-0" />
         )}
         <Command.Input
           value={query}
           onValueChange={setQuery}
           placeholder="Search tickets, articles, or jump to…"
-          className="h-full flex-1 bg-transparent text-[14px] text-label outline-none placeholder:text-label-3"
+          className="text-label placeholder:text-label-3 h-full flex-1 bg-transparent text-[14px] outline-none"
         />
         <Kbd>esc</Kbd>
       </div>
 
       <Command.List className="max-h-[min(460px,60dvh)] overflow-y-auto overscroll-contain p-1.5">
-        <Command.Empty className="px-3 py-8 text-center text-[13px] text-label-2">
+        <Command.Empty className="text-label-2 px-3 py-8 text-center text-[13px]">
           {loading ? "Searching…" : "Nothing found for that search."}
         </Command.Empty>
 
@@ -236,7 +239,7 @@ export function CommandPalette({ user }: { user: Viewer }) {
         )}
       </Command.List>
 
-      <div className="flex items-center justify-between border-t border-separator px-3.5 py-2 text-[10.5px] text-label-3">
+      <div className="border-separator text-label-3 flex items-center justify-between border-t px-3.5 py-2 text-[10.5px]">
         <span className="flex items-center gap-3">
           <span className="flex items-center gap-1">
             <Kbd>↑</Kbd>
@@ -274,11 +277,13 @@ function PaletteItem({
   return (
     <Command.Item
       onSelect={onSelect}
-      className="flex h-9 cursor-default select-none items-center gap-2.5 rounded-[8px] px-2.5 text-[13px] outline-none transition-colors duration-150 ease-amicro data-[selected=true]:bg-fill data-[selected=true]:text-label [&_svg]:size-3.5 [&_svg]:text-label-3"
+      className="ease-amicro data-[selected=true]:bg-fill data-[selected=true]:text-label [&_svg]:text-label-3 flex h-9 cursor-default items-center gap-2.5 rounded-[8px] px-2.5 text-[13px] transition-colors duration-150 outline-none select-none [&_svg]:size-3.5"
     >
       {icon}
       <span className="flex-1 truncate">{label}</span>
-      {hint && <span className="font-mono text-[10.5px] text-label-3">{hint}</span>}
+      {hint && (
+        <span className="text-label-3 font-mono text-[10.5px]">{hint}</span>
+      )}
       {shortcut && <Kbd>{shortcut}</Kbd>}
     </Command.Item>
   );

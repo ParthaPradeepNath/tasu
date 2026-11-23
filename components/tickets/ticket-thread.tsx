@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { useOptimistic } from "react";
+
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+
 import {
   CornerDownLeft,
   Loader2,
@@ -11,14 +12,16 @@ import {
   MessageSquare,
   Send,
 } from "lucide-react";
-import type { ReplyType } from "@/generated/prisma/enums";
+import { toast } from "sonner";
+
 import { addReply } from "@/app/app/actions";
-import { useWebHaptics } from "@/hooks/use-web-haptics";
-import { relativeTime } from "@/lib/dates";
+import { Markdown } from "@/components/markdown";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
-import { Markdown } from "@/components/markdown";
+import type { ReplyType } from "@/generated/prisma/enums";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
+import { relativeTime } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 export type ThreadReply = {
@@ -58,7 +61,12 @@ export function TicketThread({
     createdAt: string;
   };
   replies: ThreadReply[];
-  viewer: { id: string; name: string; avatarColor: string | null; role: string };
+  viewer: {
+    id: string;
+    name: string;
+    avatarColor: string | null;
+    role: string;
+  };
   staff: boolean;
   locked: boolean;
 }) {
@@ -67,10 +75,10 @@ export function TicketThread({
   const [body, setBody] = React.useState("");
   const [internal, setInternal] = React.useState(false);
   const [sending, setSending] = React.useState(false);
-  const [optimisticReplies, addOptimisticReply] = useOptimistic<DisplayReply[], PendingReply>(
-    replies,
-    (state, reply) => [...state, reply],
-  );
+  const [optimisticReplies, addOptimisticReply] = useOptimistic<
+    DisplayReply[],
+    PendingReply
+  >(replies, (state, reply) => [...state, reply]);
 
   async function submit() {
     const trimmed = body.trim();
@@ -133,20 +141,23 @@ export function TicketThread({
           />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="text-[12.5px] font-semibold text-label">
+              <span className="text-label text-[12.5px] font-semibold">
                 {requester.name}
               </span>
               {requester.title && (
-                <span className="text-[11px] text-label-3">
+                <span className="text-label-3 text-[11px]">
                   {requester.title}
                   {requester.department ? ` · ${requester.department}` : ""}
                 </span>
               )}
-              <span className="text-[11px] text-label-3" suppressHydrationWarning>
+              <span
+                className="text-label-3 text-[11px]"
+                suppressHydrationWarning
+              >
                 opened {relativeTime(requester.createdAt)}
               </span>
             </div>
-            <div className="mt-2 rounded-[12px] border border-separator bg-surface-solid px-4 py-3 shadow-[var(--shadow-card)]">
+            <div className="border-separator bg-surface-solid mt-2 rounded-[12px] border px-4 py-3 shadow-[var(--shadow-card)]">
               <Markdown>{description}</Markdown>
             </div>
           </div>
@@ -158,11 +169,11 @@ export function TicketThread({
               <li
                 key={reply.id}
                 className={cn(
-                  "flex items-center gap-2 pl-1 text-[11.5px] text-label-3",
-                  reply.pending && "opacity-60",
+                  "text-label-3 flex items-center gap-2 pl-1 text-[11.5px]",
+                  reply.pending && "opacity-60"
                 )}
               >
-                <span className="size-1.5 shrink-0 rounded-full bg-label-3/60" />
+                <span className="bg-label-3/60 size-1.5 shrink-0 rounded-full" />
                 <span className="text-label-2">{reply.body}</span>
                 <span aria-hidden>·</span>
                 <time dateTime={reply.createdAt} suppressHydrationWarning>
@@ -177,10 +188,7 @@ export function TicketThread({
           return (
             <li
               key={reply.id}
-              className={cn(
-                "flex gap-3",
-                reply.pending && "opacity-60",
-              )}
+              className={cn("flex gap-3", reply.pending && "opacity-60")}
             >
               <Avatar
                 name={reply.author.name}
@@ -190,22 +198,25 @@ export function TicketThread({
               />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                  <span className="text-[12.5px] font-semibold text-label">
+                  <span className="text-label text-[12.5px] font-semibold">
                     {reply.author.name}
                   </span>
                   {reply.author.role !== "employee" && (
-                    <span className="rounded-[4px] bg-fill px-1 py-px text-[9.5px] font-medium uppercase tracking-[0.04em] text-label-3">
+                    <span className="bg-fill text-label-3 rounded-[4px] px-1 py-px text-[9.5px] font-medium tracking-[0.04em] uppercase">
                       IT
                     </span>
                   )}
                   {own && (
-                    <span className="text-[10.5px] text-label-3">you</span>
+                    <span className="text-label-3 text-[10.5px]">you</span>
                   )}
-                  <span className="text-[11px] text-label-3" suppressHydrationWarning>
+                  <span
+                    className="text-label-3 text-[11px]"
+                    suppressHydrationWarning
+                  >
                     {reply.pending ? "sending…" : relativeTime(reply.createdAt)}
                   </span>
                   {reply.isInternal && (
-                    <span className="inline-flex items-center gap-1 rounded-[4px] bg-warning-soft px-1.5 py-px text-[9.5px] font-medium uppercase tracking-[0.04em] text-warning">
+                    <span className="bg-warning-soft text-warning inline-flex items-center gap-1 rounded-[4px] px-1.5 py-px text-[9.5px] font-medium tracking-[0.04em] uppercase">
                       <Lock className="size-2.5" />
                       Internal
                     </span>
@@ -215,8 +226,8 @@ export function TicketThread({
                   className={cn(
                     "mt-2 rounded-[12px] border px-4 py-3",
                     reply.isInternal
-                      ? "border-warning/20 border-l-2 border-l-warning bg-warning-soft/40"
-                      : "border-separator bg-surface-solid shadow-[var(--shadow-card)]",
+                      ? "border-warning/20 border-l-warning bg-warning-soft/40 border-l-2"
+                      : "border-separator bg-surface-solid shadow-[var(--shadow-card)]"
                   )}
                 >
                   <Markdown>{reply.body}</Markdown>
@@ -231,12 +242,13 @@ export function TicketThread({
         <div
           className={cn(
             "surface-card overflow-clip transition-[border-color,box-shadow] duration-100",
-            internal && "border-warning/30 shadow-[0_0_0_3px_var(--warning-soft)]",
+            internal &&
+              "border-warning/30 shadow-[0_0_0_3px_var(--warning-soft)]"
           )}
         >
-          <div className="flex items-center gap-2 border-b border-separator px-3 py-1.5">
-            <MessageSquare className="size-3.5 text-label-3" />
-            <span className="text-[11px] font-medium text-label-2">
+          <div className="border-separator flex items-center gap-2 border-b px-3 py-1.5">
+            <MessageSquare className="text-label-3 size-3.5" />
+            <span className="text-label-2 text-[11px] font-medium">
               {locked
                 ? "This ticket is closed"
                 : internal
@@ -252,7 +264,7 @@ export function TicketThread({
                   "press ml-auto inline-flex h-6 items-center gap-1 rounded-full px-2 text-[10.5px] font-medium transition-colors",
                   internal
                     ? "bg-warning-soft text-warning"
-                    : "text-label-3 hover:bg-fill hover:text-label",
+                    : "text-label-3 hover:bg-fill hover:text-label"
                 )}
               >
                 <Lock className="size-2.5" />
@@ -277,10 +289,10 @@ export function TicketThread({
                   ? "Leave a note for the IT team…"
                   : "Write a reply… Markdown supported."
             }
-            className="min-h-[84px] w-full resize-none bg-transparent px-4 py-3 text-[13px] leading-6 text-label outline-none placeholder:text-label-3 disabled:opacity-50"
+            className="text-label placeholder:text-label-3 min-h-[84px] w-full resize-none bg-transparent px-4 py-3 text-[13px] leading-6 outline-none disabled:opacity-50"
           />
-          <div className="flex items-center gap-2 border-t border-separator px-3 py-2">
-            <span className="hidden items-center gap-1 text-[10.5px] text-label-3 sm:flex">
+          <div className="border-separator flex items-center gap-2 border-t px-3 py-2">
+            <span className="text-label-3 hidden items-center gap-1 text-[10.5px] sm:flex">
               <Kbd>⌘</Kbd>
               <Kbd>
                 <CornerDownLeft className="size-2.5" />
@@ -304,11 +316,7 @@ export function TicketThread({
                 onClick={() => void submit()}
                 disabled={!body.trim() || sending || locked}
               >
-                {sending ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Send />
-                )}
+                {sending ? <Loader2 className="animate-spin" /> : <Send />}
                 {internal ? "Add note" : "Reply"}
               </Button>
             </div>

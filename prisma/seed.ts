@@ -1,11 +1,12 @@
 import { hashPassword } from "better-auth/crypto";
-import { prisma } from "../lib/prisma";
+
 import type {
   Category,
   Priority,
   ReplyType,
   TicketStatus,
 } from "../generated/prisma/enums";
+import { prisma } from "../lib/prisma";
 import { avatarColor } from "../lib/utils";
 
 const DEMO_PASSWORD = "tasu-demo";
@@ -22,7 +23,7 @@ function mulberry32(seed: number) {
 }
 
 const random = mulberry32(46);
-const pick = <T,>(items: T[]): T => items[Math.floor(random() * items.length)];
+const pick = <T>(items: T[]): T => items[Math.floor(random() * items.length)];
 const between = (min: number, max: number) =>
   min + Math.floor(random() * (max - min + 1));
 
@@ -749,7 +750,7 @@ async function main() {
       ? Math.max(seed.ageDays, (resolutionHours + between(4, 30)) / 24)
       : Math.max(
           0.03,
-          ((seed.status === "OPEN" ? sla.first : sla.resolve) * 0.72) / 24,
+          ((seed.status === "OPEN" ? sla.first : sla.resolve) * 0.72) / 24
         );
     const ageDays = done
       ? resolvedRecently
@@ -759,14 +760,14 @@ async function main() {
         ? seed.ageDays
         : Math.min(seed.ageDays, capDays);
     const createdAt = new Date(
-      Date.now() - ageDays * DAY - between(5, 90) * 60 * 1000,
+      Date.now() - ageDays * DAY - between(5, 90) * 60 * 1000
     );
 
     const firstResponseDue = new Date(
-      createdAt.getTime() + sla.first * 60 * 60 * 1000,
+      createdAt.getTime() + sla.first * 60 * 60 * 1000
     );
     const resolveDue = new Date(
-      createdAt.getTime() + sla.resolve * 60 * 60 * 1000,
+      createdAt.getTime() + sla.resolve * 60 * 60 * 1000
     );
     const requester = users.get(seed.requester)!;
     const assignee = seed.assignee ? users.get(seed.assignee)! : null;
@@ -785,14 +786,14 @@ async function main() {
               createdAt.getTime() +
                 Math.min(
                   between(8, 55) * 60 * 1000,
-                  Math.max(5, resolutionHours * 60 - 5) * 60 * 1000,
-                ),
+                  Math.max(5, resolutionHours * 60 - 5) * 60 * 1000
+                )
             )
           : new Date(
               Math.min(
                 Date.now() - between(2, 20) * 60 * 1000,
-                createdAt.getTime() + between(8, 55) * 60 * 1000,
-              ),
+                createdAt.getTime() + between(8, 55) * 60 * 1000
+              )
             );
 
     const ticket = await prisma.ticket.create({
@@ -815,8 +816,8 @@ async function main() {
             ? new Date(
                 Math.min(
                   resolvedAt.getTime() + 2 * DAY,
-                  Date.now() - 60 * 60 * 1000,
-                ),
+                  Date.now() - 60 * 60 * 1000
+                )
               )
             : null,
         createdAt,
@@ -877,7 +878,9 @@ async function main() {
         body: "Internal note: checked the device record and the warranty expires next month. If this needs a hardware swap, route it through the refresh budget.",
         type: "REPLY",
         isInternal: true,
-        at: new Date(respondedAt?.getTime() ?? createdAt.getTime() + 45 * 60 * 1000),
+        at: new Date(
+          respondedAt?.getTime() ?? createdAt.getTime() + 45 * 60 * 1000
+        ),
       });
     }
 
@@ -896,8 +899,8 @@ async function main() {
         at: new Date(
           Math.min(
             Date.now() - between(30, 240) * 60 * 1000,
-            (respondedAt?.getTime() ?? createdAt.getTime()) + 4 * 60 * 60 * 1000,
-          ),
+            (respondedAt?.getTime() ?? createdAt.getTime()) + 4 * 60 * 60 * 1000
+          )
         ),
       });
     }
@@ -926,9 +929,7 @@ async function main() {
       });
     }
 
-    const lastAt = events.length
-      ? events[events.length - 1].at
-      : createdAt;
+    const lastAt = events.length ? events[events.length - 1].at : createdAt;
 
     await prisma.ticket.update({
       where: { id: ticket.id },
@@ -943,7 +944,9 @@ async function main() {
     data: { id: "ticket", seq: sequence },
   });
 
-  console.log(`✓ Seeded ${SEED_USERS.length} users, ${TICKET_SEEDS.length} tickets, ${ARTICLE_SEEDS.length} articles`);
+  console.log(
+    `✓ Seeded ${SEED_USERS.length} users, ${TICKET_SEEDS.length} tickets, ${ARTICLE_SEEDS.length} articles`
+  );
   console.log(`  Demo sign-in: parth@tasu.app / ${DEMO_PASSWORD}`);
 }
 

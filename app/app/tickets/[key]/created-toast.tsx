@@ -1,8 +1,11 @@
 "use client";
 
 import * as React from "react";
+
 import { usePathname, useRouter } from "next/navigation";
+
 import { toast } from "sonner";
+
 import { useWebHaptics } from "@/hooks/use-web-haptics";
 
 export function CreatedToast({

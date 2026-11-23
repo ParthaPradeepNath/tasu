@@ -1,15 +1,21 @@
 import Link from "next/link";
+
 import { CheckCircle2, Inbox, Plus, SearchX } from "lucide-react";
-import type { Category, Priority, TicketStatus } from "@/generated/prisma/enums";
+
+import { QueueBulkList } from "@/components/tickets/queue-bulk-list";
+import { TicketFilterBar } from "@/components/tickets/ticket-filters";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { SegmentedNav } from "@/components/ui/segmented-nav";
+import type {
+  Category,
+  Priority,
+  TicketStatus,
+} from "@/generated/prisma/enums";
+import { prisma } from "@/lib/prisma";
 import { requireStaff } from "@/lib/session";
 import { getTicketCounts, listTickets, type TicketView } from "@/lib/tickets";
-import { prisma } from "@/lib/prisma";
-import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
-import { SegmentedNav } from "@/components/ui/segmented-nav";
-import { EmptyState } from "@/components/ui/empty-state";
-import { TicketFilterBar } from "@/components/tickets/ticket-filters";
-import { QueueBulkList } from "@/components/tickets/queue-bulk-list";
 
 export const metadata = {
   title: "Queue",
@@ -19,7 +25,13 @@ type Params = Record<string, string | string[] | undefined>;
 const single = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value[0] : value;
 
-const VIEWS: TicketView[] = ["all", "unassigned", "mine", "breaching", "waiting"];
+const VIEWS: TicketView[] = [
+  "all",
+  "unassigned",
+  "mine",
+  "breaching",
+  "waiting",
+];
 
 const EMPTY_COPY: Record<
   string,
@@ -27,7 +39,8 @@ const EMPTY_COPY: Record<
 > = {
   unassigned: {
     title: "Every ticket has an owner",
-    description: "Nothing is waiting for triage. New requests will appear here.",
+    description:
+      "Nothing is waiting for triage. New requests will appear here.",
     icon: CheckCircle2,
   },
   mine: {
@@ -37,7 +50,8 @@ const EMPTY_COPY: Record<
   },
   breaching: {
     title: "No SLA breaches",
-    description: "Every active ticket is inside its response and resolve targets.",
+    description:
+      "Every active ticket is inside its response and resolve targets.",
     icon: CheckCircle2,
   },
   waiting: {
@@ -92,7 +106,7 @@ export default async function QueuePage({
         assignee,
         q,
         limit: 80,
-      },
+      }
     ),
     getTicketCounts({ id: viewer.id, role: viewer.role }),
     prisma.user.findMany({
@@ -152,7 +166,7 @@ export default async function QueuePage({
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <SegmentedNav segments={segments} ariaLabel="Queue views" />
-        <span className="num text-[11px] text-label-3">
+        <span className="num text-label-3 text-[11px]">
           {items.length}
           {items.length === 80 ? "+" : ""} shown
         </span>
@@ -175,7 +189,9 @@ export default async function QueuePage({
               description="Try a different search, or clear the filters to see the whole queue."
               action={
                 <Button asChild variant="secondary" size="sm">
-                  <Link href={`/app/queue${view !== "all" ? `?view=${view}` : ""}`}>
+                  <Link
+                    href={`/app/queue${view !== "all" ? `?view=${view}` : ""}`}
+                  >
                     Clear filters
                   </Link>
                 </Button>

@@ -12,7 +12,7 @@ export default function WorkspaceLoading() {
         <Skeleton className="h-8 w-28 rounded-[9px]" />
       </div>
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-separator bg-separator lg:grid-cols-4">
+      <div className="border-separator bg-separator grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div key={index} className="bg-surface-solid px-5 py-[18px]">
             <Skeleton className="h-2.5 w-20" />

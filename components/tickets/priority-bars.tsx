@@ -1,6 +1,6 @@
 import type { Priority } from "@/generated/prisma/enums";
-import { cn } from "@/lib/utils";
 import { PRIORITY_META } from "@/lib/status";
+import { cn } from "@/lib/utils";
 
 export function PriorityBars({
   priority,
@@ -33,17 +33,17 @@ export function PriorityBars({
             className={cn(
               "w-[3px] rounded-[1px]",
               priority === "NONE"
-                ? "border border-dashed border-label-3 bg-transparent"
+                ? "border-label-3 border border-dashed bg-transparent"
                 : i < meta.bars
                   ? color
-                  : "bg-line",
+                  : "bg-line"
             )}
             style={{ height: `${5 + i * 3}px` }}
           />
         ))}
       </span>
       {showLabel && (
-        <span className="text-[12px] text-label-2">{meta.label}</span>
+        <span className="text-label-2 text-[12px]">{meta.label}</span>
       )}
       <span className="sr-only">{meta.label} priority</span>
     </span>

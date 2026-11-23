@@ -15,10 +15,10 @@ export function computeSla(priority: Priority, createdAt = new Date()) {
   const target = SLA_TARGETS[priority];
   return {
     slaFirstResponseDueAt: new Date(
-      createdAt.getTime() + target.firstResponseHours * 60 * 60 * 1000,
+      createdAt.getTime() + target.firstResponseHours * 60 * 60 * 1000
     ),
     slaResolveDueAt: new Date(
-      createdAt.getTime() + target.resolveHours * 60 * 60 * 1000,
+      createdAt.getTime() + target.resolveHours * 60 * 60 * 1000
     ),
   };
 }
@@ -36,7 +36,7 @@ export function slaState(
     | "firstResponseAt"
     | "resolvedAt"
   >,
-  now = new Date(),
+  now = new Date()
 ): SlaState {
   if (ticket.status === "CLOSED") return "none";
   const responseOverdue =
@@ -73,7 +73,7 @@ export const SLA_LABEL: Record<SlaState, string> = {
  * don't call Date.now() directly during render.
  */
 export function slaProgress(
-  ticket: Pick<Ticket, "createdAt" | "slaResolveDueAt">,
+  ticket: Pick<Ticket, "createdAt" | "slaResolveDueAt">
 ): number {
   const start = ticket.createdAt.getTime();
   const end = ticket.slaResolveDueAt?.getTime() ?? start;
@@ -83,7 +83,7 @@ export function slaProgress(
 }
 
 export function isFirstResponseOverdue(
-  ticket: Pick<Ticket, "firstResponseAt" | "slaFirstResponseDueAt">,
+  ticket: Pick<Ticket, "firstResponseAt" | "slaFirstResponseDueAt">
 ): boolean {
   return (
     !ticket.firstResponseAt &&

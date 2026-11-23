@@ -8,7 +8,7 @@ Stack you picked: **MERN + JWT**. This guide keeps that, and fixes the two thing
 
 ## 0. The one-paragraph answer
 
-A help desk is structurally the *same product* as an issue tracker. Linear is an issue tracker. So don't invent a UI — **rename Linear's primitives** (Issue → Ticket, Comment → Reply, Cycle → SLA, Project → Category, View → Queue filter) and copy its visual discipline: near-black layered surfaces, 1px hairlines instead of shadows, 13px type, one muted indigo accent, 36px list rows, `⌘K` command palette, and 150ms motion. Then add the three things a help desk needs that Linear doesn't have: **requester vs agent roles**, **"Waiting on user" status**, and **internal-only notes**.
+A help desk is structurally the _same product_ as an issue tracker. Linear is an issue tracker. So don't invent a UI — **rename Linear's primitives** (Issue → Ticket, Comment → Reply, Cycle → SLA, Project → Category, View → Queue filter) and copy its visual discipline: near-black layered surfaces, 1px hairlines instead of shadows, 13px type, one muted indigo accent, 36px list rows, `⌘K` command palette, and 150ms motion. Then add the three things a help desk needs that Linear doesn't have: **requester vs agent roles**, **"Waiting on user" status**, and **internal-only notes**.
 
 ---
 
@@ -17,18 +17,22 @@ A help desk is structurally the *same product* as an issue tracker. Linear is an
 Six pillars. Miss any one and it reads as "a dashboard template."
 
 ### 1.1 Chrome-less density
+
 - No cards inside cards. No double borders. No drop shadows on containers.
 - Structure comes from **1px hairlines** (`rgba(255,255,255,0.06–0.08)`) and whitespace.
 - List rows are **36–40px** tall. Body text is **13px**, meta is **12px**, page titles **15–16px**. Nothing is 16px except maybe a marketing headline.
 - The app fills the viewport. No centered `max-w-7xl` container with 80px side padding inside the app shell.
 
 ### 1.2 One accent, used sparingly
+
 - Canvas is near-monochrome. A **single indigo** (`#5E6AD2`) for primary buttons, focus rings, active states, selected rows.
 - Status is communicated by a **6px dot + 10%-opacity tinted background**, never a saturated pill. This alone separates you from every Bootstrap ticket system.
 - Color count discipline: 1 accent + 4 status hues (amber / blue / green / grey) + 1 danger red. That's it.
 
 ### 1.3 Keyboard-first (the highest-leverage detail)
+
 This is the #1 thing that makes a demo feel like real SaaS.
+
 - `⌘K` command palette (navigation + actions + search).
 - Single-key actions on a focused list: `J`/`K` move, `Enter` open, `C` create, `A` assign, `P` priority, `E` edit.
 - `G` then `Q` = go to queue, `G` then `K` = knowledge base.
@@ -36,18 +40,21 @@ This is the #1 thing that makes a demo feel like real SaaS.
 - Every list is arrow-key navigable and shows a visible focus ring.
 
 ### 1.4 Motion as feedback, never decoration
+
 - **120–180ms**, `cubic-bezier(0.16, 1, 0.3, 1)` (ease-out-expo-ish). Only `opacity` and `transform`.
 - Popovers scale from `0.97 → 1` with a fade. Palettes fade + rise 4px.
 - No slides across the screen, no bounce, no long fades, no skeleton shimmer longer than ~600ms.
 - Respect `prefers-reduced-motion`.
 
 ### 1.5 Perceived speed
+
 - Optimistic mutations (assign, status change, reply) — update the cache, reconcile after the response.
 - Skeletons for first load only; mutations never show a spinner, they show the new state.
 - Hover a ticket row → prefetch its detail.
 - Loading state = a 2px indeterminate bar at the top of the content area, not a full-page spinner.
 
 ### 1.6 Typographic discipline
+
 - **Inter** (variable). Base `13px / 20px`, tracking `-0.01em`.
 - `tabular-nums` for counts, IDs, dates, SLA timers.
 - Weights: `400` body, `500` titles and buttons, `600` rare (page title).
@@ -61,30 +68,30 @@ This is the #1 thing that makes a demo feel like real SaaS.
 
 Decide these names once and use them everywhere (DB, API, UI copy).
 
-| Linear | Your app | Notes |
-|---|---|---|
-| Issue | **Ticket** | `HD-1042` human key, `_id` in URLs |
-| Workflow state | **Ticket status** | `open → in_progress → waiting_on_user → resolved → closed` |
-| Comment | **Reply** | `isInternal: true` = agent-only note (amber tint) |
-| Project | **Category** | Hardware / Software / Network / Access |
-| Label | **Tag** | free-form, normalized lowercase |
-| Cycle | **SLA window** | derived from priority, not manual |
-| Assignee | **Assignee (agent)** | only `agent`/`admin` roles |
-| View | **Queue view** | saved filter: My tickets, Unassigned, Breaching SLA |
-| Inbox | **Agent inbox** | new tickets + replies on your tickets |
-| Sub-issue | **Checklist** | optional, on the ticket detail page |
+| Linear         | Your app             | Notes                                                      |
+| -------------- | -------------------- | ---------------------------------------------------------- |
+| Issue          | **Ticket**           | `HD-1042` human key, `_id` in URLs                         |
+| Workflow state | **Ticket status**    | `open → in_progress → waiting_on_user → resolved → closed` |
+| Comment        | **Reply**            | `isInternal: true` = agent-only note (amber tint)          |
+| Project        | **Category**         | Hardware / Software / Network / Access                     |
+| Label          | **Tag**              | free-form, normalized lowercase                            |
+| Cycle          | **SLA window**       | derived from priority, not manual                          |
+| Assignee       | **Assignee (agent)** | only `agent`/`admin` roles                                 |
+| View           | **Queue view**       | saved filter: My tickets, Unassigned, Breaching SLA        |
+| Inbox          | **Agent inbox**      | new tickets + replies on your tickets                      |
+| Sub-issue      | **Checklist**        | optional, on the ticket detail page                        |
 
 **Do not** call it "Issue." Requester-facing language must be human: "Your ticket has been resolved," not "Issue transitioned to Done."
 
 ### Status semantics (important for a help desk)
 
-| Status | Meaning | Who acts next |
-|---|---|---|
-| `open` | New, unclaimed | IT |
-| `in_progress` | Agent working | IT |
-| `waiting_on_user` | Agent needs info | **Employee** ← Linear has no equivalent; this is your differentiator |
-| `resolved` | Fix delivered, awaiting confirm | Employee (or auto-close) |
-| `closed` | Done | nobody |
+| Status            | Meaning                         | Who acts next                                                        |
+| ----------------- | ------------------------------- | -------------------------------------------------------------------- |
+| `open`            | New, unclaimed                  | IT                                                                   |
+| `in_progress`     | Agent working                   | IT                                                                   |
+| `waiting_on_user` | Agent needs info                | **Employee** ← Linear has no equivalent; this is your differentiator |
+| `resolved`        | Fix delivered, awaiting confirm | Employee (or auto-close)                                             |
+| `closed`          | Done                            | nobody                                                               |
 
 Show a **"Waiting on you"** counter on the employee dashboard. That's the core loop of a real help desk.
 
@@ -92,14 +99,15 @@ Show a **"Waiting on you"** counter on the employee dashboard. That's the core l
 
 ## 3. Database: how to decide (you asked)
 
-| Option | Best for | Cost | Trade-off |
-|---|---|---|---|
-| **Local MongoDB (Docker)** | daily development | free | needs Docker running |
-| **Local MongoDB (Homebrew)** | daily development | free | pollutes host, version drift |
-| **Atlas free M0** | deployment + demo links | free | 500 connections, needs internet, ~150ms latency from a laptop |
-| `mongodb-memory-server` | automated tests only | free | **data vanishes on restart — never use it for your demo** |
+| Option                       | Best for                | Cost | Trade-off                                                     |
+| ---------------------------- | ----------------------- | ---- | ------------------------------------------------------------- |
+| **Local MongoDB (Docker)**   | daily development       | free | needs Docker running                                          |
+| **Local MongoDB (Homebrew)** | daily development       | free | pollutes host, version drift                                  |
+| **Atlas free M0**            | deployment + demo links | free | 500 connections, needs internet, ~150ms latency from a laptop |
+| `mongodb-memory-server`      | automated tests only    | free | **data vanishes on restart — never use it for your demo**     |
 
 **Recommendation: both, in this order.**
+
 1. Develop against local Docker (instant, offline).
 2. Deploy against Atlas M0 (same code, different `MONGO_URI`).
 
@@ -129,6 +137,7 @@ Atlas later: create M0 → add `0.0.0.0/0` for the demo → paste the `mongodb+s
 Four collections. Keep documents flat; no deep nesting of replies inside tickets (that's how you get 16MB limits and painful pagination).
 
 ### `users`
+
 ```js
 {
   _id, name, email,            // email unique, lowercased
@@ -143,6 +152,7 @@ Four collections. Keep documents flat; no deep nesting of replies inside tickets
 ```
 
 ### `tickets`
+
 ```js
 {
   _id,
@@ -166,6 +176,7 @@ Four collections. Keep documents flat; no deep nesting of replies inside tickets
 ```
 
 ### `replies`
+
 ```js
 {
   _id, ticketId, authorId,
@@ -177,6 +188,7 @@ Four collections. Keep documents flat; no deep nesting of replies inside tickets
 ```
 
 ### `knowledge_base`
+
 ```js
 {
   _id, title, slug,            // slug unique
@@ -189,20 +201,22 @@ Four collections. Keep documents flat; no deep nesting of replies inside tickets
 ```
 
 ### Indexes (do this on day one, not day nine)
+
 ```js
-tickets.index({ status: 1, lastActivityAt: -1 })
-tickets.index({ assigneeId: 1, status: 1 })
-tickets.index({ requesterId: 1, createdAt: -1 })
-tickets.index({ key: 1 }, { unique: true })
-tickets.index({ title: 'text', description: 'text' })
-replies.index({ ticketId: 1, createdAt: 1 })
-kb.index({ slug: 1 }, { unique: true })
-kb.index({ title: 'text', body: 'text' })
+tickets.index({ status: 1, lastActivityAt: -1 });
+tickets.index({ assigneeId: 1, status: 1 });
+tickets.index({ requesterId: 1, createdAt: -1 });
+tickets.index({ key: 1 }, { unique: true });
+tickets.index({ title: "text", description: "text" });
+replies.index({ ticketId: 1, createdAt: 1 });
+kb.index({ slug: 1 }, { unique: true });
+kb.index({ title: "text", body: "text" });
 ```
 
 **Denormalize deliberately:** `replyCount` and `lastActivityAt` on the ticket. The queue is the most-rendered screen in the app; it should never need a `$lookup` to draw a row.
 
 ### Sequential keys
+
 `counters` collection: `{ _id: 'ticket', seq: 1042 }` with `findOneAndUpdate({_id:'ticket'}, {$inc:{seq:1}}, {upsert:true, new:true})`. `HD-${seq}`. Human keys make the product feel real; ObjectIds in the URL bar do not.
 
 ---
@@ -211,36 +225,38 @@ kb.index({ title: 'text', body: 'text' })
 
 Keep the spec in the assignment, add what a real client needs.
 
-| Method | Endpoint | Auth | Notes |
-|---|---|---|---|
-| POST | `/api/auth/login` | public | `{email, password}` → `{accessToken, user}` + httpOnly refresh cookie |
-| POST | `/api/auth/refresh` | cookie | rotate refresh token |
-| POST | `/api/auth/logout` | user | clear cookie |
-| GET | `/api/auth/me` | user | rehydrate session on reload |
-| GET | `/api/tickets` | user | `?status=&priority=&category=&assigneeId=&q=&view=&cursor=&limit=` |
-| POST | `/api/tickets` | employee+ | creates ticket, auto-computes SLA, returns `key` |
-| GET | `/api/tickets/:id` | owner or agent | by `_id` **or** `key` |
-| PUT | `/api/tickets/:id` | owner (title/desc) or agent (all) | field-level authorization |
-| DELETE | `/api/tickets/:id` | owner if still `open`, or admin | soft-delete preferred (`deletedAt`) |
-| POST | `/api/tickets/:id/replies` | owner or agent | `{body, isInternal}`; `isInternal` rejected for employees |
-| PUT | `/api/tickets/:id/assign` | agent/admin | `{assigneeId}`; sets `in_progress`, notifies |
-| PUT | `/api/tickets/:id/status` | agent/admin | (add this — don't overload PUT) |
-| GET | `/api/tickets/:id/replies` | owner or agent | paginated |
-| GET | `/api/tickets/stats` | agent/admin | dashboard aggregates |
-| GET | `/api/knowledge-base` | public-ish | `?q=&category=&page=` |
-| POST | `/api/knowledge-base` | agent/admin | publish article |
-| GET | `/api/knowledge-base/:slug` | user | increments `views` |
-| POST | `/api/knowledge-base/:slug/vote` | user | helpful / not |
+| Method | Endpoint                         | Auth                              | Notes                                                                 |
+| ------ | -------------------------------- | --------------------------------- | --------------------------------------------------------------------- |
+| POST   | `/api/auth/login`                | public                            | `{email, password}` → `{accessToken, user}` + httpOnly refresh cookie |
+| POST   | `/api/auth/refresh`              | cookie                            | rotate refresh token                                                  |
+| POST   | `/api/auth/logout`               | user                              | clear cookie                                                          |
+| GET    | `/api/auth/me`                   | user                              | rehydrate session on reload                                           |
+| GET    | `/api/tickets`                   | user                              | `?status=&priority=&category=&assigneeId=&q=&view=&cursor=&limit=`    |
+| POST   | `/api/tickets`                   | employee+                         | creates ticket, auto-computes SLA, returns `key`                      |
+| GET    | `/api/tickets/:id`               | owner or agent                    | by `_id` **or** `key`                                                 |
+| PUT    | `/api/tickets/:id`               | owner (title/desc) or agent (all) | field-level authorization                                             |
+| DELETE | `/api/tickets/:id`               | owner if still `open`, or admin   | soft-delete preferred (`deletedAt`)                                   |
+| POST   | `/api/tickets/:id/replies`       | owner or agent                    | `{body, isInternal}`; `isInternal` rejected for employees             |
+| PUT    | `/api/tickets/:id/assign`        | agent/admin                       | `{assigneeId}`; sets `in_progress`, notifies                          |
+| PUT    | `/api/tickets/:id/status`        | agent/admin                       | (add this — don't overload PUT)                                       |
+| GET    | `/api/tickets/:id/replies`       | owner or agent                    | paginated                                                             |
+| GET    | `/api/tickets/stats`             | agent/admin                       | dashboard aggregates                                                  |
+| GET    | `/api/knowledge-base`            | public-ish                        | `?q=&category=&page=`                                                 |
+| POST   | `/api/knowledge-base`            | agent/admin                       | publish article                                                       |
+| GET    | `/api/knowledge-base/:slug`      | user                              | increments `views`                                                    |
+| POST   | `/api/knowledge-base/:slug/vote` | user                              | helpful / not                                                         |
 
 ### Conventions
+
 - **One error envelope, always:** `{ error: { code: 'TICKET_NOT_FOUND', message: 'Human readable.' } }`. The client renders `message`; code exists for branching and tests.
 - **Cursor pagination**, not `page=N`: `{ data: [...], nextCursor: '...' }`. Infinite scroll in the queue, "Load more" in replies.
 - **Filtering is server-side.** Once you have 200 tickets, client-side filtering is the thing that breaks the demo.
 - **Validation at the edge:** `zod` schema shared by route handler and (optionally) the client form.
 - **Authorization is middleware, not `if` statements in handlers:** `requireRole('agent')`, `canAccessTicket(req.user, ticket)`.
-- Status/assignee changes also append a system reply (`type: 'system'`) so the activity feed tells the story: *"Priya assigned this to Arjun · 2h ago."*
+- Status/assignee changes also append a system reply (`type: 'system'`) so the activity feed tells the story: _"Priya assigned this to Arjun · 2h ago."_
 
 ### JWT shape (short version)
+
 - Access token, 15 min, in memory on the client (React state) — **not** localStorage.
 - Refresh token, 7 days, `httpOnly; Secure; SameSite=Lax` cookie, path `/api/auth`.
 - `requireAuth` reads `Authorization: Bearer`, verifies, loads `{ id, role }`.
@@ -267,21 +283,21 @@ client/src
 └─ styles/         tokens.css, globals.css
 ```
 
-| Concern | Choice | Why |
-|---|---|---|
-| Build | Vite + React + TypeScript | fast, and types keep a 4-collection model sane |
-| Styling | Tailwind v4 (`@theme` tokens) | tokens live in CSS, shadcn-compatible |
-| Primitives | shadcn/ui (Radix) | you need accessible Popover/Dialog/Command — build-from-scratch eats days |
-| Icons | lucide-react, 16px, `strokeWidth={1.5}` | matches Linear's line weight |
-| Server state | TanStack Query | optimistic updates, cache invalidation, prefetch |
-| Client state | Zustand | palette open, selected row, sidebar collapsed. Nothing else belongs here |
-| Routing | react-router (`createBrowserRouter`) | nested layouts: `/login`, `/app/...` |
-| Forms | react-hook-form + zod | pair with the server schema |
-| Markdown | react-markdown + remark-gfm | ticket bodies + KB |
-| Dates | date-fns + `formatDistanceToNowStrict` | "3h ago", tabular numbers |
-| Charts | Recharts, restyled | thin strokes, no gridline clutter |
-| Drag & drop | dnd-kit (only if you ship the board view) | |
-| Command palette | cmdk | |
+| Concern         | Choice                                    | Why                                                                       |
+| --------------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| Build           | Vite + React + TypeScript                 | fast, and types keep a 4-collection model sane                            |
+| Styling         | Tailwind v4 (`@theme` tokens)             | tokens live in CSS, shadcn-compatible                                     |
+| Primitives      | shadcn/ui (Radix)                         | you need accessible Popover/Dialog/Command — build-from-scratch eats days |
+| Icons           | lucide-react, 16px, `strokeWidth={1.5}`   | matches Linear's line weight                                              |
+| Server state    | TanStack Query                            | optimistic updates, cache invalidation, prefetch                          |
+| Client state    | Zustand                                   | palette open, selected row, sidebar collapsed. Nothing else belongs here  |
+| Routing         | react-router (`createBrowserRouter`)      | nested layouts: `/login`, `/app/...`                                      |
+| Forms           | react-hook-form + zod                     | pair with the server schema                                               |
+| Markdown        | react-markdown + remark-gfm               | ticket bodies + KB                                                        |
+| Dates           | date-fns + `formatDistanceToNowStrict`    | "3h ago", tabular numbers                                                 |
+| Charts          | Recharts, restyled                        | thin strokes, no gridline clutter                                         |
+| Drag & drop     | dnd-kit (only if you ship the board view) |                                                                           |
+| Command palette | cmdk                                      |                                                                           |
 
 ### App shell
 
@@ -314,49 +330,59 @@ client/src
 ```css
 @theme {
   /* surfaces — layered, near-black, barely distinguishable on purpose */
-  --color-bg:            #08090A;
-  --color-surface:       #0D0E10;
-  --color-surface-2:     #131416;
-  --color-surface-3:     #17181B;
-  --color-border:        rgba(255,255,255,0.07);
-  --color-border-strong: rgba(255,255,255,0.12);
+  --color-bg: #08090a;
+  --color-surface: #0d0e10;
+  --color-surface-2: #131416;
+  --color-surface-3: #17181b;
+  --color-border: rgba(255, 255, 255, 0.07);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
 
   /* text */
-  --color-text:          #F7F8F8;
-  --color-text-muted:    #8A8F98;
-  --color-text-subtle:   #62666D;
+  --color-text: #f7f8f8;
+  --color-text-muted: #8a8f98;
+  --color-text-subtle: #62666d;
 
   /* one accent */
-  --color-accent:        #5E6AD2;
-  --color-accent-hover:  #6E79DB;
-  --color-accent-soft:   rgba(94,106,210,0.12);
+  --color-accent: #5e6ad2;
+  --color-accent-hover: #6e79db;
+  --color-accent-soft: rgba(94, 106, 210, 0.12);
 
   /* status — dot color + soft background */
-  --color-status-open:      #8A8F98;
-  --color-status-progress:  #F2C94C;
-  --color-status-waiting:   #4EA7FC;
-  --color-status-resolved:  #4CB782;
-  --color-status-closed:    #62666D;
-  --color-danger:           #EB5757;
-  --color-warning:          #F2C94C;
-  --color-success:          #4CB782;
+  --color-status-open: #8a8f98;
+  --color-status-progress: #f2c94c;
+  --color-status-waiting: #4ea7fc;
+  --color-status-resolved: #4cb782;
+  --color-status-closed: #62666d;
+  --color-danger: #eb5757;
+  --color-warning: #f2c94c;
+  --color-success: #4cb782;
 
   /* type */
   --font-sans: "Inter Variable", Inter, -apple-system, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
-  --text-xs: 11px; --text-sm: 12px; --text-base: 13px;
-  --text-md: 14px; --text-lg: 16px; --text-xl: 20px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-base: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
 
   /* geometry */
-  --radius-sm: 4px; --radius: 6px; --radius-lg: 8px;
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
 
   /* elevation — almost none; dialogs only */
-  --shadow-pop: 0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.07);
-  --shadow-dialog: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+  --shadow-pop:
+    0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  --shadow-dialog:
+    0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
 
   /* motion */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur-fast: 120ms; --dur: 160ms; --dur-slow: 220ms;
+  --dur-fast: 120ms;
+  --dur: 160ms;
+  --dur-slow: 220ms;
 }
 ```
 
@@ -383,11 +409,14 @@ Fifteen more details that make it land:
 ## 8. Page-by-page spec
 
 ### 1. Login
+
 Centered column, `360px`, on `--color-bg` with the radial glow. Brand mark (24px) → "Sign in to Tasu" at 16px/600 → subtitle 13px muted. Email + password, 32px tall inputs, full-width accent button "Sign in", `⏎` hint inside it. Inline error `12px` red under the field, never an alert(). Footer: "Demo accounts" pill showing employee / agent credentials — because you will demo this live and the reviewer must be able to log in.
-*Pattern:* no sidebar, no nav, no marketing copy. Linear's auth is one column and one action.
+_Pattern:_ no sidebar, no nav, no marketing copy. Linear's auth is one column and one action.
 
 ### 2. Employee Dashboard
+
 `/app` — one screen, no scroll at 1440×900.
+
 - Greeting row: "Good afternoon, Parth" 16px/500 + date muted right.
 - Three stat tiles, `1px` border, 12px padding, no shadow: **Open** (count), **Waiting on you** (count, accent-tinted when > 0), **Resolved this month**.
 - **"Needs your attention"** list: tickets in `waiting_on_user` or `resolved`-awaiting-confirm. 4 rows max, ticket-row component reused.
@@ -395,7 +424,9 @@ Centered column, `360px`, on `--color-bg` with the radial glow. Brand mark (24px
 - Primary action top-right: **New ticket** (`C`).
 
 ### 3. Create Ticket
+
 Dedicated route `/app/tickets/new`, not a modal — it's the deepest form in the app.
+
 - Layout: 680px main column + 280px property rail.
 - Title: borderless input, 20px/500, placeholder "What's going wrong?". Focus ring on the container only.
 - Property rail: inline pill selectors for **Category**, **Priority**, **Attachments**. Each pill = label + value, 24px tall, opens a Popover.
@@ -404,6 +435,7 @@ Dedicated route `/app/tickets/new`, not a modal — it's the deepest form in the
 - Sticky footer: `Cancel` (ghost) · `Create ticket` (accent) with `⌘⏎` chip. On success → navigate to the ticket, toast "HD-1043 created".
 
 ### 4. My Tickets
+
 - Topbar: title "My tickets" + count, then filter chips (`All · Open · Waiting · Resolved`) and a `Search` icon that focuses the search input (`/`).
 - Grouped list: section header (`OPEN · 3`) as an 11px uppercase sticky label, rows underneath.
 - Row, 40px: status dot · mono key (`HD-1042`, muted) · title (13px/500, truncate) · category icon · priority bars · relative time right-aligned.
@@ -411,6 +443,7 @@ Dedicated route `/app/tickets/new`, not a modal — it's the deepest form in the
 - Empty state: "No tickets yet. Something broken? Create a ticket." + button.
 
 ### 5. Ticket Details — the money screen
+
 - Topbar: `← My tickets` + mono key + status pill + right-side actions (`Assign`, `⋯`).
 - **Main column (flex-1, max 760px):**
   - Title 20px/600, editable inline on click.
@@ -422,12 +455,15 @@ Dedicated route `/app/tickets/new`, not a modal — it's the deepest form in the
 - For agents, show a **"Resolve"** primary button and a **suggested-article** block ("This looks like: VPN drops after sleep") — instead of AI, do keyword overlap with KB titles/tags; label it clearly.
 
 ### 6. IT Dashboard
+
 Triage, not analytics.
+
 - Row 1, four stats: **Unassigned** (count, links to filtered queue), **Breaching SLA** (red if > 0), **Avg first response** (h), **Resolved today**.
 - Row 2: workload per agent — avatar, name, horizontal bar (open tickets / max), count. Sorted desc. Makes "who's drowning" obvious in one glance.
 - Row 3: 7-day volume area chart (single accent line, `rgba` fill to transparent, no gridlines except 3 horizontal hairlines) + "Oldest unassigned" list (3 rows).
 
 ### 7. Ticket Queue
+
 - **Views** as tabs above the list: `All · Unassigned · Mine · Breaching · Waiting on user`. These are just query params — implement them as real links so they're shareable.
 - Filter bar: status, priority, category, assignee, search. Filters live in the URL (`?status=open&assignee=me`) so refresh preserves state. Reviewers notice this.
 - Table view (default) with checkbox column; bulk bar slides up from the bottom when rows are selected: `3 selected · Assign ▾ · Priority ▾ · Close`.
@@ -435,12 +471,14 @@ Triage, not analytics.
 - Row is identical to My Tickets → reuse the component with a `showRequester` prop.
 
 ### 8. Knowledge Base
+
 - Two-pane: left `240px` category tree + search; right article list (`title`, category, `read 2m`, views).
 - Article view: reading column `max-width: 680px`, 14px/24px for body (KB reads better slightly larger than app UI), sticky TOC on the right for long articles, `Was this helpful? 👍 👎` at the bottom.
 - Agents get an `Edit` button and "New article". Employees get read-only.
 - Search: `⌘K` searches tickets + KB across scopes; on the KB page, `/` scopes to articles.
 
 ### 9. Reports
+
 - Filter bar: date range (`7d / 30d / 90d / custom`) + category.
 - Grid of 4 charts + 1 table:
   1. Tickets created vs resolved (2-line area, accent + green).
@@ -455,17 +493,17 @@ Triage, not analytics.
 
 ## 9. Motion & interaction table
 
-| Interaction | Property | Duration | Easing |
-|---|---|---|---|
-| Row hover background | background-color | 120ms | ease-out |
-| Popover / dropdown | opacity + scale(0.97→1) | 140ms | `--ease-out` |
-| Command palette | opacity + translateY(4px→0) | 160ms | `--ease-out` |
-| Dialog | opacity + scale(0.98→1) | 180ms | `--ease-out` |
-| Row status dot change | background-color | 160ms | ease-out |
-| Checkbox / avatar fill | background-color | 120ms | ease |
-| Sidebar collapse | width | 200ms | `--ease-out` |
-| Toast | translateY(8px→0) + opacity | 180ms | `--ease-out` |
-| List item enter (optimistic) | `@starting-style` opacity | 160ms | ease-out |
+| Interaction                  | Property                    | Duration | Easing       |
+| ---------------------------- | --------------------------- | -------- | ------------ |
+| Row hover background         | background-color            | 120ms    | ease-out     |
+| Popover / dropdown           | opacity + scale(0.97→1)     | 140ms    | `--ease-out` |
+| Command palette              | opacity + translateY(4px→0) | 160ms    | `--ease-out` |
+| Dialog                       | opacity + scale(0.98→1)     | 180ms    | `--ease-out` |
+| Row status dot change        | background-color            | 160ms    | ease-out     |
+| Checkbox / avatar fill       | background-color            | 120ms    | ease         |
+| Sidebar collapse             | width                       | 200ms    | `--ease-out` |
+| Toast                        | translateY(8px→0) + opacity | 180ms    | `--ease-out` |
+| List item enter (optimistic) | `@starting-style` opacity   | 160ms    | ease-out     |
 
 Rules: never animate `height`/`width` except the sidebar; never animate more than 2 properties at once; nothing over 250ms.
 
@@ -473,20 +511,21 @@ Rules: never animate `height`/`width` except the sidebar; never animate more tha
 
 ## 10. Build order (≈8–9 focused days)
 
-| Phase | Work | Done when |
-|---|---|---|
-| 0 · 2h | Vite + TS + Tailwind + shadcn init, tokens.css, folder skeleton, Docker Mongo, Mongoose connect, health route | `GET /api/health` returns ok, tokens visible on a test page |
-| 1 · 1d | App shell: sidebar, topbar, breadcrumb, route skeleton for all 9 pages with empty states | You can click every nav item and see a real (empty) page |
-| 2 · 0.5d | Auth: model, bcrypt, login/refresh/me, JWT verify, protected routes, role guard, login page | Employee and agent land on different navs; refresh keeps you logged in |
-| 3 · 2d | Tickets: model + counters + SLA, CRUD routes, list + create + detail pages, reply thread | Full loop: create → view → reply → status change |
-| 4 · 1d | Agent features: assign, status transitions, system activity feed, queue views with URL filters, bulk actions | `?view=unassigned` is shareable; assignment notifies |
-| 5 · 1d | Knowledge base: CRUD, search, article view, helpful votes, "related articles" strip on create | Search returns an article you wrote |
-| 6 · 1d | Dashboards + reports: stats endpoints, charts, workload, SLA compliance | Numbers match a manual `countDocuments` check |
-| 7 · 1.5d | Polish: `⌘K` palette, J/K nav, toasts, skeletons, empty states, seed script, favicon/title, deploy | A stranger can use it for 3 minutes without instructions |
+| Phase    | Work                                                                                                          | Done when                                                              |
+| -------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| 0 · 2h   | Vite + TS + Tailwind + shadcn init, tokens.css, folder skeleton, Docker Mongo, Mongoose connect, health route | `GET /api/health` returns ok, tokens visible on a test page            |
+| 1 · 1d   | App shell: sidebar, topbar, breadcrumb, route skeleton for all 9 pages with empty states                      | You can click every nav item and see a real (empty) page               |
+| 2 · 0.5d | Auth: model, bcrypt, login/refresh/me, JWT verify, protected routes, role guard, login page                   | Employee and agent land on different navs; refresh keeps you logged in |
+| 3 · 2d   | Tickets: model + counters + SLA, CRUD routes, list + create + detail pages, reply thread                      | Full loop: create → view → reply → status change                       |
+| 4 · 1d   | Agent features: assign, status transitions, system activity feed, queue views with URL filters, bulk actions  | `?view=unassigned` is shareable; assignment notifies                   |
+| 5 · 1d   | Knowledge base: CRUD, search, article view, helpful votes, "related articles" strip on create                 | Search returns an article you wrote                                    |
+| 6 · 1d   | Dashboards + reports: stats endpoints, charts, workload, SLA compliance                                       | Numbers match a manual `countDocuments` check                          |
+| 7 · 1.5d | Polish: `⌘K` palette, J/K nav, toasts, skeletons, empty states, seed script, favicon/title, deploy            | A stranger can use it for 3 minutes without instructions               |
 
 **Phase 7 is not optional.** It is the entire difference between "MERN project" and "SaaS product." Budget it.
 
 ### Seed data
+
 Write `server/seed.js` with: 6 users (1 admin, 2 agents, 3 employees), ~40 tickets spread over 30 days with a realistic mix of statuses/priorities/categories, ~90 replies, 12 KB articles. Name them plausibly (`"VPN disconnects every 10 minutes"`, `"Adobe license expired"`, `"Cannot access staging DB"`). An empty app never looks good; a full one looks finished. Make `npm run seed` re-runnable.
 
 ---
@@ -531,6 +570,7 @@ Take a screenshot of the ticket detail page. Does it look like it belongs in the
 The highest-risk unknowns, in order: **the ticket-detail layout**, **the design tokens in practice**, and **role-based nav**. Everything else is CRUD.
 
 If you want, I can now:
+
 - scaffold Phase 0–1 (Vite shell + tokens + all 9 routes with empty states) so you have something to look at, or
 - write the full Express route handlers + Mongoose models first, or
 - generate the seed script so every page looks alive from the first run.

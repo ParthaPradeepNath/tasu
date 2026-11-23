@@ -1,10 +1,12 @@
 import Link from "next/link";
+
 import { MessageSquareText, Sparkles } from "lucide-react";
-import type { TicketStatus } from "@/generated/prisma/enums";
-import { relativeTime } from "@/lib/dates";
-import { Avatar } from "@/components/ui/avatar";
+
 import { GlassBadge } from "@/components/liquid-glass";
 import { StatusDot } from "@/components/tickets/status-chip";
+import { Avatar } from "@/components/ui/avatar";
+import type { TicketStatus } from "@/generated/prisma/enums";
+import { relativeTime } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 
 type ActivityItem = {
@@ -31,16 +33,16 @@ export function ActivityFeed({
   if (items.length === 0 && empty) return <>{empty}</>;
 
   return (
-    <ol className={cn("list-enter divide-y divide-separator", className)}>
+    <ol className={cn("list-enter divide-separator divide-y", className)}>
       {items.map((item) => {
         const system = item.type === "SYSTEM";
         return (
           <li
             key={item.id}
-            className="flex items-start gap-2.5 px-4 py-3 transition-colors duration-100 hover:bg-surface-hover"
+            className="hover:bg-surface-hover flex items-start gap-2.5 px-4 py-3 transition-colors duration-100"
           >
             {system ? (
-              <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-fill text-label-3">
+              <span className="bg-fill text-label-3 mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full">
                 <Sparkles className="size-3" />
               </span>
             ) : (
@@ -53,12 +55,12 @@ export function ActivityFeed({
             )}
 
             <div className="min-w-0 flex-1">
-              <p className="m-0 text-[12px] leading-[1.45] text-label-2">
+              <p className="text-label-2 m-0 text-[12px] leading-[1.45]">
                 {system ? (
                   <span>{item.body}</span>
                 ) : (
                   <>
-                    <span className="font-medium text-label">
+                    <span className="text-label font-medium">
                       {item.author.name}
                     </span>{" "}
                     replied
@@ -68,7 +70,7 @@ export function ActivityFeed({
                         width={66}
                         height={17}
                         speed={0.45}
-                        className="ml-1.5 align-middle text-[9px] uppercase tracking-[0.04em]"
+                        className="ml-1.5 align-middle text-[9px] tracking-[0.04em] uppercase"
                       >
                         Internal
                       </GlassBadge>
@@ -78,7 +80,7 @@ export function ActivityFeed({
                         {" on "}
                         <Link
                           href={`/app/tickets/${item.ticket.key}`}
-                          className="num font-mono text-[11px] font-medium text-label hover:text-accent"
+                          className="num text-label hover:text-accent font-mono text-[11px] font-medium"
                         >
                           {item.ticket.key}
                         </Link>
@@ -88,7 +90,7 @@ export function ActivityFeed({
                 )}
               </p>
               {!system && (
-                <p className="mt-0.5 line-clamp-2 text-[11.5px] leading-[1.45] text-label-3">
+                <p className="text-label-3 mt-0.5 line-clamp-2 text-[11.5px] leading-[1.45]">
                   {item.body}
                 </p>
               )}
@@ -98,7 +100,7 @@ export function ActivityFeed({
               <time
                 dateTime={item.createdAt.toISOString()}
                 suppressHydrationWarning
-                className="num whitespace-nowrap text-[10.5px] text-label-3"
+                className="num text-label-3 text-[10.5px] whitespace-nowrap"
               >
                 {relativeTime(item.createdAt)}
               </time>
@@ -114,9 +116,12 @@ export function ActivityFeed({
 export function EmptyFeed({ title, hint }: { title: string; hint: string }) {
   return (
     <div className="flex flex-col items-center px-4 py-8 text-center">
-      <MessageSquareText className="mb-2 size-5 text-label-3" strokeWidth={1.6} />
-      <p className="m-0 text-[12.5px] font-medium text-label">{title}</p>
-      <p className="mt-1 max-w-[240px] text-[11.5px] leading-4 text-label-3">
+      <MessageSquareText
+        className="text-label-3 mb-2 size-5"
+        strokeWidth={1.6}
+      />
+      <p className="text-label m-0 text-[12.5px] font-medium">{title}</p>
+      <p className="text-label-3 mt-1 max-w-[240px] text-[11.5px] leading-4">
         {hint}
       </p>
     </div>

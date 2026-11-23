@@ -1,12 +1,7 @@
-import type { TicketStatus } from "@/generated/prisma/enums";
-import { cn } from "@/lib/utils";
 import { GlassBadge } from "@/components/liquid-glass";
-import {
-  firstName,
-  STATUS_META,
-  TONE_CLASSES,
-  type Tone,
-} from "@/lib/status";
+import type { TicketStatus } from "@/generated/prisma/enums";
+import { firstName, STATUS_META, type Tone, TONE_CLASSES } from "@/lib/status";
+import { cn } from "@/lib/utils";
 
 export function StatusChip({
   status,
@@ -41,8 +36,7 @@ export function StatusChip({
   }
 
   if (premium) {
-    const glassTone =
-      tone === "info" || tone === "purple" ? "accent" : tone;
+    const glassTone = tone === "info" || tone === "purple" ? "accent" : tone;
 
     return (
       <GlassBadge
@@ -60,9 +54,9 @@ export function StatusChip({
   return (
     <span
       className={cn(
-        "inline-flex h-[22px] max-w-full items-center gap-1.5 rounded-full px-2 text-[11.5px] font-medium leading-none",
+        "inline-flex h-[22px] max-w-full items-center gap-1.5 rounded-full px-2 text-[11.5px] leading-none font-medium",
         TONE_CLASSES[tone],
-        className,
+        className
       )}
       title={meta.description}
     >
@@ -88,7 +82,7 @@ export function StatusDot({
         STATUS_META[status].tone === "warning" && "bg-warning",
         STATUS_META[status].tone === "success" && "bg-success",
         STATUS_META[status].tone === "neutral" && "bg-label-3",
-        className,
+        className
       )}
       aria-hidden
     />

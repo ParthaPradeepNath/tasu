@@ -1,10 +1,24 @@
 "use client";
 
 import * as React from "react";
+
 import { useRouter } from "next/navigation";
+
 import { toast } from "sonner";
-import type { Category, Priority, TicketStatus } from "@/generated/prisma/enums";
+
 import { updateTicket } from "@/app/app/actions";
+import { PriorityBars } from "@/components/tickets/priority-bars";
+import { StatusChip } from "@/components/tickets/status-chip";
+import { Avatar } from "@/components/ui/avatar";
+import {
+  PropertySelect,
+  type SelectOption,
+} from "@/components/ui/property-select";
+import type {
+  Category,
+  Priority,
+  TicketStatus,
+} from "@/generated/prisma/enums";
 import { useWebHaptics } from "@/hooks/use-web-haptics";
 import {
   CATEGORY_META,
@@ -14,10 +28,6 @@ import {
   STATUS_META,
   STATUS_ORDER,
 } from "@/lib/status";
-import { PropertySelect, type SelectOption } from "@/components/ui/property-select";
-import { StatusChip } from "@/components/tickets/status-chip";
-import { PriorityBars } from "@/components/tickets/priority-bars";
-import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 const STATUS_OPTIONS: SelectOption[] = STATUS_ORDER.map((status) => ({
@@ -84,26 +94,29 @@ export function TicketProperties({
     <div
       className={cn(
         "surface-card overflow-clip transition-opacity duration-100",
-        pending && "opacity-70",
+        pending && "opacity-70"
       )}
     >
-      <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
-        <h2 className="m-0 text-[12px] font-semibold text-label">Properties</h2>
-        {pending && (
-          <span className="text-[10.5px] text-label-3">Saving…</span>
-        )}
+      <header className="border-separator flex h-10 items-center justify-between border-b px-3.5">
+        <h2 className="text-label m-0 text-[12px] font-semibold">Properties</h2>
+        {pending && <span className="text-label-3 text-[10.5px]">Saving…</span>}
       </header>
 
       <div className="space-y-0.5 p-2">
         <div className="flex h-8 items-center gap-2 px-1.5">
-          <span className="w-[74px] shrink-0 text-[12.5px] text-label-3">Status</span>
+          <span className="text-label-3 w-[74px] shrink-0 text-[12.5px]">
+            Status
+          </span>
           {staff ? (
             <PropertySelect
               label="Status"
               value={ticket.status}
               options={STATUS_OPTIONS}
               onChange={(value) =>
-                change({ status: value }, `Status set to ${STATUS_META[value as TicketStatus].label.toLowerCase()}.`)
+                change(
+                  { status: value },
+                  `Status set to ${STATUS_META[value as TicketStatus].label.toLowerCase()}.`
+                )
               }
               className="[&>span:first-child]:hidden"
             />
@@ -113,7 +126,7 @@ export function TicketProperties({
         </div>
 
         <div className="flex h-8 items-center gap-2 px-1.5">
-          <span className="w-[74px] shrink-0 text-[12.5px] text-label-3">
+          <span className="text-label-3 w-[74px] shrink-0 text-[12.5px]">
             Assignee
           </span>
           {staff ? (
@@ -126,24 +139,28 @@ export function TicketProperties({
                   { assigneeId: value === "unassigned" ? "" : value },
                   value === "unassigned"
                     ? "Assignee removed."
-                    : `Assigned to ${agents.find((agent) => agent.id === value)?.name ?? "agent"}.`,
+                    : `Assigned to ${agents.find((agent) => agent.id === value)?.name ?? "agent"}.`
                 )
               }
               emptyLabel="Unassigned"
               className="[&>span:first-child]:hidden"
             />
           ) : assignee ? (
-            <span className="flex min-w-0 items-center gap-1.5 text-[12.5px] text-label">
-              <Avatar name={assignee.name} color={assignee.avatarColor} size={18} />
+            <span className="text-label flex min-w-0 items-center gap-1.5 text-[12.5px]">
+              <Avatar
+                name={assignee.name}
+                color={assignee.avatarColor}
+                size={18}
+              />
               <span className="truncate">{assignee.name}</span>
             </span>
           ) : (
-            <span className="text-[12.5px] text-label-2">IT triage</span>
+            <span className="text-label-2 text-[12.5px]">IT triage</span>
           )}
         </div>
 
         <div className="flex h-8 items-center gap-2 px-1.5">
-          <span className="w-[74px] shrink-0 text-[12.5px] text-label-3">
+          <span className="text-label-3 w-[74px] shrink-0 text-[12.5px]">
             Priority
           </span>
           {staff ? (
@@ -152,12 +169,15 @@ export function TicketProperties({
               value={ticket.priority}
               options={PRIORITY_OPTIONS}
               onChange={(value) =>
-                change({ priority: value }, `Priority set to ${PRIORITY_META[value as Priority].label.toLowerCase()}.`)
+                change(
+                  { priority: value },
+                  `Priority set to ${PRIORITY_META[value as Priority].label.toLowerCase()}.`
+                )
               }
               className="[&>span:first-child]:hidden"
             />
           ) : (
-            <span className="flex items-center gap-2 text-[12.5px] text-label">
+            <span className="text-label flex items-center gap-2 text-[12.5px]">
               <PriorityBars priority={ticket.priority} />
               {PRIORITY_META[ticket.priority].label}
             </span>
@@ -165,7 +185,7 @@ export function TicketProperties({
         </div>
 
         <div className="flex h-8 items-center gap-2 px-1.5">
-          <span className="w-[74px] shrink-0 text-[12.5px] text-label-3">
+          <span className="text-label-3 w-[74px] shrink-0 text-[12.5px]">
             Category
           </span>
           {staff ? (
@@ -174,12 +194,15 @@ export function TicketProperties({
               value={ticket.category}
               options={CATEGORY_OPTIONS}
               onChange={(value) =>
-                change({ category: value }, `Category set to ${CATEGORY_META[value as Category].label.toLowerCase()}.`)
+                change(
+                  { category: value },
+                  `Category set to ${CATEGORY_META[value as Category].label.toLowerCase()}.`
+                )
               }
               className="[&>span:first-child]:hidden"
             />
           ) : (
-            <span className="text-[12.5px] text-label">
+            <span className="text-label text-[12.5px]">
               {CATEGORY_META[ticket.category].label}
             </span>
           )}
@@ -187,14 +210,14 @@ export function TicketProperties({
 
         {ticket.tags.length > 0 && (
           <div className="flex items-start gap-2 px-1.5 py-1.5">
-            <span className="mt-0.5 w-[74px] shrink-0 text-[12.5px] text-label-3">
+            <span className="text-label-3 mt-0.5 w-[74px] shrink-0 text-[12.5px]">
               Tags
             </span>
             <span className="flex flex-wrap gap-1">
               {ticket.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex h-5 items-center rounded-[4px] bg-fill px-1.5 text-[10.5px] font-medium text-label-2"
+                  className="bg-fill text-label-2 inline-flex h-5 items-center rounded-[4px] px-1.5 text-[10.5px] font-medium"
                 >
                   <span className="max-w-[140px] truncate">{tag}</span>
                 </span>
@@ -203,10 +226,10 @@ export function TicketProperties({
           </div>
         )}
 
-        <div className="my-1 h-px bg-separator" />
+        <div className="bg-separator my-1 h-px" />
 
         <div className="flex items-center gap-2 px-1.5 py-1">
-          <span className="w-[74px] shrink-0 text-[12.5px] text-label-3">
+          <span className="text-label-3 w-[74px] shrink-0 text-[12.5px]">
             Requester
           </span>
           <span className="flex min-w-0 items-center gap-1.5">
@@ -215,7 +238,7 @@ export function TicketProperties({
               color={requester.avatarColor}
               size={18}
             />
-            <span className="truncate text-[12.5px] text-label">
+            <span className="text-label truncate text-[12.5px]">
               {requester.name}
             </span>
           </span>

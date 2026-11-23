@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useActionState } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import { useFormStatus } from "react-dom";
+
+import Link from "next/link";
+
 import {
   ArrowLeft,
   Check,
@@ -17,14 +18,19 @@ import {
   TriangleAlert,
   X,
 } from "lucide-react";
-import type { Category } from "@/generated/prisma/enums";
-import { saveArticle, type ActionState } from "@/app/app/actions";
-import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/status";
-import { Button } from "@/components/ui/button";
+import { motion, useReducedMotion } from "motion/react";
+
+import { type ActionState, saveArticle } from "@/app/app/actions";
 import { GlassBadge } from "@/components/liquid-glass";
-import { Kbd } from "@/components/ui/kbd";
-import { PropertySelect, type SelectOption } from "@/components/ui/property-select";
 import { Markdown } from "@/components/markdown";
+import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
+import {
+  PropertySelect,
+  type SelectOption,
+} from "@/components/ui/property-select";
+import type { Category } from "@/generated/prisma/enums";
+import { CATEGORY_META, CATEGORY_ORDER } from "@/lib/status";
 import { cn } from "@/lib/utils";
 
 type EditableArticle = {
@@ -50,11 +56,11 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
   const [title, setTitle] = React.useState(article?.title ?? "");
   const [body, setBody] = React.useState(article?.body ?? "");
   const [category, setCategory] = React.useState<Category>(
-    article?.category ?? "OTHER",
+    article?.category ?? "OTHER"
   );
   const [tags, setTags] = React.useState<string[]>(article?.tags ?? []);
   const [published, setPublished] = React.useState(
-    article?.isPublished ?? true,
+    article?.isPublished ?? true
   );
   const [mode, setMode] = React.useState<"write" | "preview">("write");
   const bodyRef = React.useRef<HTMLTextAreaElement>(null);
@@ -63,7 +69,9 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
-        const form = document.getElementById("article-form") as HTMLFormElement | null;
+        const form = document.getElementById(
+          "article-form"
+        ) as HTMLFormElement | null;
         form?.requestSubmit();
       }
     }
@@ -88,7 +96,7 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Link
           href={article ? `/app/knowledge/${article.slug}` : "/app/knowledge"}
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-label-2 transition-colors hover:text-label"
+          className="text-label-2 hover:text-label inline-flex items-center gap-1.5 text-[12px] font-medium transition-colors"
         >
           <ArrowLeft className="size-3.5" />
           {article ? "Back to article" : "Knowledge"}
@@ -104,7 +112,9 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
         <div className="ml-auto flex items-center gap-2">
           <Button asChild variant="ghost" size="md">
             <Link
-              href={article ? `/app/knowledge/${article.slug}` : "/app/knowledge"}
+              href={
+                article ? `/app/knowledge/${article.slug}` : "/app/knowledge"
+              }
             >
               Cancel
             </Link>
@@ -128,9 +138,9 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
               maxLength={160}
               autoFocus
               required
-              className="w-full bg-transparent text-[22px] font-semibold leading-7 tracking-[-0.025em] text-label outline-none placeholder:text-label-3"
+              className="text-label placeholder:text-label-3 w-full bg-transparent text-[22px] leading-7 font-semibold tracking-[-0.025em] outline-none"
             />
-            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-label-3">
+            <div className="text-label-3 mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
               <Pencil className="size-3 shrink-0" />
               <span className="min-w-0 truncate">
                 {article
@@ -141,8 +151,11 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
             </div>
           </div>
 
-          <div className="mt-4 flex items-center gap-1 border-y border-separator bg-surface-sunken/40 px-4 py-1.5">
-            <TabButton active={mode === "write"} onClick={() => setMode("write")}>
+          <div className="border-separator bg-surface-sunken/40 mt-4 flex items-center gap-1 border-y px-4 py-1.5">
+            <TabButton
+              active={mode === "write"}
+              onClick={() => setMode("write")}
+            >
               Write
             </TabButton>
             <TabButton
@@ -153,7 +166,7 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
               <Eye className="size-3" />
               Preview
             </TabButton>
-            <span className="ml-auto hidden items-center gap-1 text-[10.5px] text-label-3 sm:flex">
+            <span className="text-label-3 ml-auto hidden items-center gap-1 text-[10.5px] sm:flex">
               Markdown supported · <Kbd>⌘</Kbd> <Kbd>⏎</Kbd> to save
             </span>
           </div>
@@ -169,10 +182,12 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
                 ref={bodyRef}
                 value={body}
                 onChange={(event) => setBody(event.target.value)}
-                placeholder={"## Overview\n\nExplain the fix in a sentence.\n\n## Steps\n\n1. …\n2. …"}
+                placeholder={
+                  "## Overview\n\nExplain the fix in a sentence.\n\n## Steps\n\n1. …\n2. …"
+                }
                 required
                 minLength={40}
-                className="min-h-[430px] w-full resize-y bg-transparent px-5 py-4 font-mono text-[12.5px] leading-6 text-label outline-none placeholder:text-label-3"
+                className="text-label placeholder:text-label-3 min-h-[430px] w-full resize-y bg-transparent px-5 py-4 font-mono text-[12.5px] leading-6 outline-none"
               />
             </div>
           ) : (
@@ -185,7 +200,7 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
           {state.error && (
             <div
               role="alert"
-              className="mx-5 mb-4 flex items-start gap-2 rounded-[9px] bg-danger-soft px-3 py-2.5 text-[12px] leading-4 text-danger"
+              className="bg-danger-soft text-danger mx-5 mb-4 flex items-start gap-2 rounded-[9px] px-3 py-2.5 text-[12px] leading-4"
             >
               <TriangleAlert className="mt-px size-3.5 shrink-0" />
               <span>{state.error}</span>
@@ -195,14 +210,14 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
 
         <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
           <div className="surface-card overflow-clip">
-            <header className="flex h-10 items-center border-b border-separator px-3.5">
-              <h2 className="m-0 text-[12px] font-semibold text-label">
+            <header className="border-separator flex h-10 items-center border-b px-3.5">
+              <h2 className="text-label m-0 text-[12px] font-semibold">
                 Properties
               </h2>
             </header>
             <div className="space-y-3 p-3.5">
               <div>
-                <p className="mb-1.5 text-[10.5px] font-medium uppercase tracking-[0.055em] text-label-3">
+                <p className="text-label-3 mb-1.5 text-[10.5px] font-medium tracking-[0.055em] uppercase">
                   Category
                 </p>
                 <PropertySelect
@@ -216,13 +231,13 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
 
               <TagEditor tags={tags} onChange={setTags} />
 
-              <div className="border-t border-separator pt-3">
+              <div className="border-separator border-t pt-3">
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <p className="m-0 text-[12px] font-medium text-label">
+                    <p className="text-label m-0 text-[12px] font-medium">
                       Published
                     </p>
-                    <p className="m-0 mt-0.5 text-[10.5px] leading-4 text-label-3">
+                    <p className="text-label-3 m-0 mt-0.5 text-[10.5px] leading-4">
                       {published
                         ? "Everyone in the workspace can read this."
                         : "Only IT staff can see drafts."}
@@ -236,18 +251,20 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
                     onClick={() => setPublished((value) => !value)}
                     className={cn(
                       "press relative h-[22px] w-[38px] shrink-0 rounded-full transition-colors duration-100",
-                      published ? "bg-success" : "bg-fill-strong",
+                      published ? "bg-success" : "bg-fill-strong"
                     )}
                   >
                     <motion.span
                       initial={false}
-                      animate={{ transform: `translateX(${published ? 16 : 0}px)` }}
+                      animate={{
+                        transform: `translateX(${published ? 16 : 0}px)`,
+                      }}
                       transition={
                         reduced
                           ? { duration: 0 }
                           : { type: "spring", stiffness: 800, damping: 42 }
                       }
-                      className="absolute left-[2px] top-[2px] size-[18px] rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
+                      className="absolute top-[2px] left-[2px] size-[18px] rounded-full bg-white shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
                     />
                   </button>
                 </div>
@@ -257,28 +274,28 @@ export function ArticleEditor({ article }: { article?: EditableArticle }) {
 
           <div className="surface-card p-3.5">
             <div className="flex items-center gap-2">
-              <span className="inline-flex size-7 items-center justify-center rounded-[8px] bg-accent-soft text-accent">
+              <span className="bg-accent-soft text-accent inline-flex size-7 items-center justify-center rounded-[8px]">
                 <Sparkles className="size-3.5" />
               </span>
-              <p className="m-0 text-[12px] font-medium text-label">
+              <p className="text-label m-0 text-[12px] font-medium">
                 What makes a good guide
               </p>
             </div>
-            <ul className="mt-2.5 space-y-1.5 text-[11px] leading-4 text-label-3">
+            <ul className="text-label-3 mt-2.5 space-y-1.5 text-[11px] leading-4">
               <li className="flex gap-1.5">
-                <Check className="mt-0.5 size-3 shrink-0 text-success" />
+                <Check className="text-success mt-0.5 size-3 shrink-0" />
                 Title it the way someone would ask the question.
               </li>
               <li className="flex gap-1.5">
-                <Check className="mt-0.5 size-3 shrink-0 text-success" />
+                <Check className="text-success mt-0.5 size-3 shrink-0" />
                 Lead with the fix, then the detail.
               </li>
               <li className="flex gap-1.5">
-                <Check className="mt-0.5 size-3 shrink-0 text-success" />
+                <Check className="text-success mt-0.5 size-3 shrink-0" />
                 Number the steps and name the menus.
               </li>
               <li className="flex gap-1.5">
-                <Check className="mt-0.5 size-3 shrink-0 text-success" />
+                <Check className="text-success mt-0.5 size-3 shrink-0" />
                 End with what to do if it still fails.
               </li>
             </ul>
@@ -310,7 +327,7 @@ function TabButton({
         "press inline-flex items-center gap-1.5 rounded-[6px] px-2 py-1 text-[11.5px] font-medium transition-colors duration-100 disabled:opacity-40",
         active
           ? "bg-surface-solid text-label shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
-          : "text-label-2 hover:text-label",
+          : "text-label-2 hover:text-label"
       )}
     >
       {children}
@@ -336,21 +353,21 @@ function TagEditor({
 
   return (
     <div>
-      <p className="mb-1.5 text-[10.5px] font-medium uppercase tracking-[0.055em] text-label-3">
+      <p className="text-label-3 mb-1.5 text-[10.5px] font-medium tracking-[0.055em] uppercase">
         Tags
       </p>
       <div className="flex flex-wrap items-center gap-1.5">
         {tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex h-6 items-center gap-1 rounded-full bg-fill pl-2 pr-1 text-[11px] font-medium text-label-2"
+            className="bg-fill text-label-2 inline-flex h-6 items-center gap-1 rounded-full pr-1 pl-2 text-[11px] font-medium"
           >
             <span className="max-w-[180px] truncate">{tag}</span>
             <button
               type="button"
               aria-label={`Remove ${tag}`}
               onClick={() => onChange(tags.filter((item) => item !== tag))}
-              className="press inline-flex size-4 items-center justify-center rounded-full text-label-3 hover:bg-fill-strong hover:text-label"
+              className="press text-label-3 hover:bg-fill-strong hover:text-label inline-flex size-4 items-center justify-center rounded-full"
             >
               <X className="size-2.5" />
             </button>
@@ -371,7 +388,7 @@ function TagEditor({
             }}
             onBlur={() => addTag(draft)}
             placeholder={tags.length === 0 ? "Add a tag…" : "Add"}
-            className="h-6 min-w-[70px] flex-1 rounded-[6px] bg-transparent px-1 text-[11.5px] text-label outline-none placeholder:text-label-3"
+            className="text-label placeholder:text-label-3 h-6 min-w-[70px] flex-1 rounded-[6px] bg-transparent px-1 text-[11.5px] outline-none"
           />
         )}
       </div>

@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import {
   BookOpen,
   ChartNoAxesColumn,
@@ -12,21 +14,25 @@ import {
   Search,
   Ticket,
 } from "lucide-react";
-import type { Viewer } from "@/lib/session";
-import { cn } from "@/lib/utils";
-import { PageTransition } from "@/components/ui/page-transition";
-import { Button } from "@/components/ui/button";
-import { Kbd } from "@/components/ui/kbd";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { UserMenu } from "@/components/layout/user-menu";
+
+import {
+  AppSidebar,
+  type SidebarNavItem,
+} from "@/components/layout/app-sidebar";
 import { CommandPalette } from "@/components/layout/command-palette";
 import { GlobalShortcuts } from "@/components/layout/global-shortcuts";
-import { AppSidebar, type SidebarNavItem } from "@/components/layout/app-sidebar";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { UserMenu } from "@/components/layout/user-menu";
+import { Button } from "@/components/ui/button";
+import { Kbd } from "@/components/ui/kbd";
+import { PageTransition } from "@/components/ui/page-transition";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import type { Viewer } from "@/lib/session";
+import { cn } from "@/lib/utils";
 
 type Counts = {
   inbox: number;
@@ -89,7 +95,7 @@ export function AppShell({
       />
 
       <SidebarInset>
-        <header className="glass-chrome sticky top-0 z-30 flex h-[var(--topbar-h)] shrink-0 items-center gap-2 border-b border-separator px-3 sm:px-5">
+        <header className="glass-chrome border-separator sticky top-0 z-30 flex h-[var(--topbar-h)] shrink-0 items-center gap-2 border-b px-3 sm:px-5">
           <SidebarTrigger className="-ml-1" />
 
           <Breadcrumbs pathname={pathname} />
@@ -103,14 +109,14 @@ export function AppShell({
                     key: "k",
                     metaKey: true,
                     bubbles: true,
-                  }),
+                  })
                 )
               }
-              className="press hidden h-8 items-center gap-2 rounded-[8px] border border-separator bg-surface-solid/60 pl-2.5 pr-1.5 text-[12px] text-label-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] sm:flex sm:w-[210px]"
+              className="press border-separator bg-surface-solid/60 text-label-3 hidden h-8 items-center gap-2 rounded-[8px] border pr-1.5 pl-2.5 text-[12px] shadow-[0_1px_2px_rgba(0,0,0,0.03)] sm:flex sm:w-[210px]"
             >
               <Search className="size-3.5" />
               <span className="flex-1 text-left">Search Tasu</span>
-              <Kbd className="border-transparent bg-fill">⌘K</Kbd>
+              <Kbd className="bg-fill border-transparent">⌘K</Kbd>
             </button>
 
             <Button
@@ -123,7 +129,7 @@ export function AppShell({
               <Link href="/app/inbox">
                 <Inbox />
                 {counts.inbox > 0 && (
-                  <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-accent ring-2 ring-[var(--sidebar)]" />
+                  <span className="bg-accent absolute top-1.5 right-1.5 size-1.5 rounded-full ring-2 ring-[var(--sidebar)]" />
                 )}
               </Link>
             </Button>
@@ -136,7 +142,7 @@ export function AppShell({
         </header>
 
         <div className="app-canvas min-w-0 flex-1">
-          <div className="mx-auto w-full max-w-[1240px] px-4 pb-20 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+          <div className="mx-auto w-full max-w-[1240px] px-4 pt-6 pb-20 sm:px-6 lg:px-8 lg:pt-8">
             <PageTransition key={pathname}>{children}</PageTransition>
           </div>
         </div>
@@ -146,7 +152,10 @@ export function AppShell({
 }
 
 function Breadcrumbs({ pathname }: { pathname: string }) {
-  const parts = pathname.replace(/^\/app\/?/, "").split("/").filter(Boolean);
+  const parts = pathname
+    .replace(/^\/app\/?/, "")
+    .split("/")
+    .filter(Boolean);
   const labels: Record<string, string> = {
     tickets: "My tickets",
     queue: "Queue",
@@ -174,16 +183,19 @@ function Breadcrumbs({ pathname }: { pathname: string }) {
   if (crumbs.length > 2) crumbs.splice(1, crumbs.length - 2);
 
   return (
-    <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 text-[12.5px]">
+    <nav
+      aria-label="Breadcrumb"
+      className="flex min-w-0 items-center gap-1 text-[12.5px]"
+    >
       {crumbs.map((crumb, index) => (
         <React.Fragment key={`${crumb.label}-${index}`}>
           {index > 0 && (
-            <ChevronRight className="size-3 shrink-0 text-label-3" />
+            <ChevronRight className="text-label-3 size-3 shrink-0" />
           )}
           <span
             className={cn(
               "truncate",
-              crumb.last ? "font-medium text-label" : "text-label-3",
+              crumb.last ? "text-label font-medium" : "text-label-3"
             )}
             aria-current={crumb.last ? "page" : undefined}
           >

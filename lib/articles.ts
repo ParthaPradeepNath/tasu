@@ -1,4 +1,5 @@
 import type { Category } from "@/generated/prisma/enums";
+
 import { prisma } from "./prisma";
 
 export const ARTICLE_CARD_SELECT = {
@@ -76,7 +77,7 @@ export async function suggestArticles(
     category: Category;
     tags: string[];
   },
-  limit = 2,
+  limit = 2
 ) {
   const articles = await prisma.knowledgeArticle.findMany({
     where: { isPublished: true },
@@ -98,14 +99,17 @@ export async function suggestArticles(
 
   return articles
     .map((article) => {
-      const haystack = `${article.title} ${article.tags.join(" ")}`.toLowerCase();
+      const haystack =
+        `${article.title} ${article.tags.join(" ")}`.toLowerCase();
       let score = words.reduce(
         (total, word) => total + (haystack.includes(word) ? 2 : 0),
-        0,
+        0
       );
       if (article.category === ticket.category) score += 2;
       score += article.tags.filter((tag) =>
-        ticket.tags.map((value) => value.toLowerCase()).includes(tag.toLowerCase()),
+        ticket.tags
+          .map((value) => value.toLowerCase())
+          .includes(tag.toLowerCase())
       ).length;
       return { article, score };
     })

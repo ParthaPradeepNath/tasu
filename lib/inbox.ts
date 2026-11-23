@@ -1,8 +1,9 @@
 import type { TicketStatus } from "@/generated/prisma/enums";
-import { prisma } from "./prisma";
+
 import { isStaff } from "./permissions";
-import { TICKET_LIST_SELECT, type TicketListItem } from "./tickets";
+import { prisma } from "./prisma";
 import type { Viewer } from "./session";
+import { TICKET_LIST_SELECT, type TicketListItem } from "./tickets";
 
 const ACTIVE: TicketStatus[] = ["OPEN", "IN_PROGRESS", "WAITING_ON_USER"];
 
@@ -66,7 +67,7 @@ export async function getInbox(viewer: Viewer) {
   ]);
 
   const byStatus = Object.fromEntries(
-    counts.map((group) => [group.status, group._count._all]),
+    counts.map((group) => [group.status, group._count._all])
   ) as Partial<Record<TicketStatus, number>>;
 
   return {

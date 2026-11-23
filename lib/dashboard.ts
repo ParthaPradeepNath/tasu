@@ -1,9 +1,11 @@
 import { format, startOfDay, startOfMonth, subDays } from "date-fns";
-import type { TicketStatus } from "@/generated/prisma/enums";
+
 import type { Prisma } from "@/generated/prisma/client";
+import type { TicketStatus } from "@/generated/prisma/enums";
+
 import { prisma } from "./prisma";
-import { TICKET_LIST_SELECT, type TicketListItem } from "./tickets";
 import type { Viewer } from "./session";
+import { TICKET_LIST_SELECT, type TicketListItem } from "./tickets";
 
 const ACTIVE: TicketStatus[] = ["OPEN", "IN_PROGRESS", "WAITING_ON_USER"];
 
@@ -63,9 +65,9 @@ export async function getEmployeeDashboard(viewer: Viewer) {
       }),
     ]);
 
-  const categorySet = Array.from(new Set(categories.map((c) => c.category))).filter(
-    (category) => category !== "OTHER",
-  );
+  const categorySet = Array.from(
+    new Set(categories.map((c) => c.category))
+  ).filter((category) => category !== "OTHER");
 
   const suggested = await prisma.knowledgeArticle.findMany({
     where: {
@@ -184,7 +186,10 @@ export async function getStaffDashboard() {
     prisma.ticket.findMany({
       where: {
         deletedAt: null,
-        OR: [{ createdAt: { gte: weekStart } }, { resolvedAt: { gte: weekStart } }],
+        OR: [
+          { createdAt: { gte: weekStart } },
+          { resolvedAt: { gte: weekStart } },
+        ],
       },
       select: { createdAt: true, resolvedAt: true },
       take: 1000,
@@ -221,23 +226,25 @@ export async function getStaffDashboard() {
           );
         }, 0) / responseSamples.length;
 
-  const volume: StaffVolumePoint[] = Array.from({ length: 7 }).map((_, index) => {
-    const day = subDays(now, 6 - index);
-    const dayStart = startOfDay(day);
-    const dayEnd = subDays(dayStart, -1);
-    return {
-      day: format(day, "EEE"),
-      created: volumeTickets.filter(
-        (ticket) => ticket.createdAt >= dayStart && ticket.createdAt < dayEnd,
-      ).length,
-      resolved: volumeTickets.filter(
-        (ticket) =>
-          ticket.resolvedAt &&
-          ticket.resolvedAt >= dayStart &&
-          ticket.resolvedAt < dayEnd,
-      ).length,
-    };
-  });
+  const volume: StaffVolumePoint[] = Array.from({ length: 7 }).map(
+    (_, index) => {
+      const day = subDays(now, 6 - index);
+      const dayStart = startOfDay(day);
+      const dayEnd = subDays(dayStart, -1);
+      return {
+        day: format(day, "EEE"),
+        created: volumeTickets.filter(
+          (ticket) => ticket.createdAt >= dayStart && ticket.createdAt < dayEnd
+        ).length,
+        resolved: volumeTickets.filter(
+          (ticket) =>
+            ticket.resolvedAt &&
+            ticket.resolvedAt >= dayStart &&
+            ticket.resolvedAt < dayEnd
+        ).length,
+      };
+    }
+  );
 
   return {
     unassigned,

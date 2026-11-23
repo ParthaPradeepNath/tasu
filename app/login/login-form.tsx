@@ -1,14 +1,23 @@
 "use client";
 
 import * as React from "react";
+
 import { useRouter } from "next/navigation";
-import { ArrowRight, CornerDownLeft, Loader2, LockKeyhole, TriangleAlert } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
-import { useWebHaptics } from "@/hooks/use-web-haptics";
+
+import {
+  ArrowRight,
+  CornerDownLeft,
+  Loader2,
+  LockKeyhole,
+  TriangleAlert,
+} from "lucide-react";
+
 import { Logo, Wordmark } from "@/components/brand";
 import { GlassButton, GlassCard } from "@/components/liquid-glass";
 import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
+import { authClient } from "@/lib/auth-client";
 
 const DEMOS = [
   {
@@ -51,7 +60,7 @@ export function LoginForm() {
       triggerHaptic("error");
       setError(
         result.error.message ??
-          "That didn't work. Check your email and password and try again.",
+          "That didn't work. Check your email and password and try again."
       );
       setLoading(false);
       return;
@@ -75,7 +84,7 @@ export function LoginForm() {
         <Logo size={44} />
         <div className="flex items-baseline gap-1.5">
           <Wordmark className="text-[17px]" />
-          <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-label-3">
+          <span className="text-label-3 text-[11px] font-medium tracking-[0.12em] uppercase">
             Help desk
           </span>
         </div>
@@ -83,10 +92,10 @@ export function LoginForm() {
 
       <GlassCard tint={0.72} blur={18} className="rounded-[22px] p-7">
         <div className="mb-6">
-          <h1 className="m-0 text-[21px] font-semibold tracking-[-0.025em] text-label">
+          <h1 className="text-label m-0 text-[21px] font-semibold tracking-[-0.025em]">
             Sign in to Tasu
           </h1>
-          <p className="mt-1 text-[13px] leading-5 text-label-2">
+          <p className="text-label-2 mt-1 text-[13px] leading-5">
             Support, handled. Use your work account to continue.
           </p>
         </div>
@@ -101,7 +110,7 @@ export function LoginForm() {
           <div className="space-y-1.5">
             <label
               htmlFor="email"
-              className="block text-[12px] font-medium text-label-2"
+              className="text-label-2 block text-[12px] font-medium"
             >
               Work email
             </label>
@@ -124,11 +133,13 @@ export function LoginForm() {
             <div className="flex flex-wrap items-center justify-between gap-1">
               <label
                 htmlFor="password"
-                className="block text-[12px] font-medium text-label-2"
+                className="text-label-2 block text-[12px] font-medium"
               >
                 Password
               </label>
-              <span className="text-[11px] text-label-3">Demo password: tasu-demo</span>
+              <span className="text-label-3 text-[11px]">
+                Demo password: tasu-demo
+              </span>
             </div>
             <Input
               id="password"
@@ -147,7 +158,7 @@ export function LoginForm() {
           {error && (
             <div
               role="alert"
-              className="flex items-start gap-2 rounded-[9px] bg-danger-soft px-3 py-2.5 text-[12px] leading-4 text-danger"
+              className="bg-danger-soft text-danger flex items-start gap-2 rounded-[9px] px-3 py-2.5 text-[12px] leading-4"
             >
               <TriangleAlert className="mt-px size-3.5 shrink-0" />
               <span>{error}</span>
@@ -158,7 +169,7 @@ export function LoginForm() {
             type="submit"
             material="tinted"
             size="lg"
-            className="w-full justify-between rounded-[12px] border border-white/15 bg-accent text-white"
+            className="bg-accent w-full justify-between rounded-[12px] border border-white/15 text-white"
             disabled={loading}
           >
             <span className="flex items-center gap-2">
@@ -178,7 +189,7 @@ export function LoginForm() {
         <div className="mt-6">
           <div className="mb-2 flex items-center gap-2">
             <span className="eyebrow">Demo accounts</span>
-            <span className="h-px flex-1 bg-separator" />
+            <span className="bg-separator h-px flex-1" />
           </div>
           <div className="grid gap-1.5">
             {DEMOS.map((demo) => (
@@ -187,30 +198,30 @@ export function LoginForm() {
                 type="button"
                 onClick={() => fillDemo(demo.email)}
                 disabled={loading}
-                className="press group flex h-10 w-full items-center gap-2.5 rounded-[9px] border border-transparent px-2 text-left hover:border-separator hover:bg-fill disabled:opacity-50"
+                className="press group hover:border-separator hover:bg-fill flex h-10 w-full items-center gap-2.5 rounded-[9px] border border-transparent px-2 text-left disabled:opacity-50"
               >
-                <span className="flex size-6 items-center justify-center rounded-full bg-fill text-[10px] font-semibold text-label-2">
+                <span className="bg-fill text-label-2 flex size-6 items-center justify-center rounded-full text-[10px] font-semibold">
                   {demo.role[0]}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[12.5px] font-medium leading-4 text-label">
+                  <span className="text-label block text-[12.5px] leading-4 font-medium">
                     {demo.role}
-                    <span className="ml-1.5 font-normal text-label-3">
+                    <span className="text-label-3 ml-1.5 font-normal">
                       {demo.name}
                     </span>
                   </span>
-                  <span className="block text-[11px] leading-4 text-label-3">
+                  <span className="text-label-3 block text-[11px] leading-4">
                     {demo.note}
                   </span>
                 </span>
-                <ArrowRight className="nudge size-3.5 text-label-3 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
+                <ArrowRight className="nudge text-label-3 size-3.5 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
               </button>
             ))}
           </div>
         </div>
       </GlassCard>
 
-      <p className="mt-5 text-center text-[11.5px] text-label-3">
+      <p className="text-label-3 mt-5 text-center text-[11.5px]">
         Trouble signing in? Ask IT — or open a ticket once you&apos;re in.
       </p>
     </div>

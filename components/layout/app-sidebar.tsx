@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+
 import { Plus, Search } from "lucide-react";
-import type { Viewer } from "@/lib/session";
+
 import { Logo, Wordmark } from "@/components/brand";
-import { Kbd } from "@/components/ui/kbd";
 import { UserMenu } from "@/components/layout/user-menu";
+import { Kbd } from "@/components/ui/kbd";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +24,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
+import type { Viewer } from "@/lib/session";
 
 export type SidebarNavItem = {
   href: string;
@@ -34,7 +36,7 @@ export type SidebarNavItem = {
 
 function openSearch() {
   document.dispatchEvent(
-    new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true }),
+    new KeyboardEvent("keydown", { key: "k", metaKey: true, bubbles: true })
   );
 }
 
@@ -59,7 +61,9 @@ function NavRow({
         </Link>
       </SidebarMenuButton>
       {typeof item.count === "number" && item.count > 0 && (
-        <SidebarMenuBadge>{item.count > 99 ? "99+" : item.count}</SidebarMenuBadge>
+        <SidebarMenuBadge>
+          {item.count > 99 ? "99+" : item.count}
+        </SidebarMenuBadge>
       )}
     </SidebarMenuItem>
   );
@@ -80,7 +84,7 @@ export function AppSidebar({
 
   return (
     <Sidebar variant="inset" collapsible="icon" className="glass-chrome">
-      <SidebarHeader className="h-[53px] justify-center border-b border-separator px-2">
+      <SidebarHeader className="border-separator h-[53px] justify-center border-b px-2">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="Tasu overview">
@@ -97,7 +101,11 @@ export function AppSidebar({
         <SidebarGroup>
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarGroupAction asChild>
-            <Link href="/app/tickets/new" title="New ticket" aria-label="New ticket">
+            <Link
+              href="/app/tickets/new"
+              title="New ticket"
+              aria-label="New ticket"
+            >
               <Plus />
             </Link>
           </SidebarGroupAction>
@@ -122,7 +130,7 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-separator">
+      <SidebarFooter className="border-separator border-t">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Search" onClick={openSearch}>
@@ -134,7 +142,11 @@ export function AppSidebar({
         </SidebarMenu>
         <SidebarSeparator />
         <div className="px-0.5">
-          <UserMenu user={user} variant="sidebar" collapsed={state === "collapsed"} />
+          <UserMenu
+            user={user}
+            variant="sidebar"
+            collapsed={state === "collapsed"}
+          />
         </div>
       </SidebarFooter>
 

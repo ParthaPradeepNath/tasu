@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+
+import Link from "next/link";
+
 import {
   BookOpen,
   Check,
@@ -14,14 +16,23 @@ import {
   TriangleAlert,
   X,
 } from "lucide-react";
-import { createTicket, type ActionState } from "@/app/app/actions";
-import type { Category, Priority } from "@/generated/prisma/enums";
-import { CATEGORY_META, CATEGORY_ORDER, PRIORITY_META, PRIORITY_ORDER } from "@/lib/status";
-import { SLA_TARGETS } from "@/lib/sla";
+
+import { type ActionState, createTicket } from "@/app/app/actions";
+import { Markdown } from "@/components/markdown";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
-import { PropertySelect, type SelectOption } from "@/components/ui/property-select";
-import { Markdown } from "@/components/markdown";
+import {
+  PropertySelect,
+  type SelectOption,
+} from "@/components/ui/property-select";
+import type { Category, Priority } from "@/generated/prisma/enums";
+import { SLA_TARGETS } from "@/lib/sla";
+import {
+  CATEGORY_META,
+  CATEGORY_ORDER,
+  PRIORITY_META,
+  PRIORITY_ORDER,
+} from "@/lib/status";
 import { cn } from "@/lib/utils";
 
 type Article = {
@@ -77,10 +88,11 @@ export function NewTicketForm({
     if (words.length === 0) return [];
     return articles
       .map((article) => {
-        const haystack = `${article.title} ${article.tags.join(" ")}`.toLowerCase();
+        const haystack =
+          `${article.title} ${article.tags.join(" ")}`.toLowerCase();
         const score = words.reduce(
           (total, word) => total + (haystack.includes(word) ? 1 : 0),
-          0,
+          0
         );
         return { article, score };
       })
@@ -91,8 +103,9 @@ export function NewTicketForm({
   }, [articles, title]);
 
   function insertArticle(article: Article) {
-    setDescription((value) =>
-      `${value}${value.trim() ? "\n\n" : ""}Possibly related: [${article.title}](/app/knowledge/${article.slug})`,
+    setDescription(
+      (value) =>
+        `${value}${value.trim() ? "\n\n" : ""}Possibly related: [${article.title}](/app/knowledge/${article.slug})`
     );
     setMode("write");
     requestAnimationFrame(() => descriptionRef.current?.focus());
@@ -102,7 +115,9 @@ export function NewTicketForm({
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
         event.preventDefault();
-        const form = document.getElementById("new-ticket-form") as HTMLFormElement | null;
+        const form = document.getElementById(
+          "new-ticket-form"
+        ) as HTMLFormElement | null;
         form?.requestSubmit();
       }
     }
@@ -132,9 +147,9 @@ export function NewTicketForm({
             maxLength={140}
             autoFocus
             required
-            className="w-full bg-transparent text-[20px] font-semibold leading-7 tracking-[-0.02em] text-label outline-none placeholder:text-label-3"
+            className="text-label placeholder:text-label-3 w-full bg-transparent text-[20px] leading-7 font-semibold tracking-[-0.02em] outline-none"
           />
-          <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-label-3">
+          <div className="text-label-3 mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
             <span className="min-w-0 truncate">Opened by {requesterName}</span>
             <span aria-hidden>·</span>
             <span className="hidden sm:inline">
@@ -145,8 +160,8 @@ export function NewTicketForm({
         </div>
 
         {related.length > 0 && (
-          <div className="mx-5 mt-4 rounded-[10px] border border-accent/15 bg-accent-soft/60 p-2.5">
-            <p className="mb-1.5 flex items-center gap-1.5 px-0.5 text-[10.5px] font-medium uppercase tracking-[0.05em] text-accent">
+          <div className="border-accent/15 bg-accent-soft/60 mx-5 mt-4 rounded-[10px] border p-2.5">
+            <p className="text-accent mb-1.5 flex items-center gap-1.5 px-0.5 text-[10.5px] font-medium tracking-[0.05em] uppercase">
               <Sparkles className="size-3" />
               Might already be answered
             </p>
@@ -154,20 +169,20 @@ export function NewTicketForm({
               {related.map((article) => (
                 <div
                   key={article.slug}
-                  className="flex items-center gap-2 rounded-[6px] px-1.5 py-1 transition-colors hover:bg-surface-solid/60"
+                  className="hover:bg-surface-solid/60 flex items-center gap-2 rounded-[6px] px-1.5 py-1 transition-colors"
                 >
-                  <BookOpen className="size-3 shrink-0 text-accent/70" />
+                  <BookOpen className="text-accent/70 size-3 shrink-0" />
                   <Link
                     href={`/app/knowledge/${article.slug}`}
                     target="_blank"
-                    className="min-w-0 flex-1 truncate text-[12px] font-medium text-label hover:text-accent"
+                    className="text-label hover:text-accent min-w-0 flex-1 truncate text-[12px] font-medium"
                   >
                     {article.title}
                   </Link>
                   <button
                     type="button"
                     onClick={() => insertArticle(article)}
-                    className="press shrink-0 rounded-[5px] px-1.5 py-0.5 text-[10.5px] font-medium text-accent hover:bg-accent-soft-strong"
+                    className="press text-accent hover:bg-accent-soft-strong shrink-0 rounded-[5px] px-1.5 py-0.5 text-[10.5px] font-medium"
                   >
                     Reference
                   </button>
@@ -177,7 +192,7 @@ export function NewTicketForm({
           </div>
         )}
 
-        <div className="mt-4 flex items-center gap-1 border-y border-separator bg-surface-sunken/40 px-4 py-1.5">
+        <div className="border-separator bg-surface-sunken/40 mt-4 flex items-center gap-1 border-y px-4 py-1.5">
           <TabButton active={mode === "write"} onClick={() => setMode("write")}>
             Write
           </TabButton>
@@ -188,7 +203,7 @@ export function NewTicketForm({
           >
             Preview
           </TabButton>
-          <span className="ml-auto hidden items-center gap-1 text-[10.5px] text-label-3 sm:flex">
+          <span className="text-label-3 ml-auto hidden items-center gap-1 text-[10.5px] sm:flex">
             Markdown supported
           </span>
         </div>
@@ -208,7 +223,7 @@ export function NewTicketForm({
                 placeholder="What happened? What have you tried? Anything that would help IT reproduce it…"
                 required
                 minLength={12}
-                className="min-h-[240px] w-full resize-y bg-transparent px-5 py-4 text-[13.5px] leading-6 text-label outline-none placeholder:text-label-3"
+                className="text-label placeholder:text-label-3 min-h-[240px] w-full resize-y bg-transparent px-5 py-4 text-[13.5px] leading-6 outline-none"
               />
             </>
           ) : (
@@ -221,15 +236,15 @@ export function NewTicketForm({
         {state.error && (
           <div
             role="alert"
-            className="mx-5 mb-4 flex items-start gap-2 rounded-[9px] bg-danger-soft px-3 py-2.5 text-[12px] leading-4 text-danger"
+            className="bg-danger-soft text-danger mx-5 mb-4 flex items-start gap-2 rounded-[9px] px-3 py-2.5 text-[12px] leading-4"
           >
             <TriangleAlert className="mt-px size-3.5 shrink-0" />
             <span>{state.error}</span>
           </div>
         )}
 
-        <div className="sticky bottom-0 flex items-center gap-2 border-t border-separator bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] px-4 py-3 backdrop-blur-xl">
-          <span className="hidden text-[11px] text-label-3 sm:block">
+        <div className="border-separator sticky bottom-0 flex items-center gap-2 border-t bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] px-4 py-3 backdrop-blur-xl">
+          <span className="text-label-3 hidden text-[11px] sm:block">
             You&apos;ll get an email and an in-app update on every reply.
           </span>
           <div className="ml-auto flex items-center gap-2">
@@ -243,12 +258,14 @@ export function NewTicketForm({
 
       <aside className="space-y-3 lg:sticky lg:top-[76px] lg:max-h-[calc(100dvh-92px)] lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
         <div className="surface-card overflow-clip">
-          <header className="flex h-10 items-center border-b border-separator px-3.5">
-            <h2 className="m-0 text-[12px] font-semibold text-label">Properties</h2>
+          <header className="border-separator flex h-10 items-center border-b px-3.5">
+            <h2 className="text-label m-0 text-[12px] font-semibold">
+              Properties
+            </h2>
           </header>
           <div className="space-y-3 p-3.5">
             <div>
-              <p className="mb-1.5 text-[10.5px] font-medium uppercase tracking-[0.055em] text-label-3">
+              <p className="text-label-3 mb-1.5 text-[10.5px] font-medium tracking-[0.055em] uppercase">
                 Category
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -263,7 +280,7 @@ export function NewTicketForm({
             </div>
 
             <div>
-              <p className="mb-1.5 text-[10.5px] font-medium uppercase tracking-[0.055em] text-label-3">
+              <p className="text-label-3 mb-1.5 text-[10.5px] font-medium tracking-[0.055em] uppercase">
                 Priority
               </p>
               <PropertySelect
@@ -286,27 +303,28 @@ export function NewTicketForm({
 
         <div className="surface-card p-3.5">
           <div className="flex items-center gap-2">
-            <span className="inline-flex size-7 items-center justify-center rounded-[8px] bg-warning-soft text-warning">
+            <span className="bg-warning-soft text-warning inline-flex size-7 items-center justify-center rounded-[8px]">
               <Check className="size-3.5" />
             </span>
             <div>
-              <p className="m-0 text-[12px] font-medium text-label">
+              <p className="text-label m-0 text-[12px] font-medium">
                 Response target
               </p>
-              <p className="m-0 text-[11px] text-label-3">
-                {sla.firstResponseHours}h first reply · {sla.resolveHours}h resolve
+              <p className="text-label-3 m-0 text-[11px]">
+                {sla.firstResponseHours}h first reply · {sla.resolveHours}h
+                resolve
               </p>
             </div>
           </div>
-          <p className="mt-2.5 text-[11px] leading-4 text-label-3">
+          <p className="text-label-3 mt-2.5 text-[11px] leading-4">
             Targets scale with priority. If it&apos;s blocking your work, say so
             in the description.
           </p>
         </div>
 
-        <p className="px-1 text-[11px] leading-4 text-label-3">
-          Press{" "}
-          <Kbd>⌘</Kbd> <Kbd>
+        <p className="text-label-3 px-1 text-[11px] leading-4">
+          Press <Kbd>⌘</Kbd>{" "}
+          <Kbd>
             <CornerDownLeft className="size-2.5" />
           </Kbd>{" "}
           to create the ticket from anywhere in the form.
@@ -337,7 +355,7 @@ function TabButton({
         "press rounded-[6px] px-2 py-1 text-[11.5px] font-medium transition-colors duration-100 disabled:opacity-40",
         active
           ? "bg-surface-solid text-label shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
-          : "text-label-2 hover:text-label",
+          : "text-label-2 hover:text-label"
       )}
     >
       {children}
@@ -363,21 +381,21 @@ function TagEditor({
 
   return (
     <div>
-      <p className="mb-1.5 text-[10.5px] font-medium uppercase tracking-[0.055em] text-label-3">
+      <p className="text-label-3 mb-1.5 text-[10.5px] font-medium tracking-[0.055em] uppercase">
         Tags
       </p>
       <div className="flex flex-wrap items-center gap-1.5">
         {tags.map((tag) => (
           <span
             key={tag}
-            className="inline-flex h-6 items-center gap-1 rounded-full bg-fill pl-2 pr-1 text-[11px] font-medium text-label-2"
+            className="bg-fill text-label-2 inline-flex h-6 items-center gap-1 rounded-full pr-1 pl-2 text-[11px] font-medium"
           >
             <span className="max-w-[180px] truncate">{tag}</span>
             <button
               type="button"
               aria-label={`Remove ${tag}`}
               onClick={() => onChange(tags.filter((item) => item !== tag))}
-              className="press inline-flex size-4 items-center justify-center rounded-full text-label-3 hover:bg-fill-strong hover:text-label"
+              className="press text-label-3 hover:bg-fill-strong hover:text-label inline-flex size-4 items-center justify-center rounded-full"
             >
               <X className="size-2.5" />
             </button>
@@ -398,7 +416,7 @@ function TagEditor({
             }}
             onBlur={() => addTag(draft)}
             placeholder={tags.length === 0 ? "Add a tag…" : "Add"}
-            className="h-6 min-w-[70px] flex-1 rounded-[6px] bg-transparent px-1 text-[11.5px] text-label outline-none placeholder:text-label-3"
+            className="text-label placeholder:text-label-3 h-6 min-w-[70px] flex-1 rounded-[6px] bg-transparent px-1 text-[11.5px] outline-none"
           />
         )}
       </div>
@@ -414,7 +432,9 @@ function SubmitButton() {
       {pending ? <Loader2 className="animate-spin" /> : <Plus />}
       {pending ? "Creating…" : "Create ticket"}
       {!pending && (
-        <Kbd className="ml-0.5 border-white/20 bg-white/10 text-white/70">⌘⏎</Kbd>
+        <Kbd className="ml-0.5 border-white/20 bg-white/10 text-white/70">
+          ⌘⏎
+        </Kbd>
       )}
     </Button>
   );

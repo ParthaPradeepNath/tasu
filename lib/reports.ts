@@ -1,8 +1,9 @@
 import { format, startOfDay, subDays } from "date-fns";
-import { prisma } from "./prisma";
-import { CATEGORY_ORDER, PRIORITY_ORDER } from "./status";
-import { SLA_TARGETS } from "./sla";
+
 import type { StaffVolumePoint } from "./dashboard";
+import { prisma } from "./prisma";
+import { SLA_TARGETS } from "./sla";
+import { CATEGORY_ORDER, PRIORITY_ORDER } from "./status";
 
 export const REPORT_RANGES = ["7d", "30d", "90d"] as const;
 export type ReportRange = (typeof REPORT_RANGES)[number];
@@ -13,7 +14,11 @@ export const RANGE_LABEL: Record<ReportRange, string> = {
   "90d": "Last 90 days",
 };
 
-const RANGE_DAYS: Record<ReportRange, number> = { "7d": 7, "30d": 30, "90d": 90 };
+const RANGE_DAYS: Record<ReportRange, number> = {
+  "7d": 7,
+  "30d": 30,
+  "90d": 90,
+};
 
 function percentChange(current: number, previous: number) {
   if (previous === 0) return current === 0 ? 0 : 100;
@@ -121,7 +126,7 @@ export async function getReports(range: ReportRange) {
     .filter((ticket) => ticket.firstResponseAt)
     .map(
       (ticket) =>
-        (ticket.firstResponseAt!.getTime() - ticket.createdAt.getTime()) / 60000,
+        (ticket.firstResponseAt!.getTime() - ticket.createdAt.getTime()) / 60000
     );
 
   const resolutionHours = resolved
@@ -129,21 +134,21 @@ export async function getReports(range: ReportRange) {
     .map(
       (ticket) =>
         (ticket.resolvedAt!.getTime() - ticket.createdAt.getTime()) /
-        (60 * 60 * 1000),
+        (60 * 60 * 1000)
     );
 
   const withinTarget = created.filter(
     (ticket) =>
       ticket.firstResponseAt &&
       ticket.slaFirstResponseDueAt &&
-      ticket.firstResponseAt.getTime() <= ticket.slaFirstResponseDueAt.getTime(),
+      ticket.firstResponseAt.getTime() <= ticket.slaFirstResponseDueAt.getTime()
   ).length;
 
   const resolvedWithinSla = resolved.filter(
     (ticket) =>
       ticket.resolvedAt &&
       ticket.slaResolveDueAt &&
-      ticket.resolvedAt.getTime() <= ticket.slaResolveDueAt.getTime(),
+      ticket.resolvedAt.getTime() <= ticket.slaResolveDueAt.getTime()
   ).length;
 
   const categories = CATEGORY_ORDER.map((category) => ({
@@ -158,7 +163,7 @@ export async function getReports(range: ReportRange) {
       (ticket) =>
         ticket.slaFirstResponseDueAt &&
         ticket.firstResponseAt!.getTime() <=
-          ticket.slaFirstResponseDueAt.getTime(),
+          ticket.slaFirstResponseDueAt.getTime()
     ).length;
 
     return {
@@ -172,12 +177,14 @@ export async function getReports(range: ReportRange) {
                 (ticket) =>
                   (ticket.firstResponseAt!.getTime() -
                     ticket.createdAt.getTime()) /
-                  (60 * 60 * 1000),
-              ),
+                  (60 * 60 * 1000)
+              )
             ),
       targetHours: SLA_TARGETS[priority].firstResponseHours,
       withinTargetPct:
-        responded.length === 0 ? null : Math.round((within / responded.length) * 100),
+        responded.length === 0
+          ? null
+          : Math.round((within / responded.length) * 100),
     };
   });
 
@@ -191,13 +198,13 @@ export async function getReports(range: ReportRange) {
         day: format(bucketStart, "MMM d"),
         created: created.filter(
           (ticket) =>
-            ticket.createdAt >= bucketStart && ticket.createdAt < bucketEnd,
+            ticket.createdAt >= bucketStart && ticket.createdAt < bucketEnd
         ).length,
         resolved: resolved.filter(
           (ticket) =>
             ticket.resolvedAt &&
             ticket.resolvedAt >= bucketStart &&
-            ticket.resolvedAt < bucketEnd,
+            ticket.resolvedAt < bucketEnd
         ).length,
       });
     }
@@ -208,13 +215,13 @@ export async function getReports(range: ReportRange) {
       volume.push({
         day: format(day, range === "7d" ? "EEE" : "MMM d"),
         created: created.filter(
-          (ticket) => ticket.createdAt >= day && ticket.createdAt < dayEnd,
+          (ticket) => ticket.createdAt >= day && ticket.createdAt < dayEnd
         ).length,
         resolved: resolved.filter(
           (ticket) =>
             ticket.resolvedAt &&
             ticket.resolvedAt >= day &&
-            ticket.resolvedAt < dayEnd,
+            ticket.resolvedAt < dayEnd
         ).length,
       });
     }

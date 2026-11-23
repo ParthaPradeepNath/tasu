@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -10,19 +12,24 @@ import {
   Pencil,
   Plus,
 } from "lucide-react";
-import type { Metadata } from "next";
-import { requireViewer } from "@/lib/session";
-import { isStaff } from "@/lib/permissions";
-import { getArticleBySlug, listArticles } from "@/lib/articles";
-import { CATEGORY_META, CATEGORY_TONE, TONE_CLASSES } from "@/lib/status";
-import { relativeTime } from "@/lib/dates";
-import { extractHeadings, Markdown, readingMinutes } from "@/components/markdown";
+
+import { GlassBadge } from "@/components/liquid-glass";
+import {
+  extractHeadings,
+  Markdown,
+  readingMinutes,
+} from "@/components/markdown";
+import { CategoryIcon } from "@/components/tickets/category-icon";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { GlassBadge } from "@/components/liquid-glass";
-import { CategoryIcon } from "@/components/tickets/category-icon";
-import { ArticleFeedback, TableOfContents } from "./article-feedback";
+import { getArticleBySlug, listArticles } from "@/lib/articles";
+import { relativeTime } from "@/lib/dates";
+import { isStaff } from "@/lib/permissions";
+import { requireViewer } from "@/lib/session";
+import { CATEGORY_META, CATEGORY_TONE, TONE_CLASSES } from "@/lib/status";
 import { cn } from "@/lib/utils";
+
+import { ArticleFeedback, TableOfContents } from "./article-feedback";
 
 export async function generateMetadata({
   params,
@@ -55,8 +62,9 @@ export default async function ArticlePage({
   const helpfulRate =
     article.helpfulCount + article.notHelpfulCount > 0
       ? Math.round(
-          (article.helpfulCount / (article.helpfulCount + article.notHelpfulCount)) *
-            100,
+          (article.helpfulCount /
+            (article.helpfulCount + article.notHelpfulCount)) *
+            100
         )
       : null;
 
@@ -65,7 +73,7 @@ export default async function ArticlePage({
       <div className="mb-5 flex flex-wrap items-center gap-2">
         <Link
           href="/app/knowledge"
-          className="inline-flex items-center gap-1.5 text-[12px] font-medium text-label-2 transition-colors hover:text-label"
+          className="text-label-2 hover:text-label inline-flex items-center gap-1.5 text-[12px] font-medium transition-colors"
         >
           <ArrowLeft className="size-3.5" />
           Knowledge
@@ -76,7 +84,7 @@ export default async function ArticlePage({
         <span
           className={cn(
             "inline-flex h-5 items-center gap-1.5 rounded-full px-2 text-[10.5px] font-medium",
-            TONE_CLASSES[CATEGORY_TONE[article.category]],
+            TONE_CLASSES[CATEGORY_TONE[article.category]]
           )}
         >
           <CategoryIcon category={article.category} className="size-2.5" />
@@ -107,22 +115,24 @@ export default async function ArticlePage({
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_252px]">
         <div className="min-w-0">
           <header className="mb-5">
-            <h1 className="m-0 max-w-[680px] text-[29px] font-semibold leading-[1.16] tracking-[-0.03em] text-label text-balance break-words [overflow-wrap:anywhere]">
+            <h1 className="text-label m-0 max-w-[680px] text-[29px] leading-[1.16] font-semibold tracking-[-0.03em] text-balance [overflow-wrap:anywhere] break-words">
               {article.title}
             </h1>
 
-            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] text-label-3">
+            <div className="text-label-3 mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px]">
               <span className="flex items-center gap-1.5">
                 <Avatar
                   name={article.author.name}
                   color={article.author.avatarColor}
                   size={20}
                 />
-                <span className="font-medium text-label-2">
+                <span className="text-label-2 font-medium">
                   {article.author.name}
                 </span>
                 {article.author.title && (
-                  <span className="hidden sm:inline">· {article.author.title}</span>
+                  <span className="hidden sm:inline">
+                    · {article.author.title}
+                  </span>
                 )}
               </span>
               <span aria-hidden>·</span>
@@ -144,7 +154,7 @@ export default async function ArticlePage({
                 {article.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex h-5 items-center rounded-[5px] bg-fill px-1.5 text-[10.5px] font-medium text-label-2"
+                    className="bg-fill text-label-2 inline-flex h-5 items-center rounded-[5px] px-1.5 text-[10.5px] font-medium"
                   >
                     #{tag}
                   </span>
@@ -166,7 +176,7 @@ export default async function ArticlePage({
           </div>
 
           {helpfulRate !== null && (
-            <p className="num mt-2 px-1 text-[10.5px] text-label-3">
+            <p className="num text-label-3 mt-2 px-1 text-[10.5px]">
               {helpfulRate}% of {article.helpfulCount + article.notHelpfulCount}{" "}
               readers found this helpful
             </p>
@@ -177,41 +187,41 @@ export default async function ArticlePage({
           <TableOfContents headings={headings} />
 
           <div className="surface-card overflow-clip">
-            <header className="flex h-10 items-center justify-between border-b border-separator px-3.5">
-              <h2 className="m-0 text-[12px] font-semibold text-label">
+            <header className="border-separator flex h-10 items-center justify-between border-b px-3.5">
+              <h2 className="text-label m-0 text-[12px] font-semibold">
                 More in {CATEGORY_META[article.category].label.toLowerCase()}
               </h2>
               <Link
                 href="/app/knowledge"
-                className="text-[10.5px] font-medium text-accent hover:underline"
+                className="text-accent text-[10.5px] font-medium hover:underline"
               >
                 All
               </Link>
             </header>
             {related.length === 0 ? (
-              <p className="px-3.5 py-4 text-[11.5px] leading-5 text-label-3">
+              <p className="text-label-3 px-3.5 py-4 text-[11.5px] leading-5">
                 This is the only article in this category so far.
               </p>
             ) : (
-              <ul className="divide-y divide-separator">
+              <ul className="divide-separator divide-y">
                 {related.map((item) => (
                   <li key={item.slug}>
                     <Link
                       href={`/app/knowledge/${item.slug}`}
-                      className="group flex items-start gap-2.5 px-3.5 py-2.5 transition-colors hover:bg-surface-hover"
+                      className="group hover:bg-surface-hover flex items-start gap-2.5 px-3.5 py-2.5 transition-colors"
                     >
-                      <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-[6px] bg-fill text-label-3">
+                      <span className="bg-fill text-label-3 mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-[6px]">
                         <BookOpen className="size-3" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[11.5px] font-medium leading-4 text-label">
+                        <span className="text-label block text-[11.5px] leading-4 font-medium">
                           {item.title}
                         </span>
-                        <span className="mt-0.5 block text-[10.5px] text-label-3">
+                        <span className="text-label-3 mt-0.5 block text-[10.5px]">
                           {readingMinutes(item.body)} min read
                         </span>
                       </span>
-                      <ArrowUpRight className="mt-0.5 size-3 shrink-0 text-label-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                      <ArrowUpRight className="text-label-3 mt-0.5 size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
                     </Link>
                   </li>
                 ))}
@@ -221,18 +231,23 @@ export default async function ArticlePage({
 
           <div className="surface-card p-3.5">
             <div className="flex items-center gap-2">
-              <span className="inline-flex size-7 items-center justify-center rounded-[8px] bg-accent-soft text-accent">
+              <span className="bg-accent-soft text-accent inline-flex size-7 items-center justify-center rounded-[8px]">
                 <LifeBuoy className="size-3.5" />
               </span>
-              <p className="m-0 text-[12px] font-medium text-label">
+              <p className="text-label m-0 text-[12px] font-medium">
                 Still stuck?
               </p>
             </div>
-            <p className="mt-2 text-[11px] leading-4 text-label-3">
+            <p className="text-label-3 mt-2 text-[11px] leading-4">
               If this didn&apos;t solve it, IT would rather hear from you than
               have you lose an afternoon.
             </p>
-            <Button asChild variant="secondary" size="sm" className="mt-2.5 w-full">
+            <Button
+              asChild
+              variant="secondary"
+              size="sm"
+              className="mt-2.5 w-full"
+            >
               <Link href="/app/tickets/new">
                 <Plus />
                 Open a ticket

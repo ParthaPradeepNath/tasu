@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+
 import Link from "next/link";
+
 import {
   ArrowUpRight,
   Clock3,
@@ -11,12 +13,18 @@ import {
   ThumbsUp,
   X,
 } from "lucide-react";
-import type { Category } from "@/generated/prisma/enums";
-import { CATEGORY_META, CATEGORY_ORDER, CATEGORY_TONE, TONE_CLASSES } from "@/lib/status";
-import { CategoryIcon } from "@/components/tickets/category-icon";
+
 import { plainText, readingMinutes } from "@/components/markdown";
-import { relativeTime } from "@/lib/dates";
+import { CategoryIcon } from "@/components/tickets/category-icon";
 import { Kbd } from "@/components/ui/kbd";
+import type { Category } from "@/generated/prisma/enums";
+import { relativeTime } from "@/lib/dates";
+import {
+  CATEGORY_META,
+  CATEGORY_ORDER,
+  CATEGORY_TONE,
+  TONE_CLASSES,
+} from "@/lib/status";
 import { cn } from "@/lib/utils";
 
 export type KnowledgeArticleSummary = {
@@ -84,7 +92,7 @@ export function KnowledgeBrowser({
     <div>
       <div className="surface-card overflow-clip">
         <div className="flex items-center gap-2.5 px-4 py-3">
-          <Search className="size-4 shrink-0 text-label-3" />
+          <Search className="text-label-3 size-4 shrink-0" />
           <label htmlFor="knowledge-search" className="sr-only">
             Search the knowledge base
           </label>
@@ -94,25 +102,25 @@ export function KnowledgeBrowser({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search guides, fixes, and how-tos…"
-            className="h-7 min-w-0 flex-1 bg-transparent text-[14px] text-label outline-none placeholder:text-label-3"
+            className="text-label placeholder:text-label-3 h-7 min-w-0 flex-1 bg-transparent text-[14px] outline-none"
           />
           {query ? (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="press inline-flex size-6 shrink-0 items-center justify-center rounded-full text-label-3 hover:bg-fill hover:text-label"
+              className="press text-label-3 hover:bg-fill hover:text-label inline-flex size-6 shrink-0 items-center justify-center rounded-full"
             >
               <X className="size-3.5" />
             </button>
           ) : (
-            <span className="hidden shrink-0 items-center gap-1 text-[10.5px] text-label-3 sm:flex">
+            <span className="text-label-3 hidden shrink-0 items-center gap-1 text-[10.5px] sm:flex">
               <Kbd>/</Kbd> to search
             </span>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 border-t border-separator bg-surface-sunken/40 px-4 py-2">
+        <div className="border-separator bg-surface-sunken/40 flex flex-wrap items-center gap-1.5 border-t px-4 py-2">
           <CategoryPill
             active={!category}
             onClick={() => setCategory(null)}
@@ -120,7 +128,9 @@ export function KnowledgeBrowser({
             count={articles.length}
           />
           {CATEGORY_ORDER.map((key) => {
-            const count = articles.filter((article) => article.category === key).length;
+            const count = articles.filter(
+              (article) => article.category === key
+            ).length;
             if (count === 0) return null;
             return (
               <CategoryPill
@@ -140,11 +150,11 @@ export function KnowledgeBrowser({
           {featuredArticles.length > 0 && (
             <section className="mt-6">
               <div className="mb-2.5 flex items-center gap-1.5">
-                <Sparkles className="size-3.5 text-accent" />
-                <h2 className="m-0 text-[12.5px] font-semibold text-label">
+                <Sparkles className="text-accent size-3.5" />
+                <h2 className="text-label m-0 text-[12.5px] font-semibold">
                   Most read
                 </h2>
-                <span className="text-[11px] text-label-3">— start here</span>
+                <span className="text-label-3 text-[11px]">— start here</span>
               </div>
               <div className="grid gap-3 md:grid-cols-3">
                 {featuredArticles.map((article) => (
@@ -156,10 +166,10 @@ export function KnowledgeBrowser({
 
           <section className="mt-7">
             <div className="mb-2.5 flex items-end justify-between gap-3">
-              <h2 className="m-0 text-[12.5px] font-semibold text-label">
+              <h2 className="text-label m-0 text-[12.5px] font-semibold">
                 Browse all
               </h2>
-              <span className="num text-[11px] text-label-3">
+              <span className="num text-label-3 text-[11px]">
                 {articles.length} articles
               </span>
             </div>
@@ -167,23 +177,23 @@ export function KnowledgeBrowser({
             <div className="grid gap-4 lg:grid-cols-2">
               {groups.map((group) => (
                 <div key={group.key} className="surface-card overflow-clip">
-                  <header className="flex h-10 items-center gap-2 border-b border-separator px-3.5">
+                  <header className="border-separator flex h-10 items-center gap-2 border-b px-3.5">
                     <span
                       className={cn(
                         "inline-flex size-5 items-center justify-center rounded-[5px]",
-                        TONE_CLASSES[CATEGORY_TONE[group.key]],
+                        TONE_CLASSES[CATEGORY_TONE[group.key]]
                       )}
                     >
                       <CategoryIcon category={group.key} className="size-3" />
                     </span>
-                    <h3 className="m-0 text-[12px] font-semibold text-label">
+                    <h3 className="text-label m-0 text-[12px] font-semibold">
                       {CATEGORY_META[group.key].label}
                     </h3>
-                    <span className="num ml-auto text-[10.5px] text-label-3">
+                    <span className="num text-label-3 ml-auto text-[10.5px]">
                       {group.articles.length}
                     </span>
                   </header>
-                  <ul className="list-enter divide-y divide-separator">
+                  <ul className="list-enter divide-separator divide-y">
                     {group.articles.map((article) => (
                       <li key={article.slug}>
                         <ArticleRow article={article} />
@@ -198,7 +208,7 @@ export function KnowledgeBrowser({
       ) : (
         <section className="mt-6">
           <div className="mb-2.5 flex items-center justify-between gap-3">
-            <h2 className="m-0 min-w-0 truncate text-[12.5px] font-semibold text-label">
+            <h2 className="text-label m-0 min-w-0 truncate text-[12.5px] font-semibold">
               {normalized
                 ? `${filtered.length} ${filtered.length === 1 ? "result" : "results"} for “${query.trim()}”`
                 : `${CATEGORY_META[category!].label} · ${filtered.length} articles`}
@@ -209,7 +219,7 @@ export function KnowledgeBrowser({
                 setQuery("");
                 setCategory(null);
               }}
-              className="press shrink-0 text-[11.5px] font-medium text-accent hover:underline"
+              className="press text-accent shrink-0 text-[11.5px] font-medium hover:underline"
             >
               Clear
             </button>
@@ -217,26 +227,26 @@ export function KnowledgeBrowser({
 
           {filtered.length === 0 ? (
             <div className="surface-card flex flex-col items-center px-6 py-14 text-center">
-              <span className="mb-4 inline-flex size-11 items-center justify-center rounded-[12px] bg-fill text-label-3">
+              <span className="bg-fill text-label-3 mb-4 inline-flex size-11 items-center justify-center rounded-[12px]">
                 <Search className="size-4.5" />
               </span>
-              <h3 className="m-0 text-[14px] font-medium text-label">
+              <h3 className="text-label m-0 text-[14px] font-medium">
                 No articles match
               </h3>
-              <p className="mt-1 max-w-[320px] text-[12.5px] leading-5 text-label-2">
+              <p className="text-label-2 mt-1 max-w-[320px] text-[12.5px] leading-5">
                 Try a shorter search, or open a ticket and IT will write the
                 answer for next time.
               </p>
               <Link
                 href="/app/tickets/new"
-                className="press mt-4 inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-accent px-3 text-[12px] font-medium text-white"
+                className="press bg-accent mt-4 inline-flex h-8 items-center gap-1.5 rounded-[8px] px-3 text-[12px] font-medium text-white"
               >
                 Open a ticket
               </Link>
             </div>
           ) : (
             <div className="surface-card overflow-clip">
-              <ul className="list-enter divide-y divide-separator">
+              <ul className="list-enter divide-separator divide-y">
                 {filtered.map((article) => (
                   <li key={article.slug}>
                     <ArticleRow article={article} expanded />
@@ -271,11 +281,16 @@ function CategoryPill({
         "press inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium transition-colors duration-100",
         active
           ? "bg-surface-solid text-label shadow-[0_1px_2px_rgba(0,0,0,0.07)]"
-          : "text-label-2 hover:bg-fill hover:text-label",
+          : "text-label-2 hover:bg-fill hover:text-label"
       )}
     >
       {label}
-      <span className={cn("num text-[10px]", active ? "text-label-3" : "text-label-3")}>
+      <span
+        className={cn(
+          "num text-[10px]",
+          active ? "text-label-3" : "text-label-3"
+        )}
+      >
         {count}
       </span>
     </button>
@@ -292,23 +307,23 @@ function FeaturedCard({ article }: { article: KnowledgeArticleSummary }) {
         <span
           className={cn(
             "inline-flex size-7 items-center justify-center rounded-[8px]",
-            TONE_CLASSES[CATEGORY_TONE[article.category]],
+            TONE_CLASSES[CATEGORY_TONE[article.category]]
           )}
         >
           <CategoryIcon category={article.category} className="size-3.5" />
         </span>
-        <span className="text-[10.5px] font-medium uppercase tracking-[0.05em] text-label-3">
+        <span className="text-label-3 text-[10.5px] font-medium tracking-[0.05em] uppercase">
           {CATEGORY_META[article.category].label}
         </span>
-        <ArrowUpRight className="nudge ml-auto size-3.5 text-label-3 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
+        <ArrowUpRight className="nudge text-label-3 ml-auto size-3.5 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
       </div>
-      <h3 className="mt-3 text-[14px] font-semibold leading-[1.35] tracking-[-0.015em] text-label">
+      <h3 className="text-label mt-3 text-[14px] leading-[1.35] font-semibold tracking-[-0.015em]">
         {article.title}
       </h3>
-      <p className="mt-1.5 line-clamp-2 text-[11.5px] leading-[1.55] text-label-2">
+      <p className="text-label-2 mt-1.5 line-clamp-2 text-[11.5px] leading-[1.55]">
         {plainText(article.body, 120)}
       </p>
-      <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-3 text-[10.5px] text-label-3">
+      <div className="text-label-3 mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-3 text-[10.5px]">
         <span className="inline-flex items-center gap-1">
           <Clock3 className="size-3" />
           {readingMinutes(article.body)} min
@@ -336,26 +351,26 @@ function ArticleRow({
   return (
     <Link
       href={`/app/knowledge/${article.slug}`}
-      className="group flex items-start gap-3 px-3.5 py-3 transition-colors duration-100 hover:bg-surface-hover"
+      className="group hover:bg-surface-hover flex items-start gap-3 px-3.5 py-3 transition-colors duration-100"
     >
       <span
         className={cn(
           "mt-px inline-flex size-6 shrink-0 items-center justify-center rounded-[6px]",
-          TONE_CLASSES[CATEGORY_TONE[article.category]],
+          TONE_CLASSES[CATEGORY_TONE[article.category]]
         )}
       >
         <CategoryIcon category={article.category} className="size-3" />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[12.5px] font-medium leading-[1.4] text-label">
+        <span className="text-label block text-[12.5px] leading-[1.4] font-medium">
           {article.title}
         </span>
         {expanded && (
-          <span className="mt-0.5 line-clamp-1 block text-[11.5px] leading-[1.5] text-label-2">
+          <span className="text-label-2 mt-0.5 line-clamp-1 block text-[11.5px] leading-[1.5]">
             {plainText(article.body, 160)}
           </span>
         )}
-        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10.5px] text-label-3">
+        <span className="text-label-3 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10.5px]">
           <span>{CATEGORY_META[article.category].label}</span>
           <span aria-hidden>·</span>
           <span suppressHydrationWarning>
@@ -366,14 +381,14 @@ function ArticleRow({
           {article.tags.slice(0, 2).map((tag) => (
             <span
               key={tag}
-              className="inline-flex h-4 items-center rounded-[4px] bg-fill px-1 text-[9.5px] font-medium text-label-2"
+              className="bg-fill text-label-2 inline-flex h-4 items-center rounded-[4px] px-1 text-[9.5px] font-medium"
             >
               {tag}
             </span>
           ))}
         </span>
       </span>
-      <ArrowUpRight className="nudge mt-0.5 size-3.5 shrink-0 text-label-3 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
+      <ArrowUpRight className="nudge text-label-3 mt-0.5 size-3.5 shrink-0 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
     </Link>
   );
 }

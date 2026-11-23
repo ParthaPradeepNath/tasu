@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+
 import { cn } from "@/lib/utils";
 
 const Tooltip = TooltipPrimitive.Root;
@@ -16,8 +18,8 @@ const TooltipContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "motion-pop z-[70] max-w-[260px] rounded-[7px] border border-line bg-surface-solid px-2 py-1 text-[11.5px] font-medium text-label shadow-[var(--shadow-pop)]",
-        className,
+        "motion-pop border-line bg-surface-solid text-label z-[70] max-w-[260px] rounded-[7px] border px-2 py-1 text-[11.5px] font-medium shadow-[var(--shadow-pop)]",
+        className
       )}
       {...props}
     />

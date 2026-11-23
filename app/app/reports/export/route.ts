@@ -1,9 +1,14 @@
 import { startOfDay, subDays } from "date-fns";
-import { prisma } from "@/lib/prisma";
-import { getViewer } from "@/lib/session";
-import { REPORT_RANGES, type ReportRange } from "@/lib/reports";
 
-const RANGE_DAYS: Record<ReportRange, number> = { "7d": 7, "30d": 30, "90d": 90 };
+import { prisma } from "@/lib/prisma";
+import { REPORT_RANGES, type ReportRange } from "@/lib/reports";
+import { getViewer } from "@/lib/session";
+
+const RANGE_DAYS: Record<ReportRange, number> = {
+  "7d": 7,
+  "30d": 30,
+  "90d": 90,
+};
 
 function cell(value: string | number | null | undefined) {
   const text = value === null || value === undefined ? "" : String(value);
@@ -16,7 +21,9 @@ export async function GET(request: Request) {
     return new Response("Sign in to export reports.", { status: 401 });
   }
   if (viewer.role === "employee") {
-    return new Response("Reports are only available to IT staff.", { status: 403 });
+    return new Response("Reports are only available to IT staff.", {
+      status: 403,
+    });
   }
 
   const url = new URL(request.url);
@@ -83,7 +90,9 @@ export async function GET(request: Request) {
       : "",
   ]);
 
-  const csv = [header, ...rows].map((row) => row.map(cell).join(",")).join("\n");
+  const csv = [header, ...rows]
+    .map((row) => row.map(cell).join(","))
+    .join("\n");
   const filename = `tasu-tickets-${range}-${new Date().toISOString().slice(0, 10)}.csv`;
 
   return new Response(csv, {

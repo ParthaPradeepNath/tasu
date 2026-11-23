@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
+
+import { AppShell } from "@/components/layout/app-shell";
 import type { TicketStatus } from "@/generated/prisma/enums";
 import { prisma } from "@/lib/prisma";
 import { requireViewer } from "@/lib/session";
-import { AppShell } from "@/components/layout/app-shell";
 
 export default async function WorkspaceLayout({
   children,
@@ -46,10 +47,7 @@ export default async function WorkspaceLayout({
   ]);
 
   return (
-    <AppShell
-      user={viewer}
-      counts={{ inbox, unassigned, waiting }}
-    >
+    <AppShell user={viewer} counts={{ inbox, unassigned, waiting }}>
       {children}
     </AppShell>
   );

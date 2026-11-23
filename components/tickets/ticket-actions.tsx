@@ -1,21 +1,22 @@
 "use client";
 
 import * as React from "react";
+
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+
 import {
   Check,
   CircleDot,
+  Clock,
   Ellipsis,
   Loader2,
   RotateCcw,
   UserRoundPlus,
-  Clock,
   XCircle,
 } from "lucide-react";
-import type { TicketStatus } from "@/generated/prisma/enums";
+import { toast } from "sonner";
+
 import { updateTicket } from "@/app/app/actions";
-import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,6 +26,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { TicketStatus } from "@/generated/prisma/enums";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 
 export function TicketActions({
   ticketId,
@@ -70,7 +73,12 @@ export function TicketActions({
             variant="secondary"
             size="md"
             disabled={pending}
-            onClick={() => change({ status: "OPEN" }, "Reopened — IT will take another look.")}
+            onClick={() =>
+              change(
+                { status: "OPEN" },
+                "Reopened — IT will take another look."
+              )
+            }
           >
             <RotateCcw />
             Still broken
@@ -96,7 +104,9 @@ export function TicketActions({
           variant="secondary"
           size="md"
           disabled={pending}
-          onClick={() => change({ status: "OPEN" }, "Reopened — IT will take another look.")}
+          onClick={() =>
+            change({ status: "OPEN" }, "Reopened — IT will take another look.")
+          }
         >
           <RotateCcw />
           Reopen
@@ -129,7 +139,7 @@ export function TicketActions({
           onClick={() =>
             change(
               { assigneeId: viewerId },
-              "Assigned to you. It's in your queue now.",
+              "Assigned to you. It's in your queue now."
             )
           }
         >
@@ -143,7 +153,10 @@ export function TicketActions({
           size="md"
           disabled={pending}
           onClick={() =>
-            change({ status: "RESOLVED" }, "Resolved. The requester has been asked to confirm.")
+            change(
+              { status: "RESOLVED" },
+              "Resolved. The requester has been asked to confirm."
+            )
           }
         >
           {pending ? <Loader2 className="animate-spin" /> : <Check />}
@@ -163,7 +176,11 @@ export function TicketActions({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon" aria-label="More ticket actions">
+          <Button
+            variant="secondary"
+            size="icon"
+            aria-label="More ticket actions"
+          >
             <Ellipsis />
           </Button>
         </DropdownMenuTrigger>
@@ -173,7 +190,7 @@ export function TicketActions({
             onSelect={() =>
               change(
                 { status: "WAITING_ON_USER" },
-                "Marked waiting on the requester.",
+                "Marked waiting on the requester."
               )
             }
           >

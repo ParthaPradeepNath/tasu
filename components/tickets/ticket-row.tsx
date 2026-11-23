@@ -1,13 +1,15 @@
 import Link from "next/link";
+
 import { ChevronRight } from "lucide-react";
-import type { Role } from "@/lib/permissions";
-import { compactRelative, relativeTime } from "@/lib/dates";
-import { cn } from "@/lib/utils";
-import { StatusDot } from "@/components/tickets/status-chip";
-import { PriorityBars } from "@/components/tickets/priority-bars";
+
 import { CategoryIcon } from "@/components/tickets/category-icon";
+import { PriorityBars } from "@/components/tickets/priority-bars";
+import { StatusDot } from "@/components/tickets/status-chip";
 import { Avatar } from "@/components/ui/avatar";
+import { compactRelative, relativeTime } from "@/lib/dates";
+import type { Role } from "@/lib/permissions";
 import type { TicketListItem } from "@/lib/tickets";
+import { cn } from "@/lib/utils";
 
 export function TicketRow({
   ticket,
@@ -46,13 +48,13 @@ export function TicketRow({
         selected
           ? "bg-accent-soft shadow-[inset_0_0_0_1px_rgba(0,113,227,0.12)]"
           : "hover:bg-surface-hover",
-        className,
+        className
       )}
     >
       {selected && (
         <span
           aria-hidden
-          className="indicator-in absolute inset-y-2 left-0 w-[2px] rounded-r-full bg-accent"
+          className="indicator-in bg-accent absolute inset-y-2 left-0 w-[2px] rounded-r-full"
         />
       )}
 
@@ -60,8 +62,8 @@ export function TicketRow({
 
       <span
         className={cn(
-          "num hidden shrink-0 whitespace-nowrap font-mono text-label-3 sm:block",
-          compact ? "w-[68px] text-[10.5px]" : "w-[76px] text-[11px]",
+          "num text-label-3 hidden shrink-0 font-mono whitespace-nowrap sm:block",
+          compact ? "w-[68px] text-[10.5px]" : "w-[76px] text-[11px]"
         )}
       >
         {ticket.key}
@@ -70,14 +72,14 @@ export function TicketRow({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block truncate font-medium leading-4 text-label",
-            compact ? "text-[12px]" : "text-[12.8px]",
+            "text-label block truncate leading-4 font-medium",
+            compact ? "text-[12px]" : "text-[12.8px]"
           )}
         >
           {ticket.title}
         </span>
         {!compact && (
-          <span className="mt-0.5 flex items-center gap-1.5 text-[10.5px] leading-3 text-label-3 sm:hidden">
+          <span className="text-label-3 mt-0.5 flex items-center gap-1.5 text-[10.5px] leading-3 sm:hidden">
             <span className="num font-mono">{ticket.key}</span>
             <span aria-hidden>·</span>
             <span>{ticket.replyCount} replies</span>
@@ -112,8 +114,8 @@ export function TicketRow({
       ) : (
         <span
           className={cn(
-            "hidden shrink-0 rounded-full border border-dashed border-line sm:inline-block",
-            compact ? "size-[19px]" : "size-[21px]",
+            "border-line hidden shrink-0 rounded-full border border-dashed sm:inline-block",
+            compact ? "size-[19px]" : "size-[21px]"
           )}
         />
       )}
@@ -122,8 +124,8 @@ export function TicketRow({
         dateTime={ticket.lastActivityAt.toISOString()}
         suppressHydrationWarning
         className={cn(
-          "num shrink-0 whitespace-nowrap text-right text-label-3",
-          compact ? "w-[34px] text-[10.5px]" : "w-[68px] text-[11px]",
+          "num text-label-3 shrink-0 text-right whitespace-nowrap",
+          compact ? "w-[34px] text-[10.5px]" : "w-[68px] text-[11px]"
         )}
       >
         {compact
@@ -133,7 +135,7 @@ export function TicketRow({
 
       <ChevronRight
         aria-hidden
-        className="size-3.5 shrink-0 text-label-3 opacity-0 transition-[opacity,transform] duration-150 ease-amicro group-hover:translate-x-[3px] group-hover:opacity-100 group-focus-visible:opacity-100"
+        className="text-label-3 ease-amicro size-3.5 shrink-0 opacity-0 transition-[opacity,transform] duration-150 group-hover:translate-x-[3px] group-hover:opacity-100 group-focus-visible:opacity-100"
       />
     </Link>
   );
@@ -160,7 +162,7 @@ function StatusMini({
             : "Closed";
 
   return (
-    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-[11px] text-label-2">
+    <span className="text-label-2 inline-flex items-center gap-1.5 text-[11px] whitespace-nowrap">
       <span className="truncate">{label}</span>
     </span>
   );

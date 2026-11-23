@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
+
 import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "motion/react";
-import { toast } from "sonner";
+
 import {
   Check,
   ChevronDown,
@@ -14,20 +14,12 @@ import {
   UserRoundPlus,
   X,
 } from "lucide-react";
-import type { Priority, TicketStatus } from "@/generated/prisma/enums";
+import { AnimatePresence, motion } from "motion/react";
+import { toast } from "sonner";
+
 import { bulkUpdateTickets } from "@/app/app/actions";
-import { useWebHaptics } from "@/hooks/use-web-haptics";
-import type { Role } from "@/lib/permissions";
-import type { TicketListItem } from "@/lib/tickets";
-import {
-  PRIORITY_META,
-  PRIORITY_ORDER,
-  STATUS_META,
-  STATUS_ORDER,
-} from "@/lib/status";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { GlassBadge } from "@/components/liquid-glass";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +28,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Priority, TicketStatus } from "@/generated/prisma/enums";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
+import type { Role } from "@/lib/permissions";
+import {
+  PRIORITY_META,
+  PRIORITY_ORDER,
+  STATUS_META,
+  STATUS_ORDER,
+} from "@/lib/status";
+import type { TicketListItem } from "@/lib/tickets";
+import { cn } from "@/lib/utils";
+
 import { PriorityBars } from "./priority-bars";
 import { StatusDot } from "./status-chip";
 import { TicketRow } from "./ticket-row";
@@ -91,7 +95,9 @@ export function QueueBulkList({
 
   function toggleAll() {
     triggerHaptic("light");
-    setSelected(allSelected ? new Set() : new Set(items.map((ticket) => ticket.id)));
+    setSelected(
+      allSelected ? new Set() : new Set(items.map((ticket) => ticket.id))
+    );
   }
 
   function apply(payload: BulkChange, message: string) {
@@ -156,63 +162,67 @@ export function QueueBulkList({
   return (
     <>
       <div onKeyDown={onKeyDown}>
-      <div className="flex h-9 items-center gap-2 border-b border-separator bg-surface-sunken/40 pl-3 pr-4">
-        <SelectionCheckbox
-          checked={allSelected}
-          indeterminate={someSelected}
-          onChange={toggleAll}
-          label="Select all tickets"
-        />
-        <span className="text-[11px] font-medium text-label-2">Select all</span>
-        <span
-          className={cn(
-            "num min-w-[64px] text-[10.5px] text-label-3",
-            selected.size === 0 && "invisible",
-          )}
-        >
-          {selected.size} of {items.length}
-        </span>
-        <span className="num ml-auto text-[10.5px] text-label-3">
-          {items.length} {items.length === 1 ? "ticket" : "tickets"}
-        </span>
-      </div>
+        <div className="border-separator bg-surface-sunken/40 flex h-9 items-center gap-2 border-b pr-4 pl-3">
+          <SelectionCheckbox
+            checked={allSelected}
+            indeterminate={someSelected}
+            onChange={toggleAll}
+            label="Select all tickets"
+          />
+          <span className="text-label-2 text-[11px] font-medium">
+            Select all
+          </span>
+          <span
+            className={cn(
+              "num text-label-3 min-w-[64px] text-[10.5px]",
+              selected.size === 0 && "invisible"
+            )}
+          >
+            {selected.size} of {items.length}
+          </span>
+          <span className="num text-label-3 ml-auto text-[10.5px]">
+            {items.length} {items.length === 1 ? "ticket" : "tickets"}
+          </span>
+        </div>
 
-      <ul
-        role="list"
-        aria-label="Ticket queue. Use J and K to move, X to select, Enter to open."
-        className="list-enter divide-y divide-separator"
-      >
-        {items.map((ticket, index) => {
-          const checked = selected.has(ticket.id);
-          return (
-            <li key={ticket.id} className="group/row relative">
-              <span
-                className={cn(
-                  "absolute inset-y-0 left-0 z-10 flex w-10 items-center justify-center transition-colors duration-100",
-                  checked ? "bg-accent-soft" : "group-hover/row:bg-surface-hover",
-                )}
-              >
-                <SelectionCheckbox
-                  checked={checked}
-                  onChange={() => toggle(ticket.id)}
-                  label={`Select ${ticket.key}: ${ticket.title}`}
+        <ul
+          role="list"
+          aria-label="Ticket queue. Use J and K to move, X to select, Enter to open."
+          className="list-enter divide-separator divide-y"
+        >
+          {items.map((ticket, index) => {
+            const checked = selected.has(ticket.id);
+            return (
+              <li key={ticket.id} className="group/row relative">
+                <span
+                  className={cn(
+                    "absolute inset-y-0 left-0 z-10 flex w-10 items-center justify-center transition-colors duration-100",
+                    checked
+                      ? "bg-accent-soft"
+                      : "group-hover/row:bg-surface-hover"
+                  )}
+                >
+                  <SelectionCheckbox
+                    checked={checked}
+                    onChange={() => toggle(ticket.id)}
+                    label={`Select ${ticket.key}: ${ticket.title}`}
+                  />
+                </span>
+                <TicketRow
+                  ticket={ticket}
+                  role={role}
+                  showRequester
+                  selected={checked || cursor === index}
+                  rowRef={(element) => {
+                    rowRefs.current[index] = element;
+                  }}
+                  onFocus={() => setCursor(index)}
+                  className="pl-10"
                 />
-              </span>
-              <TicketRow
-                ticket={ticket}
-                role={role}
-                showRequester
-                selected={checked || cursor === index}
-                rowRef={(element) => {
-                  rowRefs.current[index] = element;
-                }}
-                onFocus={() => setCursor(index)}
-                className="pl-10"
-              />
-            </li>
-          );
-        })}
-      </ul>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       <AnimatePresence>
@@ -230,7 +240,7 @@ export function QueueBulkList({
               transition: { duration: 0.14, ease: [0.25, 0.46, 0.45, 0.94] },
             }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[620px] items-center gap-1.5 rounded-[14px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] p-1.5 shadow-[var(--shadow-pop)] backdrop-blur-2xl sm:inset-x-0"
+            className="border-line fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[620px] items-center gap-1.5 rounded-[14px] border bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] p-1.5 shadow-[var(--shadow-pop)] backdrop-blur-2xl sm:inset-x-0"
           >
             <GlassBadge
               tone="accent"
@@ -242,18 +252,19 @@ export function QueueBulkList({
               {`${selected.size} selected`}
             </GlassBadge>
             {pending && (
-              <Loader2 className="size-3.5 animate-spin text-label-3" aria-hidden />
+              <Loader2
+                className="text-label-3 size-3.5 animate-spin"
+                aria-hidden
+              />
             )}
 
-            <span className="mx-1 hidden h-4 w-px bg-separator sm:block" />
+            <span className="bg-separator mx-1 hidden h-4 w-px sm:block" />
 
             <Button
               variant="ghost"
               size="sm"
               disabled={pending}
-              onClick={() =>
-                apply({ assigneeId: viewerId }, "Assigned to you")
-              }
+              onClick={() => apply({ assigneeId: viewerId }, "Assigned to you")}
               aria-label="Assign selected tickets to me"
             >
               <UserRoundPlus />
@@ -265,7 +276,7 @@ export function QueueBulkList({
                 <Button variant="ghost" size="sm" aria-label="Change priority">
                   <Flag />
                   <span className="hidden sm:inline">Priority</span>
-                  <ChevronDown className="size-3 text-label-3" />
+                  <ChevronDown className="text-label-3 size-3" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-[196px]">
@@ -276,7 +287,7 @@ export function QueueBulkList({
                     onSelect={() =>
                       apply(
                         { priority },
-                        `Priority set to ${PRIORITY_META[priority].label.toLowerCase()}`,
+                        `Priority set to ${PRIORITY_META[priority].label.toLowerCase()}`
                       )
                     }
                   >
@@ -292,7 +303,7 @@ export function QueueBulkList({
                 <Button variant="ghost" size="sm" aria-label="Change status">
                   <CircleDot />
                   <span className="hidden sm:inline">Status</span>
-                  <ChevronDown className="size-3 text-label-3" />
+                  <ChevronDown className="text-label-3 size-3" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-[224px]">
@@ -305,15 +316,15 @@ export function QueueBulkList({
                     <StatusDot status={status} />
                     {STAFF_STATUS_LABEL[status]}
                     {status === "RESOLVED" && (
-                      <span className="ml-auto text-[10px] text-label-3">confirm</span>
+                      <span className="text-label-3 ml-auto text-[10px]">
+                        confirm
+                      </span>
                     )}
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onSelect={() =>
-                    apply({ status: "CLOSED" }, "Tickets closed")
-                  }
+                  onSelect={() => apply({ status: "CLOSED" }, "Tickets closed")}
                 >
                   <StatusDot status="CLOSED" />
                   Close tickets
@@ -327,7 +338,7 @@ export function QueueBulkList({
               disabled={pending}
               onClick={() => setSelected(new Set())}
               aria-label="Clear selection"
-              className="ml-auto text-label-3 sm:ml-1"
+              className="text-label-3 ml-auto sm:ml-1"
             >
               <X />
             </Button>
@@ -360,7 +371,7 @@ function SelectionCheckbox({
           "focus-ring size-[15px] cursor-pointer appearance-none rounded-[4px] border transition-[background-color,border-color,box-shadow] duration-100",
           checked || indeterminate
             ? "border-accent bg-accent"
-            : "border-line bg-surface-solid shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] hover:border-label-3",
+            : "border-line bg-surface-solid hover:border-label-3 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)]"
         )}
       />
       {indeterminate ? (
@@ -372,7 +383,7 @@ function SelectionCheckbox({
         <Check
           className={cn(
             "pointer-events-none absolute size-2.5 text-white transition-opacity duration-100",
-            checked ? "opacity-100" : "opacity-0",
+            checked ? "opacity-100" : "opacity-0"
           )}
           strokeWidth={3.5}
         />

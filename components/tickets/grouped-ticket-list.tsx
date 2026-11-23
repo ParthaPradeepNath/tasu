@@ -1,6 +1,7 @@
-import { STATUS_META, STATUS_ORDER } from "@/lib/status";
 import type { Role } from "@/lib/permissions";
+import { STATUS_META, STATUS_ORDER } from "@/lib/status";
 import type { TicketListItem } from "@/lib/tickets";
+
 import { TicketList } from "./ticket-list";
 
 export function GroupedTicketList({
@@ -22,13 +23,16 @@ export function GroupedTicketList({
   return (
     <div>
       {groups.map((group, index) => (
-        <section key={group.status} className={index > 0 ? "border-t border-line" : undefined}>
-          <div className="sticky top-[var(--topbar-h)] z-10 flex h-8 items-center gap-2 border-b border-separator bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] px-4 backdrop-blur-md">
+        <section
+          key={group.status}
+          className={index > 0 ? "border-line border-t" : undefined}
+        >
+          <div className="border-separator sticky top-[var(--topbar-h)] z-10 flex h-8 items-center gap-2 border-b bg-[color-mix(in_srgb,var(--bg)_90%,transparent)] px-4 backdrop-blur-md">
             <h2 className="eyebrow m-0">{STATUS_META[group.status].label}</h2>
-            <span className="num text-[10.5px] text-label-3">
+            <span className="num text-label-3 text-[10.5px]">
               {group.items.length}
             </span>
-            <span className="ml-auto hidden text-[10.5px] text-label-3 sm:block">
+            <span className="text-label-3 ml-auto hidden text-[10.5px] sm:block">
               {STATUS_META[group.status].description}
             </span>
           </div>
@@ -37,7 +41,7 @@ export function GroupedTicketList({
             role={role}
             showRequester={showRequester}
             compact={compact}
-            className="divide-y divide-separator"
+            className="divide-separator divide-y"
           />
         </section>
       ))}

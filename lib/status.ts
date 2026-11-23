@@ -1,4 +1,8 @@
-import type { Category, Priority, TicketStatus } from "@/generated/prisma/enums";
+import type {
+  Category,
+  Priority,
+  TicketStatus,
+} from "@/generated/prisma/enums";
 
 export const STATUS_ORDER: TicketStatus[] = [
   "OPEN",
@@ -40,13 +44,7 @@ export const STATUS_META: Record<
 };
 
 export type Tone =
-  | "accent"
-  | "info"
-  | "warning"
-  | "success"
-  | "danger"
-  | "neutral"
-  | "purple";
+  "accent" | "info" | "warning" | "success" | "danger" | "neutral" | "purple";
 
 export const TONE_CLASSES: Record<Tone, string> = {
   accent: "bg-accent-soft text-accent",

@@ -1,34 +1,32 @@
 import Link from "next/link";
-import {
-  BookOpen,
-  Download,
-  Target,
-} from "lucide-react";
-import { requireStaff } from "@/lib/session";
+
+import { BookOpen, Download, Target } from "lucide-react";
+
+import { ChartLegend, VolumeChart } from "@/components/dashboard/volume-chart";
+import { CategoryIcon } from "@/components/tickets/category-icon";
+import { PriorityBars } from "@/components/tickets/priority-bars";
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { MeterBar } from "@/components/ui/meter-bar";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionCard } from "@/components/ui/section-card";
+import { SegmentedNav } from "@/components/ui/segmented-nav";
+import { StatStrip } from "@/components/ui/stat-strip";
+import { formatDate } from "@/lib/dates";
 import {
   getReports,
   RANGE_LABEL,
   REPORT_RANGES,
   type ReportRange,
 } from "@/lib/reports";
+import { requireStaff } from "@/lib/session";
 import {
   CATEGORY_META,
   CATEGORY_TONE,
   PRIORITY_META,
   TONE_CLASSES,
 } from "@/lib/status";
-import { formatDate } from "@/lib/dates";
-import { PageHeader } from "@/components/ui/page-header";
-import { StatStrip } from "@/components/ui/stat-strip";
-import { MeterBar } from "@/components/ui/meter-bar";
-import { SectionCard } from "@/components/ui/section-card";
-import { SegmentedNav } from "@/components/ui/segmented-nav";
-import { Button } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
-import { EmptyState } from "@/components/ui/empty-state";
-import { PriorityBars } from "@/components/tickets/priority-bars";
-import { CategoryIcon } from "@/components/tickets/category-icon";
-import { ChartLegend, VolumeChart } from "@/components/dashboard/volume-chart";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
@@ -68,8 +66,14 @@ export default async function ReportsPage({
               className="min-w-0 flex-1 sm:flex-none"
               ariaLabel="Report range"
               segments={REPORT_RANGES.map((key) => ({
-                label: key === "7d" ? "7 days" : key === "30d" ? "30 days" : "90 days",
-                href: key === "30d" ? "/app/reports" : `/app/reports?range=${key}`,
+                label:
+                  key === "7d"
+                    ? "7 days"
+                    : key === "30d"
+                      ? "30 days"
+                      : "90 days",
+                href:
+                  key === "30d" ? "/app/reports" : `/app/reports?range=${key}`,
               }))}
             />
             <Button asChild variant="secondary" size="md">
@@ -146,7 +150,7 @@ export default async function ReportsPage({
         <SectionCard
           title="Where requests come from"
           action={
-            <span className="text-[11px] text-label-3">Created in range</span>
+            <span className="text-label-3 text-[11px]">Created in range</span>
           }
         >
           {data.created === 0 ? (
@@ -163,18 +167,21 @@ export default async function ReportsPage({
                     <span
                       className={cn(
                         "inline-flex size-5 items-center justify-center rounded-[5px]",
-                        TONE_CLASSES[CATEGORY_TONE[row.category]],
+                        TONE_CLASSES[CATEGORY_TONE[row.category]]
                       )}
                     >
-                      <CategoryIcon category={row.category} className="size-3" />
+                      <CategoryIcon
+                        category={row.category}
+                        className="size-3"
+                      />
                     </span>
-                    <span className="text-[12px] font-medium text-label">
+                    <span className="text-label text-[12px] font-medium">
                       {CATEGORY_META[row.category].label}
                     </span>
-                    <span className="num ml-auto text-[11px] text-label-2">
+                    <span className="num text-label-2 ml-auto text-[11px]">
                       {row.count}
                     </span>
-                    <span className="num w-9 text-right text-[10.5px] text-label-3">
+                    <span className="num text-label-3 w-9 text-right text-[10.5px]">
                       {data.created === 0
                         ? "0%"
                         : `${Math.round((row.count / data.created) * 100)}%`}
@@ -185,7 +192,7 @@ export default async function ReportsPage({
                     fillClassName="bg-accent/75"
                     value={Math.max(
                       row.count === 0 ? 0 : 0.04,
-                      row.count / maxCategory,
+                      row.count / maxCategory
                     )}
                   />
                 </li>
@@ -199,67 +206,79 @@ export default async function ReportsPage({
         <SectionCard
           title="Response by priority"
           action={
-            <span className="inline-flex items-center gap-1 text-[11px] text-label-3">
+            <span className="text-label-3 inline-flex items-center gap-1 text-[11px]">
               <Target className="size-3" />
               First response target
             </span>
           }
         >
           <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-left">
-            <thead>
-              <tr className="border-b border-separator text-[10.5px] uppercase tracking-[0.05em] text-label-3">
-                <th className="whitespace-nowrap px-4 py-2 font-medium">Priority</th>
-                <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Tickets</th>
-                <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Avg response</th>
-                <th className="whitespace-nowrap px-3 py-2 text-right font-medium">Target</th>
-                <th className="whitespace-nowrap px-4 py-2 text-right font-medium">Within target</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-separator">
-              {data.priorities.map((row) => (
-                <tr key={row.priority} className="text-[12px] text-label-2">
-                  <td className="px-4 py-2.5">
-                    <span className="flex items-center gap-2 text-label">
-                      <PriorityBars priority={row.priority} />
-                      {PRIORITY_META[row.priority].label}
-                    </span>
-                  </td>
-                  <td className="num whitespace-nowrap px-3 py-2.5 text-right">{row.count}</td>
-                  <td className="num whitespace-nowrap px-3 py-2.5 text-right text-label">
-                    {row.avgFirstResponseHours === null
-                      ? "—"
-                      : `${row.avgFirstResponseHours.toFixed(1)}h`}
-                  </td>
-                  <td className="num whitespace-nowrap px-3 py-2.5 text-right text-label-3">
-                    {row.targetHours}h
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <div className="flex items-center justify-end gap-2">
-                      <MeterBar
-                        className="h-1 w-14"
-                        fillClassName={
-                          (row.withinTargetPct ?? 0) >= 90
-                            ? "bg-success"
-                            : (row.withinTargetPct ?? 0) >= 75
-                              ? "bg-warning"
-                              : "bg-danger"
-                        }
-                        value={(row.withinTargetPct ?? 0) / 100}
-                      />
-                      <span className="num w-9 whitespace-nowrap text-right text-[11px] font-medium text-label">
-                        {row.withinTargetPct === null
-                          ? "—"
-                          : `${row.withinTargetPct}%`}
-                      </span>
-                    </div>
-                  </td>
+            <table className="w-full min-w-[560px] border-collapse text-left">
+              <thead>
+                <tr className="border-separator text-label-3 border-b text-[10.5px] tracking-[0.05em] uppercase">
+                  <th className="px-4 py-2 font-medium whitespace-nowrap">
+                    Priority
+                  </th>
+                  <th className="px-3 py-2 text-right font-medium whitespace-nowrap">
+                    Tickets
+                  </th>
+                  <th className="px-3 py-2 text-right font-medium whitespace-nowrap">
+                    Avg response
+                  </th>
+                  <th className="px-3 py-2 text-right font-medium whitespace-nowrap">
+                    Target
+                  </th>
+                  <th className="px-4 py-2 text-right font-medium whitespace-nowrap">
+                    Within target
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-separator divide-y">
+                {data.priorities.map((row) => (
+                  <tr key={row.priority} className="text-label-2 text-[12px]">
+                    <td className="px-4 py-2.5">
+                      <span className="text-label flex items-center gap-2">
+                        <PriorityBars priority={row.priority} />
+                        {PRIORITY_META[row.priority].label}
+                      </span>
+                    </td>
+                    <td className="num px-3 py-2.5 text-right whitespace-nowrap">
+                      {row.count}
+                    </td>
+                    <td className="num text-label px-3 py-2.5 text-right whitespace-nowrap">
+                      {row.avgFirstResponseHours === null
+                        ? "—"
+                        : `${row.avgFirstResponseHours.toFixed(1)}h`}
+                    </td>
+                    <td className="num text-label-3 px-3 py-2.5 text-right whitespace-nowrap">
+                      {row.targetHours}h
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center justify-end gap-2">
+                        <MeterBar
+                          className="h-1 w-14"
+                          fillClassName={
+                            (row.withinTargetPct ?? 0) >= 90
+                              ? "bg-success"
+                              : (row.withinTargetPct ?? 0) >= 75
+                                ? "bg-warning"
+                                : "bg-danger"
+                          }
+                          value={(row.withinTargetPct ?? 0) / 100}
+                        />
+                        <span className="num text-label w-9 text-right text-[11px] font-medium whitespace-nowrap">
+                          {row.withinTargetPct === null
+                            ? "—"
+                            : `${row.withinTargetPct}%`}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <p className="border-t border-separator px-4 py-2.5 text-[11px] leading-4 text-label-3">
+          <p className="border-separator text-label-3 border-t px-4 py-2.5 text-[11px] leading-4">
             Based on {data.firstResponseSamples} tickets that received a first
             reply in this range. Targets scale with priority.
           </p>
@@ -267,9 +286,7 @@ export default async function ReportsPage({
 
         <SectionCard
           title="Agent workload"
-          action={
-            <span className="text-[11px] text-label-3">Active now</span>
-          }
+          action={<span className="text-label-3 text-[11px]">Active now</span>}
         >
           {data.workload.length === 0 ? (
             <EmptyState
@@ -278,11 +295,14 @@ export default async function ReportsPage({
               description="No active tickets are assigned to an agent right now."
             />
           ) : (
-            <ul className="divide-y divide-separator">
+            <ul className="divide-separator divide-y">
               {data.workload.map((row) => (
-                <li key={row.id} className="flex items-center gap-3 px-4 py-2.5">
+                <li
+                  key={row.id}
+                  className="flex items-center gap-3 px-4 py-2.5"
+                >
                   <Avatar name={row.name} color={row.avatarColor} size={24} />
-                  <span className="w-[92px] shrink-0 truncate text-[12px] font-medium text-label">
+                  <span className="text-label w-[92px] shrink-0 truncate text-[12px] font-medium">
                     {row.name}
                   </span>
                   <MeterBar
@@ -290,7 +310,7 @@ export default async function ReportsPage({
                     fillClassName="bg-accent/80"
                     value={Math.max(0.06, row.count / maxWorkload)}
                   />
-                  <span className="num w-6 text-right text-[12px] font-medium text-label-2">
+                  <span className="num text-label-2 w-6 text-right text-[12px] font-medium">
                     {row.count}
                   </span>
                 </li>
@@ -306,7 +326,7 @@ export default async function ReportsPage({
           action={
             <Link
               href="/app/knowledge"
-              className="text-[11px] font-medium text-accent hover:underline"
+              className="text-accent text-[11px] font-medium hover:underline"
             >
               Browse
             </Link>
@@ -319,40 +339,47 @@ export default async function ReportsPage({
               description="Publish a few guides and they will show up here with read counts."
             />
           ) : (
-            <ul className="divide-y divide-separator">
+            <ul className="divide-separator divide-y">
               {data.topArticles.map((article, index) => {
                 const total = article.helpfulCount + article.notHelpfulCount;
                 const rate =
-                  total === 0 ? null : Math.round((article.helpfulCount / total) * 100);
+                  total === 0
+                    ? null
+                    : Math.round((article.helpfulCount / total) * 100);
                 return (
                   <li key={article.slug}>
                     <Link
                       href={`/app/knowledge/${article.slug}`}
-                      className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-surface-hover"
+                      className="group hover:bg-surface-hover flex items-center gap-3 px-4 py-2.5 transition-colors"
                     >
-                      <span className="num w-4 shrink-0 text-[11px] text-label-3">
+                      <span className="num text-label-3 w-4 shrink-0 text-[11px]">
                         {index + 1}
                       </span>
                       <span
                         className={cn(
                           "inline-flex size-6 shrink-0 items-center justify-center rounded-[6px]",
-                          TONE_CLASSES[CATEGORY_TONE[article.category]],
+                          TONE_CLASSES[CATEGORY_TONE[article.category]]
                         )}
                       >
-                        <CategoryIcon category={article.category} className="size-3" />
+                        <CategoryIcon
+                          category={article.category}
+                          className="size-3"
+                        />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[12px] font-medium text-label">
+                        <span className="text-label block truncate text-[12px] font-medium">
                           {article.title}
                         </span>
-                        <span className="mt-0.5 block text-[10.5px] text-label-3">
+                        <span className="text-label-3 mt-0.5 block text-[10.5px]">
                           {CATEGORY_META[article.category].label} ·{" "}
                           {rate === null ? "No votes yet" : `${rate}% helpful`}
                         </span>
                       </span>
-                      <span className="num shrink-0 text-right text-[11px] text-label-2">
+                      <span className="num text-label-2 shrink-0 text-right text-[11px]">
                         {article.views.toLocaleString()}
-                        <span className="ml-1 text-[9.5px] text-label-3">reads</span>
+                        <span className="text-label-3 ml-1 text-[9.5px]">
+                          reads
+                        </span>
                       </span>
                     </Link>
                   </li>
@@ -365,10 +392,10 @@ export default async function ReportsPage({
         <div className="surface-card flex flex-col justify-between p-4">
           <div>
             <p className="eyebrow mb-1.5">Window</p>
-            <p className="m-0 text-[13px] font-medium text-label">
+            <p className="text-label m-0 text-[13px] font-medium">
               {formatDate(data.start)} — today
             </p>
-            <p className="mt-1.5 text-[11.5px] leading-4 text-label-3">
+            <p className="text-label-3 mt-1.5 text-[11.5px] leading-4">
               {data.created} created, {data.resolved} resolved. Export the raw
               ticket list if you need to slice it elsewhere.
             </p>

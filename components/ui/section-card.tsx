@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import { GlassCard } from "@/components/liquid-glass";
+import { cn } from "@/lib/utils";
 
 export function SectionCard({
   title,
@@ -22,12 +22,12 @@ export function SectionCard({
       blur={10}
       className={cn(
         "min-w-0 overflow-clip rounded-[16px] [--radius:14px]",
-        className,
+        className
       )}
     >
       {title && (
-        <header className="flex min-h-11 items-center justify-between gap-3 border-b border-separator px-4">
-          <h2 className="m-0 min-w-0 truncate text-[12.5px] font-semibold tracking-[-0.01em] text-label">
+        <header className="border-separator flex min-h-11 items-center justify-between gap-3 border-b px-4">
+          <h2 className="text-label m-0 min-w-0 truncate text-[12.5px] font-semibold tracking-[-0.01em]">
             {title}
           </h2>
           {action && <span className="shrink-0">{action}</span>}

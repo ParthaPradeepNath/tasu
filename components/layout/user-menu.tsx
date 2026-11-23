@@ -1,20 +1,21 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+
+import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import {
   BookOpen,
   ChevronsUpDown,
   LogOut,
+  Monitor,
   Moon,
   Sun,
   Ticket,
-  Monitor,
 } from "lucide-react";
-import { useTheme } from "next-themes";
-import { authClient } from "@/lib/auth-client";
-import type { Viewer } from "@/lib/session";
+
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { authClient } from "@/lib/auth-client";
+import type { Viewer } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
 export function UserMenu({
@@ -48,7 +51,11 @@ export function UserMenu({
   }
 
   const roleLabel =
-    user.role === "admin" ? "IT manager" : user.role === "agent" ? "IT agent" : "Employee";
+    user.role === "admin"
+      ? "IT manager"
+      : user.role === "agent"
+        ? "IT agent"
+        : "Employee";
 
   return (
     <DropdownMenu>
@@ -58,7 +65,7 @@ export function UserMenu({
             type="button"
             className={cn(
               "press flex w-full items-center gap-2.5 rounded-[10px] p-1.5 text-left",
-              collapsed && "justify-center p-1",
+              collapsed && "justify-center p-1"
             )}
             aria-label="Account menu"
           >
@@ -66,14 +73,14 @@ export function UserMenu({
             {!collapsed && (
               <>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[12.5px] font-medium leading-4 text-label">
+                  <span className="text-label block truncate text-[12.5px] leading-4 font-medium">
                     {user.name}
                   </span>
-                  <span className="block truncate text-[11px] leading-4 text-label-3">
+                  <span className="text-label-3 block truncate text-[11px] leading-4">
                     {roleLabel}
                   </span>
                 </span>
-                <ChevronsUpDown className="size-3.5 shrink-0 text-label-3" />
+                <ChevronsUpDown className="text-label-3 size-3.5 shrink-0" />
               </>
             )}
           </button>
@@ -88,10 +95,18 @@ export function UserMenu({
           </Button>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" side={variant === "topbar" ? "bottom" : "top"} className="w-[236px]">
-        <DropdownMenuLabel className="normal-case tracking-normal">
-          <span className="block text-[12.5px] font-medium text-label">{user.name}</span>
-          <span className="block truncate text-[11px] font-normal text-label-3">{user.email}</span>
+      <DropdownMenuContent
+        align="start"
+        side={variant === "topbar" ? "bottom" : "top"}
+        className="w-[236px]"
+      >
+        <DropdownMenuLabel className="tracking-normal normal-case">
+          <span className="text-label block text-[12.5px] font-medium">
+            {user.name}
+          </span>
+          <span className="text-label-3 block truncate text-[11px] font-normal">
+            {user.email}
+          </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
@@ -110,17 +125,23 @@ export function UserMenu({
         <DropdownMenuItem onSelect={() => setTheme("light")}>
           <Sun className="size-3.5" />
           Light
-          {theme === "light" && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
+          {theme === "light" && (
+            <span className="bg-accent ml-auto size-1.5 rounded-full" />
+          )}
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => setTheme("dark")}>
           <Moon className="size-3.5" />
           Dark
-          {theme === "dark" && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
+          {theme === "dark" && (
+            <span className="bg-accent ml-auto size-1.5 rounded-full" />
+          )}
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => setTheme("system")}>
           <Monitor className="size-3.5" />
           System
-          {theme === "system" && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
+          {theme === "system" && (
+            <span className="bg-accent ml-auto size-1.5 rounded-full" />
+          )}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

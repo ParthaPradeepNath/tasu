@@ -27,7 +27,7 @@ export function compactRelative(date: Date | string | null | undefined) {
   const value = typeof date === "string" ? new Date(date) : date;
   const minutes = Math.max(
     0,
-    Math.round((Date.now() - value.getTime()) / 60000),
+    Math.round((Date.now() - value.getTime()) / 60000)
   );
   if (minutes < 1) return "now";
   if (minutes < 60) return `${minutes}m`;

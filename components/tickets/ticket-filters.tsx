@@ -1,10 +1,16 @@
 "use client";
 
 import * as React from "react";
+
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import { Search, X } from "lucide-react";
-import { PropertySelect, type SelectOption } from "@/components/ui/property-select";
+
 import { Button } from "@/components/ui/button";
+import {
+  PropertySelect,
+  type SelectOption,
+} from "@/components/ui/property-select";
 import { cn } from "@/lib/utils";
 
 type Assignee = { id: string; name: string };
@@ -86,28 +92,23 @@ export function TicketFilterBar({
   ];
 
   return (
-    <div
-      className={cn(
-        "flex flex-wrap items-center gap-2",
-        className,
-      )}
-    >
-      <div className="relative flex h-7 min-w-[168px] flex-1 items-center gap-1.5 rounded-full border border-separator bg-surface-solid/70 pl-2.5 pr-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-100 focus-within:border-[color-mix(in_srgb,var(--accent)_35%,transparent)] focus-within:shadow-[0_0_0_3px_var(--accent-soft)] sm:max-w-[260px]">
-        <Search className="size-3.5 shrink-0 text-label-3" />
+    <div className={cn("flex flex-wrap items-center gap-2", className)}>
+      <div className="border-separator bg-surface-solid/70 relative flex h-7 min-w-[168px] flex-1 items-center gap-1.5 rounded-full border pr-1.5 pl-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-[border-color,box-shadow] duration-100 focus-within:border-[color-mix(in_srgb,var(--accent)_35%,transparent)] focus-within:shadow-[0_0_0_3px_var(--accent-soft)] sm:max-w-[260px]">
+        <Search className="text-label-3 size-3.5 shrink-0" />
         <input
           data-search-input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={placeholder}
           aria-label={placeholder}
-          className="h-full min-w-0 flex-1 bg-transparent text-[12px] text-label outline-none placeholder:text-label-3"
+          className="text-label placeholder:text-label-3 h-full min-w-0 flex-1 bg-transparent text-[12px] outline-none"
         />
         {query && (
           <button
             type="button"
             aria-label="Clear search"
             onClick={() => setQuery("")}
-            className="press inline-flex size-4 items-center justify-center rounded-full bg-fill text-label-3 hover:text-label"
+            className="press bg-fill text-label-3 hover:text-label inline-flex size-4 items-center justify-center rounded-full"
           >
             <X className="size-2.5" />
           </button>
@@ -154,7 +155,7 @@ export function TicketFilterBar({
           variant="ghost"
           size="sm"
           onClick={() => router.push(pathname, { scroll: false })}
-          className="h-7 gap-1 px-1.5 text-[11.5px] text-label-3"
+          className="text-label-3 h-7 gap-1 px-1.5 text-[11.5px]"
         >
           <X className="size-3" />
           Clear

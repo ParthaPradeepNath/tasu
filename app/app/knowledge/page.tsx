@@ -1,14 +1,17 @@
 import Link from "next/link";
+
 import { BookOpen, Plus } from "lucide-react";
-import { requireViewer } from "@/lib/session";
-import { isStaff } from "@/lib/permissions";
-import { listArticles } from "@/lib/articles";
+
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatStrip } from "@/components/ui/stat-strip";
-import { Button } from "@/components/ui/button";
+import { listArticles } from "@/lib/articles";
+import { isStaff } from "@/lib/permissions";
+import { requireViewer } from "@/lib/session";
+
 import {
-  KnowledgeBrowser,
   type KnowledgeArticleSummary,
+  KnowledgeBrowser,
 } from "./knowledge-browser";
 
 export const metadata = {
@@ -32,12 +35,16 @@ export default async function KnowledgePage() {
     updatedAt: article.updatedAt.toISOString(),
   }));
 
-  const totalViews = serialized.reduce((total, article) => total + article.views, 0);
+  const totalViews = serialized.reduce(
+    (total, article) => total + article.views,
+    0
+  );
   const totalHelpful = serialized.reduce(
     (total, article) => total + article.helpfulCount,
-    0,
+    0
   );
-  const categoryCount = new Set(serialized.map((article) => article.category)).size;
+  const categoryCount = new Set(serialized.map((article) => article.category))
+    .size;
   const featured = [...serialized]
     .sort((a, b) => b.views - a.views)
     .slice(0, 3)
@@ -71,8 +78,16 @@ export default async function KnowledgePage() {
       <StatStrip
         columns={4}
         stats={[
-          { label: "Articles", value: serialized.length, hint: "Published and current" },
-          { label: "Categories", value: categoryCount, hint: "Hardware, access, network…" },
+          {
+            label: "Articles",
+            value: serialized.length,
+            hint: "Published and current",
+          },
+          {
+            label: "Categories",
+            value: categoryCount,
+            hint: "Hardware, access, network…",
+          },
           {
             label: "Total reads",
             value: totalViews.toLocaleString(),

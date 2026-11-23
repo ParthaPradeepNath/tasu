@@ -1,6 +1,11 @@
-import type { Category, Priority, TicketStatus } from "@/generated/prisma/enums";
-import { prisma } from "./prisma";
+import type {
+  Category,
+  Priority,
+  TicketStatus,
+} from "@/generated/prisma/enums";
+
 import { isStaff, type Role } from "./permissions";
+import { prisma } from "./prisma";
 
 export const TICKET_LIST_SELECT = {
   id: true,
@@ -40,7 +45,8 @@ export type TicketListItem = {
   assignee: { id: string; name: string; avatarColor: string | null } | null;
 };
 
-export type TicketView = "all" | "unassigned" | "mine" | "breaching" | "waiting";
+export type TicketView =
+  "all" | "unassigned" | "mine" | "breaching" | "waiting";
 
 export type TicketFilters = {
   status?: TicketStatus[];
@@ -61,7 +67,7 @@ function viewWhere(
   view: TicketView | undefined,
   viewerId: string,
   role: Role,
-  now = new Date(),
+  now = new Date()
 ) {
   switch (view) {
     case "unassigned":
@@ -90,13 +96,14 @@ function viewWhere(
 
 export async function listTickets(
   viewer: { id: string; role: Role },
-  filters: TicketFilters = {},
+  filters: TicketFilters = {}
 ) {
   const limit = Math.min(filters.limit ?? 40, 100);
   const now = new Date();
   const view = viewWhere(filters.view, viewer.id, viewer.role, now);
   const viewOr = "OR" in view ? view.OR : undefined;
-  const viewRest = "OR" in view ? { status: view.status, assigneeId: view.assigneeId } : view;
+  const viewRest =
+    "OR" in view ? { status: view.status, assigneeId: view.assigneeId } : view;
 
   const where = {
     deletedAt: null,
@@ -160,13 +167,13 @@ export async function listTickets(
 
   return {
     items: page as TicketListItem[],
-    nextCursor: hasMore ? page[page.length - 1]?.id ?? null : null,
+    nextCursor: hasMore ? (page[page.length - 1]?.id ?? null) : null,
   };
 }
 
 export async function getTicketByKey(
   viewer: { id: string; role: Role },
-  key: string,
+  key: string
 ) {
   return prisma.ticket.findFirst({
     where: {
@@ -214,9 +221,7 @@ export async function getTicketByKey(
   });
 }
 
-export async function getTicketCounts(
-  viewer: { id: string; role: Role },
-) {
+export async function getTicketCounts(viewer: { id: string; role: Role }) {
   const scope = viewerScope(viewer.role, viewer.id);
   const now = new Date();
 
@@ -246,7 +251,7 @@ export async function getTicketCounts(
   ]);
 
   const byStatus = Object.fromEntries(
-    groups.map((group) => [group.status, group._count._all]),
+    groups.map((group) => [group.status, group._count._all])
   ) as Partial<Record<TicketStatus, number>>;
 
   return {

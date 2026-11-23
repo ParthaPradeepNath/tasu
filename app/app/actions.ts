@@ -2,13 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
-import { requireViewer, requireStaff } from "@/lib/session";
-import { isStaff } from "@/lib/permissions";
-import { computeSla } from "@/lib/sla";
-import { STATUS_META, PRIORITY_META, CATEGORY_META } from "@/lib/status";
+
 import type { Priority, TicketStatus } from "@/generated/prisma/enums";
+import { isStaff } from "@/lib/permissions";
+import { prisma } from "@/lib/prisma";
+import { requireStaff, requireViewer } from "@/lib/session";
+import { computeSla } from "@/lib/sla";
+import { CATEGORY_META, PRIORITY_META, STATUS_META } from "@/lib/status";
 
 export type ActionState = { error: string | null };
 
@@ -39,7 +41,7 @@ async function nextTicketKey() {
 
 export async function createTicket(
   _prev: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const viewer = await requireViewer();
 
@@ -91,7 +93,7 @@ const replySchema = z.object({
 
 export async function addReply(
   _prev: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const viewer = await requireViewer();
   const parsed = replySchema.safeParse({
@@ -146,7 +148,9 @@ export async function addReply(
       data: {
         status: nextStatus ?? ticket.status,
         firstResponseAt:
-          staff && !internal && !ticket.firstResponseAt ? now : ticket.firstResponseAt,
+          staff && !internal && !ticket.firstResponseAt
+            ? now
+            : ticket.firstResponseAt,
         resolvedAt:
           nextStatus === "IN_PROGRESS" || nextStatus === "OPEN"
             ? null
@@ -171,14 +175,16 @@ const updateSchema = z.object({
     .enum(["OPEN", "IN_PROGRESS", "WAITING_ON_USER", "RESOLVED", "CLOSED"])
     .optional(),
   priority: z.enum(["NONE", "LOW", "MEDIUM", "HIGH", "URGENT"]).optional(),
-  category: z.enum(["HARDWARE", "SOFTWARE", "NETWORK", "ACCESS", "OTHER"]).optional(),
+  category: z
+    .enum(["HARDWARE", "SOFTWARE", "NETWORK", "ACCESS", "OTHER"])
+    .optional(),
   assigneeId: z.string().nullable().optional(),
   tags: z.array(z.string().trim().min(1).max(32)).max(8).optional(),
 });
 
 export async function updateTicket(
   _prev: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const viewer = await requireViewer();
   const staff = isStaff(viewer.role);
@@ -187,8 +193,12 @@ export async function updateTicket(
   const parsed = updateSchema.safeParse({
     ticketId: formData.get("ticketId"),
     status: rawStatus ? String(rawStatus) : undefined,
-    priority: formData.get("priority") ? String(formData.get("priority")) : undefined,
-    category: formData.get("category") ? String(formData.get("category")) : undefined,
+    priority: formData.get("priority")
+      ? String(formData.get("priority"))
+      : undefined,
+    category: formData.get("category")
+      ? String(formData.get("category"))
+      : undefined,
     assigneeId:
       formData.get("assigneeId") === null
         ? undefined
@@ -203,7 +213,9 @@ export async function updateTicket(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "That change didn't apply." };
+    return {
+      error: parsed.error.issues[0]?.message ?? "That change didn't apply.",
+    };
   }
 
   const ticket = await prisma.ticket.findFirst({
@@ -233,15 +245,17 @@ export async function updateTicket(
 
   const changes: string[] = [];
   if (status && status !== ticket.status) {
-    changes.push(
-      `moved this to ${STATUS_META[status].label.toLowerCase()}`,
-    );
+    changes.push(`moved this to ${STATUS_META[status].label.toLowerCase()}`);
   }
   if (priority && priority !== ticket.priority) {
-    changes.push(`set priority to ${PRIORITY_META[priority].label.toLowerCase()}`);
+    changes.push(
+      `set priority to ${PRIORITY_META[priority].label.toLowerCase()}`
+    );
   }
   if (category && category !== ticket.category) {
-    changes.push(`changed the category to ${CATEGORY_META[category].label.toLowerCase()}`);
+    changes.push(
+      `changed the category to ${CATEGORY_META[category].label.toLowerCase()}`
+    );
   }
 
   let assigneeName: string | null = null;
@@ -304,7 +318,10 @@ export async function updateTicket(
 }
 
 const bulkSchema = z.object({
-  ids: z.array(z.string().min(1)).min(1, "Select at least one ticket.").max(100),
+  ids: z
+    .array(z.string().min(1))
+    .min(1, "Select at least one ticket.")
+    .max(100),
   status: z
     .enum(["OPEN", "IN_PROGRESS", "WAITING_ON_USER", "RESOLVED", "CLOSED"])
     .optional(),
@@ -322,11 +339,17 @@ export async function bulkUpdateTickets(input: {
   const parsed = bulkSchema.safeParse(input);
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "That change didn't apply." };
+    return {
+      error: parsed.error.issues[0]?.message ?? "That change didn't apply.",
+    };
   }
 
   const { ids, status, priority, assigneeId } = parsed.data;
-  if (status === undefined && priority === undefined && assigneeId === undefined) {
+  if (
+    status === undefined &&
+    priority === undefined &&
+    assigneeId === undefined
+  ) {
     return { error: "Pick a change to apply." };
   }
 
@@ -335,7 +358,8 @@ export async function bulkUpdateTickets(input: {
     select: { id: true, status: true, priority: true, assigneeId: true },
   });
 
-  if (tickets.length === 0) return { error: "Those tickets are no longer available." };
+  if (tickets.length === 0)
+    return { error: "Those tickets are no longer available." };
 
   let assigneeName: string | null = null;
   if (assigneeId) {
@@ -357,14 +381,14 @@ export async function bulkUpdateTickets(input: {
     }
     if (priority && priority !== ticket.priority) {
       changes.push(
-        `set priority to ${PRIORITY_META[priority].label.toLowerCase()}`,
+        `set priority to ${PRIORITY_META[priority].label.toLowerCase()}`
       );
     }
     if (assigneeId !== undefined && assigneeId !== ticket.assigneeId) {
       changes.push(
         assigneeId
           ? `assigned this to ${assigneeName ?? "an agent"}`
-          : "removed the assignee",
+          : "removed the assignee"
       );
     }
     if (changes.length === 0) continue;
@@ -482,7 +506,7 @@ async function uniqueArticleSlug(title: string, excludeId?: string) {
 
 export async function saveArticle(
   _prev: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const viewer = await requireStaff();
   const id = String(formData.get("id") ?? "").trim() || null;
@@ -502,7 +526,9 @@ export async function saveArticle(
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Check the article fields." };
+    return {
+      error: parsed.error.issues[0]?.message ?? "Check the article fields.",
+    };
   }
 
   const existing = id
@@ -510,8 +536,7 @@ export async function saveArticle(
     : null;
   if (id && !existing) return { error: "That article no longer exists." };
 
-  const slug =
-    existing?.slug ?? (await uniqueArticleSlug(parsed.data.title));
+  const slug = existing?.slug ?? (await uniqueArticleSlug(parsed.data.title));
 
   const article = existing
     ? await prisma.knowledgeArticle.update({

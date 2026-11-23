@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+
 import { useRouter } from "next/navigation";
+
 import type { Viewer } from "@/lib/session";
 
 function isTypingTarget(target: EventTarget | null) {
@@ -63,7 +65,7 @@ export function GlobalShortcuts({ user }: { user: Viewer }) {
 
       if (event.key === "/") {
         const input = document.querySelector<HTMLInputElement>(
-          "[data-search-input]",
+          "[data-search-input]"
         );
         if (input) {
           event.preventDefault();

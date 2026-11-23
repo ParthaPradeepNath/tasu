@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
-import { requireStaff } from "@/lib/session";
+
 import { getArticleBySlug } from "@/lib/articles";
+import { requireStaff } from "@/lib/session";
+
 import { ArticleEditor } from "../../article-editor";
 
 export const metadata = {

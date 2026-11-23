@@ -1,17 +1,23 @@
 import Link from "next/link";
+
 import { Inbox, Plus, SearchX, Ticket } from "lucide-react";
-import type { Category, Priority, TicketStatus } from "@/generated/prisma/enums";
-import { requireViewer } from "@/lib/session";
-import { isStaff } from "@/lib/permissions";
-import { getTicketCounts, listTickets, type TicketView } from "@/lib/tickets";
-import { prisma } from "@/lib/prisma";
-import { PageHeader } from "@/components/ui/page-header";
-import { Button } from "@/components/ui/button";
-import { SegmentedNav } from "@/components/ui/segmented-nav";
-import { EmptyState } from "@/components/ui/empty-state";
-import { TicketFilterBar } from "@/components/tickets/ticket-filters";
+
 import { GroupedTicketList } from "@/components/tickets/grouped-ticket-list";
+import { TicketFilterBar } from "@/components/tickets/ticket-filters";
 import { TicketList } from "@/components/tickets/ticket-list";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { SegmentedNav } from "@/components/ui/segmented-nav";
+import type {
+  Category,
+  Priority,
+  TicketStatus,
+} from "@/generated/prisma/enums";
+import { isStaff } from "@/lib/permissions";
+import { prisma } from "@/lib/prisma";
+import { requireViewer } from "@/lib/session";
+import { getTicketCounts, listTickets, type TicketView } from "@/lib/tickets";
 
 export const metadata = {
   title: "Tickets",
@@ -49,9 +55,13 @@ export default async function TicketsPage({
   const assignee = single(params.assignee);
   const q = single(params.q)?.trim();
   const view = single(params.view) as TicketView | undefined;
-  const viewValid = ["all", "unassigned", "mine", "breaching", "waiting"].includes(
-    view ?? "",
-  )
+  const viewValid = [
+    "all",
+    "unassigned",
+    "mine",
+    "breaching",
+    "waiting",
+  ].includes(view ?? "")
     ? view
     : undefined;
 
@@ -66,7 +76,7 @@ export default async function TicketsPage({
         q,
         view: staff ? viewValid : viewValid === "mine" ? "mine" : undefined,
         limit: 60,
-      },
+      }
     ),
     getTicketCounts({ id: viewer.id, role: viewer.role }),
     staff
@@ -78,8 +88,13 @@ export default async function TicketsPage({
       : Promise.resolve([]),
   ]);
 
-  const filtered = Boolean(status || priority || category || assignee || q || viewValid);
-  const total = Object.values(counts.byStatus).reduce((sum, n) => sum + (n ?? 0), 0);
+  const filtered = Boolean(
+    status || priority || category || assignee || q || viewValid
+  );
+  const total = Object.values(counts.byStatus).reduce(
+    (sum, n) => sum + (n ?? 0),
+    0
+  );
 
   const segments = staff
     ? [
@@ -161,7 +176,7 @@ export default async function TicketsPage({
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <SegmentedNav segments={segments} ariaLabel="Ticket views" />
-        <span className="num text-[11px] text-label-3">
+        <span className="num text-label-3 text-[11px]">
           {items.length}
           {items.length === 60 ? "+" : ""} shown
         </span>
@@ -208,7 +223,7 @@ export default async function TicketsPage({
             items={items}
             role={viewer.role}
             showRequester={staff}
-            className="divide-y divide-separator"
+            className="divide-separator divide-y"
           />
         ) : (
           <GroupedTicketList
@@ -220,14 +235,14 @@ export default async function TicketsPage({
       </div>
 
       {items.length > 0 && (
-        <p className="mt-3 flex items-center gap-1.5 text-[11px] text-label-3">
+        <p className="text-label-3 mt-3 flex items-center gap-1.5 text-[11px]">
           <Ticket className="size-3" />
           Tip: press{" "}
-          <kbd className="rounded border border-line bg-surface-solid px-1 font-mono text-[10px]">
+          <kbd className="border-line bg-surface-solid rounded border px-1 font-mono text-[10px]">
             J
           </kbd>{" "}
           and{" "}
-          <kbd className="rounded border border-line bg-surface-solid px-1 font-mono text-[10px]">
+          <kbd className="border-line bg-surface-solid rounded border px-1 font-mono text-[10px]">
             K
           </kbd>{" "}
           to move, Enter to open.

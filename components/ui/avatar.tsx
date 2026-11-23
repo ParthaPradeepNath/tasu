@@ -1,8 +1,8 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- DiceBear serves a remote SVG; image optimization adds no value for these tiny placeholders. */
-
 import * as React from "react";
+
 import { avatarColor, cn, initials } from "@/lib/utils";
 
 function GlassAvatarImage({ src, size }: { src: string; size: number }) {
@@ -41,8 +41,8 @@ export function Avatar({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden rounded-full font-semibold text-white ring-1 ring-inset ring-white/15",
-        className,
+        "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full font-semibold text-white ring-1 ring-white/15 select-none ring-inset",
+        className
       )}
       style={{
         width: size,

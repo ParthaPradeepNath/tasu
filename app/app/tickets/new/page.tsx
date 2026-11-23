@@ -1,8 +1,11 @@
 import Link from "next/link";
+
 import { ArrowLeft } from "lucide-react";
-import { requireViewer } from "@/lib/session";
-import { prisma } from "@/lib/prisma";
+
 import { PageHeader } from "@/components/ui/page-header";
+import { prisma } from "@/lib/prisma";
+import { requireViewer } from "@/lib/session";
+
 import { NewTicketForm } from "./new-ticket-form";
 
 export const metadata = {
@@ -22,7 +25,7 @@ export default async function NewTicketPage() {
     <div className="mx-auto max-w-[1040px]">
       <Link
         href="/app/tickets"
-        className="mb-4 inline-flex items-center gap-1.5 text-[12px] font-medium text-label-2 transition-colors hover:text-label"
+        className="text-label-2 hover:text-label mb-4 inline-flex items-center gap-1.5 text-[12px] font-medium transition-colors"
       >
         <ArrowLeft className="size-3.5" />
         My tickets
@@ -34,10 +37,7 @@ export default async function NewTicketPage() {
         description="A clear title and a little detail get you a faster fix. You can add more once IT replies."
       />
 
-      <NewTicketForm
-        articles={articles}
-        requesterName={viewer.name}
-      />
+      <NewTicketForm articles={articles} requesterName={viewer.name} />
     </div>
   );
 }

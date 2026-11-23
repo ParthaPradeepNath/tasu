@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+
 import * as DropdownPrimitive from "@radix-ui/react-dropdown-menu";
 import { Check } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 const DropdownMenu = DropdownPrimitive.Root;
@@ -17,8 +19,8 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "motion-pop z-50 min-w-[190px] overflow-hidden rounded-[12px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_94%,transparent)] p-1.5 text-label shadow-[var(--shadow-pop)] backdrop-blur-2xl",
-        className,
+        "motion-pop border-line text-label z-50 min-w-[190px] overflow-hidden rounded-[12px] border bg-[color-mix(in_srgb,var(--surface-solid)_94%,transparent)] p-1.5 shadow-[var(--shadow-pop)] backdrop-blur-2xl",
+        className
       )}
       style={{
         transformOrigin:
@@ -39,9 +41,9 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownPrimitive.Item
     ref={ref}
     className={cn(
-      "flex h-8 cursor-default select-none items-center gap-2 rounded-[7px] px-2 text-[13px] outline-none transition-colors duration-150 ease-amicro data-[disabled]:pointer-events-none data-[highlighted]:bg-fill data-[disabled]:opacity-40",
+      "ease-amicro data-[highlighted]:bg-fill flex h-8 cursor-default items-center gap-2 rounded-[7px] px-2 text-[13px] transition-colors duration-150 outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
       destructive && "text-danger data-[highlighted]:bg-danger-soft",
-      className,
+      className
     )}
     {...props}
   />
@@ -56,14 +58,14 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     checked={checked}
     className={cn(
-      "flex h-8 cursor-default select-none items-center gap-2 rounded-[7px] pl-7 pr-2 text-[13px] outline-none transition-colors duration-150 ease-amicro data-[disabled]:pointer-events-none data-[highlighted]:bg-fill data-[disabled]:opacity-40",
-      className,
+      "ease-amicro data-[highlighted]:bg-fill flex h-8 cursor-default items-center gap-2 rounded-[7px] pr-2 pl-7 text-[13px] transition-colors duration-150 outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-40",
+      className
     )}
     {...props}
   >
     <span className="absolute left-2 inline-flex size-4 items-center justify-center">
       <DropdownPrimitive.ItemIndicator>
-        <Check className="size-3.5 text-accent" />
+        <Check className="text-accent size-3.5" />
       </DropdownPrimitive.ItemIndicator>
     </span>
     {children}
@@ -77,7 +79,10 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownPrimitive.Label
     ref={ref}
-    className={cn("px-2 py-1 text-[10.5px] font-medium uppercase tracking-[0.05em] text-label-3", className)}
+    className={cn(
+      "text-label-3 px-2 py-1 text-[10.5px] font-medium tracking-[0.05em] uppercase",
+      className
+    )}
     {...props}
   />
 ));
@@ -89,7 +94,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownPrimitive.Separator
     ref={ref}
-    className={cn("my-1 h-px bg-separator", className)}
+    className={cn("bg-separator my-1 h-px", className)}
     {...props}
   />
 ));
@@ -100,7 +105,7 @@ const DropdownMenuShortcut = ({
   ...props
 }: React.HTMLAttributes<HTMLSpanElement>) => (
   <span
-    className={cn("ml-auto font-mono text-[10.5px] text-label-3", className)}
+    className={cn("text-label-3 ml-auto font-mono text-[10.5px]", className)}
     {...props}
   />
 );

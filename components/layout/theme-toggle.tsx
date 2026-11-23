@@ -1,10 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "motion/react";
+
 import { useTheme } from "next-themes";
+
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useWebHaptics } from "@/hooks/use-web-haptics";
+import { motion } from "motion/react";
+
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,17 +16,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 
 const subscribeNoop = () => () => {};
 
-export function ThemeToggle({ variant = "icon" }: { variant?: "icon" | "menu" }) {
+export function ThemeToggle({
+  variant = "icon",
+}: {
+  variant?: "icon" | "menu";
+}) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { triggerHaptic } = useWebHaptics();
   const mounted = React.useSyncExternalStore(
     subscribeNoop,
     () => true,
-    () => false,
+    () => false
   );
 
   if (!mounted) {
@@ -64,18 +71,24 @@ export function ThemeToggle({ variant = "icon" }: { variant?: "icon" | "menu" })
         <DropdownMenuItem onSelect={() => chooseTheme("light")}>
           <Sun className="size-3.5" />
           Light
-          {theme === "light" && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
+          {theme === "light" && (
+            <span className="bg-accent ml-auto size-1.5 rounded-full" />
+          )}
         </DropdownMenuItem>
         <DropdownMenuItem onSelect={() => chooseTheme("dark")}>
           <Moon className="size-3.5" />
           Dark
-          {theme === "dark" && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
+          {theme === "dark" && (
+            <span className="bg-accent ml-auto size-1.5 rounded-full" />
+          )}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onSelect={() => chooseTheme("system")}>
           <Monitor className="size-3.5" />
           System
-          {theme === "system" && <span className="ml-auto size-1.5 rounded-full bg-accent" />}
+          {theme === "system" && (
+            <span className="bg-accent ml-auto size-1.5 rounded-full" />
+          )}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

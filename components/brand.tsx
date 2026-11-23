@@ -13,7 +13,7 @@ export function Logo({
     <span
       className={cn(
         "relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[9px] text-white shadow-[0_1px_2px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.24)]",
-        className,
+        className
       )}
       style={{
         width: size,
@@ -54,8 +54,8 @@ export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "text-[15px] font-semibold tracking-[-0.02em] text-label",
-        className,
+        "text-label text-[15px] font-semibold tracking-[-0.02em]",
+        className
       )}
     >
       Tasu

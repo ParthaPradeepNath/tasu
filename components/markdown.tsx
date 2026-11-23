@@ -1,6 +1,9 @@
-import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+
+import Link from "next/link";
+
 import remarkGfm from "remark-gfm";
+
 import { cn } from "@/lib/utils";
 
 export function slugifyHeading(value: string) {

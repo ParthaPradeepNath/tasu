@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { format } from "date-fns";
 import {
   ArrowRight,
@@ -8,20 +9,21 @@ import {
   Plus,
   Ticket,
 } from "lucide-react";
-import { requireViewer } from "@/lib/session";
-import { getEmployeeDashboard, getStaffDashboard } from "@/lib/dashboard";
-import { firstName } from "@/lib/status";
-import { PageHeader } from "@/components/ui/page-header";
-import { StatStrip } from "@/components/ui/stat-strip";
-import { MeterBar } from "@/components/ui/meter-bar";
-import { SectionCard } from "@/components/ui/section-card";
-import { Button } from "@/components/ui/button";
-import { GlassButton } from "@/components/liquid-glass";
-import { Avatar } from "@/components/ui/avatar";
-import { EmptyState } from "@/components/ui/empty-state";
-import { TicketList } from "@/components/tickets/ticket-list";
+
 import { ActivityFeed, EmptyFeed } from "@/components/dashboard/activity-feed";
 import { ChartLegend, VolumeChart } from "@/components/dashboard/volume-chart";
+import { GlassButton } from "@/components/liquid-glass";
+import { TicketList } from "@/components/tickets/ticket-list";
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { MeterBar } from "@/components/ui/meter-bar";
+import { PageHeader } from "@/components/ui/page-header";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatStrip } from "@/components/ui/stat-strip";
+import { getEmployeeDashboard, getStaffDashboard } from "@/lib/dashboard";
+import { requireViewer } from "@/lib/session";
+import { firstName } from "@/lib/status";
 
 export const metadata = {
   title: "Overview",
@@ -60,7 +62,7 @@ export default async function OverviewPage() {
                 asChild
                 material="tinted"
                 size="md"
-                className="rounded-[10px] border border-white/15 bg-accent text-white"
+                className="bg-accent rounded-[10px] border border-white/15 text-white"
               >
                 <Link href="/app/tickets/new">
                   <Plus />
@@ -76,13 +78,17 @@ export default async function OverviewPage() {
             {
               label: "Unassigned",
               value: data.unassigned,
-              hint: data.unassigned > 0 ? "Waiting for an agent" : "Queue is clear",
+              hint:
+                data.unassigned > 0 ? "Waiting for an agent" : "Queue is clear",
               tone: data.unassigned > 0 ? "warning" : "success",
             },
             {
               label: "Breaching SLA",
               value: data.breaching,
-              hint: data.breaching > 0 ? "Needs attention now" : "All within target",
+              hint:
+                data.breaching > 0
+                  ? "Needs attention now"
+                  : "All within target",
               tone: data.breaching > 0 ? "danger" : "success",
             },
             {
@@ -101,19 +107,14 @@ export default async function OverviewPage() {
 
         <div className="mt-4 grid gap-4 xl:grid-cols-[1.5fr_1fr]">
           <div className="min-w-0 space-y-4">
-            <SectionCard
-              title="Volume · last 7 days"
-              action={<ChartLegend />}
-            >
+            <SectionCard title="Volume · last 7 days" action={<ChartLegend />}>
               <VolumeChart data={data.volume} />
             </SectionCard>
 
             <SectionCard
               title="Agent workload"
               action={
-                <span className="text-[11px] text-label-3">
-                  Active tickets
-                </span>
+                <span className="text-label-3 text-[11px]">Active tickets</span>
               }
             >
               {data.workload.length === 0 ? (
@@ -122,7 +123,7 @@ export default async function OverviewPage() {
                   hint="Assigned tickets will show up here with each agent's load."
                 />
               ) : (
-                <ul className="divide-y divide-separator">
+                <ul className="divide-separator divide-y">
                   {data.workload.map((row) => (
                     <li
                       key={row.id}
@@ -133,7 +134,7 @@ export default async function OverviewPage() {
                         color={row.avatarColor}
                         size={24}
                       />
-                      <span className="w-[104px] shrink-0 truncate text-[12.5px] font-medium text-label">
+                      <span className="text-label w-[104px] shrink-0 truncate text-[12.5px] font-medium">
                         {row.name}
                       </span>
                       <MeterBar
@@ -141,7 +142,7 @@ export default async function OverviewPage() {
                         fillClassName="bg-accent/80"
                         value={Math.max(0.06, row.count / maxWorkload)}
                       />
-                      <span className="num w-6 text-right text-[12px] font-medium text-label-2">
+                      <span className="num text-label-2 w-6 text-right text-[12px] font-medium">
                         {row.count}
                       </span>
                     </li>
@@ -157,7 +158,7 @@ export default async function OverviewPage() {
               action={
                 <Link
                   href="/app/queue?view=unassigned"
-                  className="text-[11px] font-medium text-accent hover:underline"
+                  className="text-accent text-[11px] font-medium hover:underline"
                 >
                   View all
                 </Link>
@@ -174,7 +175,7 @@ export default async function OverviewPage() {
                   role={viewer.role}
                   showRequester
                   compact
-                  className="divide-y divide-separator"
+                  className="divide-separator divide-y"
                 />
               )}
             </SectionCard>
@@ -184,7 +185,7 @@ export default async function OverviewPage() {
               action={
                 <Link
                   href="/app/queue?view=waiting"
-                  className="text-[11px] font-medium text-accent hover:underline"
+                  className="text-accent text-[11px] font-medium hover:underline"
                 >
                   View all
                 </Link>
@@ -201,7 +202,7 @@ export default async function OverviewPage() {
                   role={viewer.role}
                   showRequester
                   compact
-                  className="divide-y divide-separator"
+                  className="divide-separator divide-y"
                 />
               )}
             </SectionCard>
@@ -211,7 +212,7 @@ export default async function OverviewPage() {
               action={
                 <Link
                   href="/app/inbox"
-                  className="text-[11px] font-medium text-accent hover:underline"
+                  className="text-accent text-[11px] font-medium hover:underline"
                 >
                   Inbox
                 </Link>
@@ -219,7 +220,12 @@ export default async function OverviewPage() {
             >
               <ActivityFeed
                 items={data.activity}
-                empty={<EmptyFeed title="Quiet for now" hint="New replies will land here." />}
+                empty={
+                  <EmptyFeed
+                    title="Quiet for now"
+                    hint="New replies will land here."
+                  />
+                }
               />
             </SectionCard>
           </div>
@@ -245,7 +251,7 @@ export default async function OverviewPage() {
             asChild
             material="tinted"
             size="md"
-            className="rounded-[10px] border border-white/15 bg-accent text-white"
+            className="bg-accent rounded-[10px] border border-white/15 text-white"
           >
             <Link href="/app/tickets/new">
               <Plus />
@@ -266,7 +272,8 @@ export default async function OverviewPage() {
           {
             label: "Waiting on you",
             value: data.waiting,
-            hint: data.waiting > 0 ? "IT needs a reply" : "You're all caught up",
+            hint:
+              data.waiting > 0 ? "IT needs a reply" : "You're all caught up",
             tone: data.waiting > 0 ? "warning" : "success",
           },
           {
@@ -284,7 +291,7 @@ export default async function OverviewPage() {
           action={
             <Link
               href="/app/tickets"
-              className="flex items-center gap-1 text-[11px] font-medium text-accent hover:underline"
+              className="text-accent flex items-center gap-1 text-[11px] font-medium hover:underline"
             >
               My tickets
               <ArrowUpRight className="size-3" />
@@ -306,7 +313,7 @@ export default async function OverviewPage() {
             <TicketList
               items={data.attention}
               role={viewer.role}
-              className="divide-y divide-separator"
+              className="divide-separator divide-y"
             />
           )}
         </SectionCard>
@@ -317,7 +324,7 @@ export default async function OverviewPage() {
             action={
               <Link
                 href="/app/inbox"
-                className="text-[11px] font-medium text-accent hover:underline"
+                className="text-accent text-[11px] font-medium hover:underline"
               >
                 Inbox
               </Link>
@@ -335,37 +342,35 @@ export default async function OverviewPage() {
           </SectionCard>
 
           <SectionCard title="Suggested reading">
-            <ul className="divide-y divide-separator">
+            <ul className="divide-separator divide-y">
               {data.suggested.map((article) => (
                 <li key={article.slug}>
                   <Link
                     href={`/app/knowledge/${article.slug}`}
-                    className="group flex items-start gap-3 px-4 py-3 transition-colors duration-100 hover:bg-surface-hover"
+                    className="group hover:bg-surface-hover flex items-start gap-3 px-4 py-3 transition-colors duration-100"
                   >
-                    <span className="mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-[8px] bg-fill text-label-3">
+                    <span className="bg-fill text-label-3 mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-[8px]">
                       <BookOpen className="size-3.5" strokeWidth={1.7} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[12.5px] font-medium leading-[1.35] text-label">
+                      <span className="text-label block text-[12.5px] leading-[1.35] font-medium">
                         {article.title}
                       </span>
-                      <span className="mt-0.5 block text-[10.5px] text-label-3">
+                      <span className="text-label-3 mt-0.5 block text-[10.5px]">
                         {article.category.toLowerCase()} ·{" "}
                         {Math.max(
                           2,
-                          Math.round(
-                            article.body.split(/\s+/).length / 200,
-                          ),
+                          Math.round(article.body.split(/\s+/).length / 200)
                         )}{" "}
                         min read
                       </span>
                     </span>
-                    <ArrowUpRight className="mt-1 size-3.5 shrink-0 text-label-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                    <ArrowUpRight className="text-label-3 mt-1 size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
                   </Link>
                 </li>
               ))}
               {data.suggested.length === 0 && (
-                <li className="px-4 py-6 text-center text-[12px] text-label-3">
+                <li className="text-label-3 px-4 py-6 text-center text-[12px]">
                   Articles matching your tickets will appear here.
                 </li>
               )}
@@ -373,14 +378,14 @@ export default async function OverviewPage() {
           </SectionCard>
 
           <div className="surface-card flex items-center gap-3 p-4">
-            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-accent-soft text-accent">
+            <span className="bg-accent-soft text-accent inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]">
               <Ticket className="size-4" strokeWidth={1.7} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="m-0 text-[12.5px] font-medium text-label">
+              <p className="text-label m-0 text-[12.5px] font-medium">
                 Something broken?
               </p>
-              <p className="m-0 mt-0.5 text-[11px] leading-4 text-label-3">
+              <p className="text-label-3 m-0 mt-0.5 text-[11px] leading-4">
                 Describe it in a sentence. We&apos;ll take it from there.
               </p>
             </div>
