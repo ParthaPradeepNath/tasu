@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { authClient } from "@/lib/auth-client";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import type { Viewer } from "@/lib/session";
 import { cn } from "@/lib/utils";
 import { Kbd } from "@/components/ui/kbd";
@@ -34,6 +35,7 @@ const EMPTY: Results = { tickets: [], articles: [] };
 export function CommandPalette({ user }: { user: Viewer }) {
   const router = useRouter();
   const { setTheme } = useTheme();
+  const { triggerHaptic } = useWebHaptics();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<Results>(EMPTY);
@@ -46,12 +48,13 @@ export function CommandPalette({ user }: { user: Viewer }) {
     function onKeyDown(event: KeyboardEvent) {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
+        triggerHaptic("light");
         setOpen((value) => !value);
       }
     }
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [triggerHaptic]);
 
   React.useEffect(() => {
     if (!searching) return;
@@ -81,6 +84,7 @@ export function CommandPalette({ user }: { user: Viewer }) {
   }, [searching, term]);
 
   function handleOpenChange(next: boolean) {
+    if (next) triggerHaptic("light");
     setOpen(next);
     if (!next) {
       setQuery("");
@@ -90,6 +94,7 @@ export function CommandPalette({ user }: { user: Viewer }) {
   }
 
   function run(action: () => void) {
+    triggerHaptic("medium");
     setOpen(false);
     action();
   }
@@ -100,7 +105,7 @@ export function CommandPalette({ user }: { user: Viewer }) {
       onOpenChange={handleOpenChange}
       label="Command menu"
       shouldFilter
-      overlayClassName="fixed inset-0 z-[80] bg-black/30 backdrop-blur-[4px]"
+      overlayClassName="motion-overlay fixed inset-0 z-[80] bg-black/30 backdrop-blur-[4px]"
       contentClassName={cn(
         "motion-dialog fixed left-1/2 top-[16%] z-[81] w-[min(620px,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-[16px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] text-label shadow-[var(--shadow-dialog)] backdrop-blur-2xl",
       )}
@@ -269,7 +274,7 @@ function PaletteItem({
   return (
     <Command.Item
       onSelect={onSelect}
-      className="flex h-9 cursor-default select-none items-center gap-2.5 rounded-[8px] px-2.5 text-[13px] outline-none data-[selected=true]:bg-fill data-[selected=true]:text-label [&_svg]:size-3.5 [&_svg]:text-label-3"
+      className="flex h-9 cursor-default select-none items-center gap-2.5 rounded-[8px] px-2.5 text-[13px] outline-none transition-colors duration-150 ease-amicro data-[selected=true]:bg-fill data-[selected=true]:text-label [&_svg]:size-3.5 [&_svg]:text-label-3"
     >
       {icon}
       <span className="flex-1 truncate">{label}</span>

@@ -39,7 +39,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownPrimitive.Item
     ref={ref}
     className={cn(
-      "flex h-8 cursor-default select-none items-center gap-2 rounded-[7px] px-2 text-[13px] outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-fill data-[disabled]:opacity-40",
+      "flex h-8 cursor-default select-none items-center gap-2 rounded-[7px] px-2 text-[13px] outline-none transition-colors duration-150 ease-amicro data-[disabled]:pointer-events-none data-[highlighted]:bg-fill data-[disabled]:opacity-40",
       destructive && "text-danger data-[highlighted]:bg-danger-soft",
       className,
     )}
@@ -56,7 +56,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     checked={checked}
     className={cn(
-      "flex h-8 cursor-default select-none items-center gap-2 rounded-[7px] pl-7 pr-2 text-[13px] outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-fill data-[disabled]:opacity-40",
+      "flex h-8 cursor-default select-none items-center gap-2 rounded-[7px] pl-7 pr-2 text-[13px] outline-none transition-colors duration-150 ease-amicro data-[disabled]:pointer-events-none data-[highlighted]:bg-fill data-[disabled]:opacity-40",
       className,
     )}
     {...props}

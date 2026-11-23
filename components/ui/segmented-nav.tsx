@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { cn } from "@/lib/utils";
 import { GlassLens } from "@/components/liquid-glass";
 
@@ -33,6 +34,7 @@ export function SegmentedNav({
 }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { triggerHaptic } = useWebHaptics();
 
   function isActive(segment: Segment) {
     const [path, query] = segment.href.split("?");
@@ -69,6 +71,7 @@ export function SegmentedNav({
           <Link
             key={segment.href}
             href={segment.href}
+            onClick={() => triggerHaptic("light")}
             role="radio"
             aria-checked={active}
             aria-current={active ? "page" : undefined}

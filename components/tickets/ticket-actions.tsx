@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import type { TicketStatus } from "@/generated/prisma/enums";
 import { updateTicket } from "@/app/app/actions";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,6 +41,7 @@ export function TicketActions({
 }) {
   const router = useRouter();
   const [pending, startTransition] = React.useTransition();
+  const { triggerHaptic } = useWebHaptics();
 
   function change(payload: Record<string, string>, message: string) {
     startTransition(async () => {
@@ -50,9 +52,11 @@ export function TicketActions({
       }
       const result = await updateTicket({ error: null }, formData);
       if (result.error) {
+        triggerHaptic("error");
         toast.error(result.error);
         return;
       }
+      triggerHaptic("success");
       toast.success(message);
       router.refresh();
     });

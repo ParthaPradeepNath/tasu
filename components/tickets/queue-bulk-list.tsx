@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
 import { toast } from "sonner";
 import {
   Check,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import type { Priority, TicketStatus } from "@/generated/prisma/enums";
 import { bulkUpdateTickets } from "@/app/app/actions";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import type { Role } from "@/lib/permissions";
 import type { TicketListItem } from "@/lib/tickets";
 import {
@@ -70,6 +72,7 @@ export function QueueBulkList({
   const router = useRouter();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [pending, startTransition] = React.useTransition();
+  const { triggerHaptic } = useWebHaptics();
   const rowRefs = React.useRef<Array<HTMLAnchorElement | null>>([]);
   const [cursor, setCursor] = React.useState(-1);
 
@@ -77,6 +80,7 @@ export function QueueBulkList({
   const someSelected = selected.size > 0 && !allSelected;
 
   function toggle(id: string) {
+    triggerHaptic("light");
     setSelected((current) => {
       const next = new Set(current);
       if (next.has(id)) next.delete(id);
@@ -86,6 +90,7 @@ export function QueueBulkList({
   }
 
   function toggleAll() {
+    triggerHaptic("light");
     setSelected(allSelected ? new Set() : new Set(items.map((ticket) => ticket.id)));
   }
 
@@ -96,6 +101,7 @@ export function QueueBulkList({
     startTransition(async () => {
       const result = await bulkUpdateTickets({ ids, ...payload });
       if (result.error) {
+        triggerHaptic("error");
         toast.error(result.error);
         return;
       }
@@ -103,12 +109,14 @@ export function QueueBulkList({
       setSelected(new Set());
 
       if ((result.updated ?? 0) === 0) {
+        triggerHaptic("light");
         toast.info("No changes needed", {
           description: "Those tickets already match.",
         });
         return;
       }
 
+      triggerHaptic("success");
       toast.success(message, {
         description: `${result.updated} ${
           result.updated === 1 ? "ticket" : "tickets"
@@ -172,7 +180,7 @@ export function QueueBulkList({
       <ul
         role="list"
         aria-label="Ticket queue. Use J and K to move, X to select, Enter to open."
-        className="divide-y divide-separator"
+        className="list-enter divide-y divide-separator"
       >
         {items.map((ticket, index) => {
           const checked = selected.has(ticket.id);
@@ -207,113 +215,125 @@ export function QueueBulkList({
       </ul>
       </div>
 
-      {selected.size > 0 && (
-        <div
-          role="region"
-          aria-label="Bulk ticket actions"
-          className="motion-pop fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[620px] items-center gap-1.5 rounded-[14px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] p-1.5 shadow-[var(--shadow-pop)] backdrop-blur-2xl sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2"
-        >
-          <GlassBadge
-            tone="accent"
-            width={104}
-            height={28}
-            speed={0.75}
-            className="num text-[11.5px] font-semibold"
+      <AnimatePresence>
+        {selected.size > 0 && (
+          <motion.div
+            key="bulk-bar"
+            role="region"
+            aria-label="Bulk ticket actions"
+            initial={{ opacity: 0, y: 12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{
+              opacity: 0,
+              y: 8,
+              scale: 0.98,
+              transition: { duration: 0.14, ease: [0.25, 0.46, 0.45, 0.94] },
+            }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-x-3 bottom-4 z-40 mx-auto flex max-w-[620px] items-center gap-1.5 rounded-[14px] border border-line bg-[color-mix(in_srgb,var(--surface-solid)_92%,transparent)] p-1.5 shadow-[var(--shadow-pop)] backdrop-blur-2xl sm:inset-x-0"
           >
-            {`${selected.size} selected`}
-          </GlassBadge>
-          {pending && (
-            <Loader2 className="size-3.5 animate-spin text-label-3" aria-hidden />
-          )}
+            <GlassBadge
+              tone="accent"
+              width={104}
+              height={28}
+              speed={0.75}
+              className="num text-[11.5px] font-semibold"
+            >
+              {`${selected.size} selected`}
+            </GlassBadge>
+            {pending && (
+              <Loader2 className="size-3.5 animate-spin text-label-3" aria-hidden />
+            )}
 
-          <span className="mx-1 hidden h-4 w-px bg-separator sm:block" />
+            <span className="mx-1 hidden h-4 w-px bg-separator sm:block" />
 
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={pending}
-            onClick={() =>
-              apply({ assigneeId: viewerId }, "Assigned to you")
-            }
-            aria-label="Assign selected tickets to me"
-          >
-            <UserRoundPlus />
-            <span className="hidden sm:inline">Assign to me</span>
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={pending}
+              onClick={() =>
+                apply({ assigneeId: viewerId }, "Assigned to you")
+              }
+              aria-label="Assign selected tickets to me"
+            >
+              <UserRoundPlus />
+              <span className="hidden sm:inline">Assign to me</span>
+            </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild disabled={pending}>
-              <Button variant="ghost" size="sm" aria-label="Change priority">
-                <Flag />
-                <span className="hidden sm:inline">Priority</span>
-                <ChevronDown className="size-3 text-label-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-[196px]">
-              <DropdownMenuLabel>Set priority</DropdownMenuLabel>
-              {PRIORITY_ORDER.map((priority) => (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild disabled={pending}>
+                <Button variant="ghost" size="sm" aria-label="Change priority">
+                  <Flag />
+                  <span className="hidden sm:inline">Priority</span>
+                  <ChevronDown className="size-3 text-label-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-[196px]">
+                <DropdownMenuLabel>Set priority</DropdownMenuLabel>
+                {PRIORITY_ORDER.map((priority) => (
+                  <DropdownMenuItem
+                    key={priority}
+                    onSelect={() =>
+                      apply(
+                        { priority },
+                        `Priority set to ${PRIORITY_META[priority].label.toLowerCase()}`,
+                      )
+                    }
+                  >
+                    <PriorityBars priority={priority} className="w-4" />
+                    {PRIORITY_META[priority].label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild disabled={pending}>
+                <Button variant="ghost" size="sm" aria-label="Change status">
+                  <CircleDot />
+                  <span className="hidden sm:inline">Status</span>
+                  <ChevronDown className="size-3 text-label-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-[224px]">
+                <DropdownMenuLabel>Move selected to</DropdownMenuLabel>
+                {STATUS_ORDER.map((status) => (
+                  <DropdownMenuItem
+                    key={status}
+                    onSelect={() => apply({ status }, statusMessage(status))}
+                  >
+                    <StatusDot status={status} />
+                    {STAFF_STATUS_LABEL[status]}
+                    {status === "RESOLVED" && (
+                      <span className="ml-auto text-[10px] text-label-3">confirm</span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  key={priority}
                   onSelect={() =>
-                    apply(
-                      { priority },
-                      `Priority set to ${PRIORITY_META[priority].label.toLowerCase()}`,
-                    )
+                    apply({ status: "CLOSED" }, "Tickets closed")
                   }
                 >
-                  <PriorityBars priority={priority} className="w-4" />
-                  {PRIORITY_META[priority].label}
+                  <StatusDot status="CLOSED" />
+                  Close tickets
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild disabled={pending}>
-              <Button variant="ghost" size="sm" aria-label="Change status">
-                <CircleDot />
-                <span className="hidden sm:inline">Status</span>
-                <ChevronDown className="size-3 text-label-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-[224px]">
-              <DropdownMenuLabel>Move selected to</DropdownMenuLabel>
-              {STATUS_ORDER.map((status) => (
-                <DropdownMenuItem
-                  key={status}
-                  onSelect={() => apply({ status }, statusMessage(status))}
-                >
-                  <StatusDot status={status} />
-                  {STAFF_STATUS_LABEL[status]}
-                  {status === "RESOLVED" && (
-                    <span className="ml-auto text-[10px] text-label-3">confirm</span>
-                  )}
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() =>
-                  apply({ status: "CLOSED" }, "Tickets closed")
-                }
-              >
-                <StatusDot status="CLOSED" />
-                Close tickets
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            disabled={pending}
-            onClick={() => setSelected(new Set())}
-            aria-label="Clear selection"
-            className="ml-auto text-label-3 sm:ml-1"
-          >
-            <X />
-          </Button>
-        </div>
-      )}
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              disabled={pending}
+              onClick={() => setSelected(new Set())}
+              aria-label="Clear selection"
+              className="ml-auto text-label-3 sm:ml-1"
+            >
+              <X />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

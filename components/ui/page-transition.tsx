@@ -7,9 +7,9 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
   return (
     <motion.div
-      initial={reduced ? false : { opacity: 0, y: 4 }}
+      initial={reduced ? false : { opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: reduced ? 0 : 0.12, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: reduced ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
       className="min-w-0"
     >
       {children}

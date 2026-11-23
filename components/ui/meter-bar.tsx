@@ -33,7 +33,7 @@ export function MeterBar({
         transition={
           reduced
             ? { duration: 0 }
-            : { duration: 0.18, ease: [0.23, 1, 0.32, 1] }
+            : { duration: 0.25, ease: [0.16, 1, 0.3, 1] }
         }
         className={cn(
           "block h-full w-full origin-left rounded-full bg-accent",

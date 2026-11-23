@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import type { Role } from "@/lib/permissions";
 import { compactRelative, relativeTime } from "@/lib/dates";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ export function TicketRow({
       onMouseEnter={onMouseEnter}
       data-ticket-row
       className={cn(
-        "group relative flex items-center gap-3 px-4 outline-none transition-colors duration-100",
+        "group lift-hover relative flex items-center gap-3 px-4 outline-none",
         compact ? "h-[37px] gap-2.5 px-3.5" : "h-[46px] sm:gap-3.5",
         selected
           ? "bg-accent-soft shadow-[inset_0_0_0_1px_rgba(0,113,227,0.12)]"
@@ -51,7 +52,7 @@ export function TicketRow({
       {selected && (
         <span
           aria-hidden
-          className="absolute inset-y-2 left-0 w-[2px] rounded-r-full bg-accent"
+          className="indicator-in absolute inset-y-2 left-0 w-[2px] rounded-r-full bg-accent"
         />
       )}
 
@@ -129,6 +130,11 @@ export function TicketRow({
           ? compactRelative(ticket.lastActivityAt)
           : relativeTime(ticket.lastActivityAt)}
       </time>
+
+      <ChevronRight
+        aria-hidden
+        className="size-3.5 shrink-0 text-label-3 opacity-0 transition-[opacity,transform] duration-150 ease-amicro group-hover:translate-x-[3px] group-hover:opacity-100 group-focus-visible:opacity-100"
+      />
     </Link>
   );
 }

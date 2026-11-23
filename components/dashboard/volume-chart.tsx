@@ -8,6 +8,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
+import { useReducedMotion } from "motion/react";
 import type { StaffVolumePoint } from "@/lib/dashboard";
 
 function ChartTooltip({
@@ -49,6 +50,9 @@ export function VolumeChart({
   height?: number;
   minTickGap?: number;
 }) {
+  const reduced = useReducedMotion();
+  const animationDuration = reduced ? 0 : 280;
+
   return (
     <div className="w-full px-1 pb-2 pt-3" style={{ height }}>
       <ResponsiveContainer width="100%" height="100%">
@@ -88,6 +92,7 @@ export function VolumeChart({
             fill="url(#created-fill)"
             dot={false}
             activeDot={{ r: 3, strokeWidth: 0 }}
+            animationDuration={animationDuration}
           />
           <Area
             type="monotone"
@@ -97,6 +102,7 @@ export function VolumeChart({
             fill="url(#resolved-fill)"
             dot={false}
             activeDot={{ r: 3, strokeWidth: 0 }}
+            animationDuration={animationDuration}
           />
         </AreaChart>
       </ResponsiveContainer>

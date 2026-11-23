@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { Category, Priority, TicketStatus } from "@/generated/prisma/enums";
 import { updateTicket } from "@/app/app/actions";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import {
   CATEGORY_META,
   CATEGORY_ORDER,
@@ -52,6 +53,7 @@ export function TicketProperties({
 }) {
   const router = useRouter();
   const [pending, startTransition] = React.useTransition();
+  const { triggerHaptic } = useWebHaptics();
   const assignee = agents.find((agent) => agent.id === ticket.assigneeId);
 
   function change(payload: Record<string, string>, message: string) {
@@ -63,9 +65,11 @@ export function TicketProperties({
       }
       const result = await updateTicket({ error: null }, formData);
       if (result.error) {
+        triggerHaptic("error");
         toast.error(result.error);
         return;
       }
+      triggerHaptic("success");
       toast.success(message);
       router.refresh();
     });

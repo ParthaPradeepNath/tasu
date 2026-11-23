@@ -183,7 +183,7 @@ export function KnowledgeBrowser({
                       {group.articles.length}
                     </span>
                   </header>
-                  <ul className="divide-y divide-separator">
+                  <ul className="list-enter divide-y divide-separator">
                     {group.articles.map((article) => (
                       <li key={article.slug}>
                         <ArticleRow article={article} />
@@ -236,7 +236,7 @@ export function KnowledgeBrowser({
             </div>
           ) : (
             <div className="surface-card overflow-clip">
-              <ul className="divide-y divide-separator">
+              <ul className="list-enter divide-y divide-separator">
                 {filtered.map((article) => (
                   <li key={article.slug}>
                     <ArticleRow article={article} expanded />
@@ -286,7 +286,7 @@ function FeaturedCard({ article }: { article: KnowledgeArticleSummary }) {
   return (
     <Link
       href={`/app/knowledge/${article.slug}`}
-      className="surface-card group flex min-h-[150px] flex-col p-4 transition-[transform,box-shadow] duration-100 hover:-translate-y-0.5 hover:shadow-[var(--shadow-pop)]"
+      className="surface-card group lift-hover flex min-h-[150px] flex-col p-4"
     >
       <div className="flex items-center gap-2">
         <span
@@ -300,7 +300,7 @@ function FeaturedCard({ article }: { article: KnowledgeArticleSummary }) {
         <span className="text-[10.5px] font-medium uppercase tracking-[0.05em] text-label-3">
           {CATEGORY_META[article.category].label}
         </span>
-        <ArrowUpRight className="ml-auto size-3.5 text-label-3 opacity-0 transition-opacity group-hover:opacity-100" />
+        <ArrowUpRight className="nudge ml-auto size-3.5 text-label-3 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
       </div>
       <h3 className="mt-3 text-[14px] font-semibold leading-[1.35] tracking-[-0.015em] text-label">
         {article.title}
@@ -373,7 +373,7 @@ function ArticleRow({
           ))}
         </span>
       </span>
-      <ArrowUpRight className="mt-0.5 size-3.5 shrink-0 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
+      <ArrowUpRight className="nudge mt-0.5 size-3.5 shrink-0 text-label-3 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
     </Link>
   );
 }

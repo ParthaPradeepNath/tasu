@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { ReplyType } from "@/generated/prisma/enums";
 import { addReply } from "@/app/app/actions";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { relativeTime } from "@/lib/dates";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,7 @@ export function TicketThread({
   locked: boolean;
 }) {
   const router = useRouter();
+  const { triggerHaptic } = useWebHaptics();
   const [body, setBody] = React.useState("");
   const [internal, setInternal] = React.useState(false);
   const [sending, setSending] = React.useState(false);
@@ -100,12 +102,14 @@ export function TicketThread({
     setSending(false);
 
     if (result.error) {
+      triggerHaptic("error");
       toast.error(result.error);
       return;
     }
 
     setBody("");
     setInternal(false);
+    triggerHaptic("success");
     toast.success(internal ? "Internal note added." : "Reply sent.");
     router.refresh();
   }
@@ -119,7 +123,7 @@ export function TicketThread({
 
   return (
     <div>
-      <ol className="space-y-5">
+      <ol className="list-enter space-y-5">
         <li className="flex gap-3">
           <Avatar
             name={requester.name}

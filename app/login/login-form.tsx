@@ -4,11 +4,11 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CornerDownLeft, Loader2, LockKeyhole, TriangleAlert } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { Logo, Wordmark } from "@/components/brand";
 import { GlassButton, GlassCard } from "@/components/liquid-glass";
 import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
-import { cn } from "@/lib/utils";
 
 const DEMOS = [
   {
@@ -37,6 +37,7 @@ export function LoginForm() {
   const [password, setPassword] = React.useState("tasu-demo");
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const { triggerHaptic } = useWebHaptics();
 
   async function signIn(nextEmail = email, nextPassword = password) {
     setError(null);
@@ -47,6 +48,7 @@ export function LoginForm() {
     });
 
     if (result.error) {
+      triggerHaptic("error");
       setError(
         result.error.message ??
           "That didn't work. Check your email and password and try again.",
@@ -55,6 +57,7 @@ export function LoginForm() {
       return;
     }
 
+    triggerHaptic("success");
     router.push("/app");
     router.refresh();
   }
@@ -184,9 +187,7 @@ export function LoginForm() {
                 type="button"
                 onClick={() => fillDemo(demo.email)}
                 disabled={loading}
-                className={cn(
-                  "group flex h-10 w-full items-center gap-2.5 rounded-[9px] border border-transparent px-2 text-left transition-[background-color,border-color] duration-100 hover:border-separator hover:bg-fill disabled:opacity-50",
-                )}
+                className="press group flex h-10 w-full items-center gap-2.5 rounded-[9px] border border-transparent px-2 text-left hover:border-separator hover:bg-fill disabled:opacity-50"
               >
                 <span className="flex size-6 items-center justify-center rounded-full bg-fill text-[10px] font-semibold text-label-2">
                   {demo.role[0]}
@@ -202,7 +203,7 @@ export function LoginForm() {
                     {demo.note}
                   </span>
                 </span>
-                <ArrowRight className="size-3.5 text-label-3 opacity-0 transition-opacity duration-100 group-hover:opacity-100" />
+                <ArrowRight className="nudge size-3.5 text-label-3 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
               </button>
             ))}
           </div>

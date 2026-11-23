@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "motion/react";
 import { Check, ThumbsDown, ThumbsUp } from "lucide-react";
 import { voteArticle, markArticleView } from "@/app/app/actions";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import { cn } from "@/lib/utils";
 
 export function ArticleFeedback({
@@ -20,6 +22,7 @@ export function ArticleFeedback({
     down: notHelpfulCount,
   });
   const [pending, startTransition] = React.useTransition();
+  const { triggerHaptic } = useWebHaptics();
 
   React.useEffect(() => {
     const key = `tasu.viewed.${slug}`;
@@ -30,6 +33,7 @@ export function ArticleFeedback({
 
   function cast(next: "up" | "down") {
     if (vote || pending) return;
+    triggerHaptic("success");
     setVote(next);
     setCounts((current) => ({
       up: current.up + (next === "up" ? 1 : 0),
@@ -41,53 +45,66 @@ export function ArticleFeedback({
   }
 
   return (
-    <div className="surface-card flex flex-wrap items-center gap-3 px-4 py-3.5">
-      {vote ? (
-        <>
-          <span className="inline-flex size-7 items-center justify-center rounded-full bg-success-soft text-success">
-            <Check className="size-3.5" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="m-0 text-[12.5px] font-medium text-label">
-              Thanks for the feedback
-            </p>
-            <p className="m-0 mt-0.5 text-[11px] text-label-3">
-              {vote === "up"
-                ? "Glad it helped. IT sees which guides actually work."
-                : "Noted — this article is flagged for a rewrite."}
-            </p>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="min-w-0 flex-1">
-            <p className="m-0 text-[12.5px] font-medium text-label">
-              Did this answer your question?
-            </p>
-            <p className="m-0 mt-0.5 text-[11px] text-label-3">
-              {counts.up} people found this helpful
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => cast("up")}
-              className="press inline-flex h-7 items-center gap-1.5 rounded-[7px] border border-separator bg-surface-solid px-2.5 text-[11.5px] font-medium text-label-2 transition-colors hover:border-success/40 hover:bg-success-soft hover:text-success"
+    <div className="surface-card px-4 py-3.5">
+      <motion.div
+        key={vote ?? "ask"}
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+        className="flex flex-wrap items-center gap-3"
+      >
+        {vote ? (
+          <>
+            <motion.span
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+              className="inline-flex size-7 items-center justify-center rounded-full bg-success-soft text-success"
             >
-              <ThumbsUp className="size-3" />
-              Yes
-            </button>
-            <button
-              type="button"
-              onClick={() => cast("down")}
-              className="press inline-flex h-7 items-center gap-1.5 rounded-[7px] border border-separator bg-surface-solid px-2.5 text-[11.5px] font-medium text-label-2 transition-colors hover:border-danger/40 hover:bg-danger-soft hover:text-danger"
-            >
-              <ThumbsDown className="size-3" />
-              Not quite
-            </button>
-          </div>
-        </>
-      )}
+              <Check className="size-3.5" />
+            </motion.span>
+            <div className="min-w-0 flex-1">
+              <p className="m-0 text-[12.5px] font-medium text-label">
+                Thanks for the feedback
+              </p>
+              <p className="m-0 mt-0.5 text-[11px] text-label-3">
+                {vote === "up"
+                  ? "Glad it helped. IT sees which guides actually work."
+                  : "Noted — this article is flagged for a rewrite."}
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="min-w-0 flex-1">
+              <p className="m-0 text-[12.5px] font-medium text-label">
+                Did this answer your question?
+              </p>
+              <p className="m-0 mt-0.5 text-[11px] text-label-3">
+                {counts.up} people found this helpful
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => cast("up")}
+                className="press inline-flex h-7 items-center gap-1.5 rounded-[7px] border border-separator bg-surface-solid px-2.5 text-[11.5px] font-medium text-label-2 hover:border-success/40 hover:bg-success-soft hover:text-success"
+              >
+                <ThumbsUp className="size-3" />
+                Yes
+              </button>
+              <button
+                type="button"
+                onClick={() => cast("down")}
+                className="press inline-flex h-7 items-center gap-1.5 rounded-[7px] border border-separator bg-surface-solid px-2.5 text-[11.5px] font-medium text-label-2 hover:border-danger/40 hover:bg-danger-soft hover:text-danger"
+              >
+                <ThumbsDown className="size-3" />
+                Not quite
+              </button>
+            </div>
+          </>
+        )}
+      </motion.div>
     </div>
   );
 }

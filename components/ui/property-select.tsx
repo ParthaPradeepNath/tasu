@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
+import { useWebHaptics } from "@/hooks/use-web-haptics";
 import {
   Popover,
   PopoverContent,
@@ -38,6 +39,7 @@ export function PropertySelect({
 }) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
+  const { triggerHaptic } = useWebHaptics();
   const selected = options.find((option) => option.value === value);
   const filtered = query
     ? options.filter((option) =>
@@ -115,6 +117,7 @@ export function PropertySelect({
                 key={option.value}
                 type="button"
                 onClick={() => {
+                  triggerHaptic("light");
                   onChange(option.value);
                   setOpen(false);
                 }}

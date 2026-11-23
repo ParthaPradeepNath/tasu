@@ -63,9 +63,12 @@
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-amicro: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --dur-1: 80ms;
-  --dur-2: 120ms;
-  --dur-3: 160ms;
+  --dur-2: 160ms;
+  --dur-3: 250ms;
+  --dur-exit: 140ms;
 
   --topbar-h: 52px;
   --scroll-offset: 68px;
@@ -238,6 +241,7 @@
 
   --ease-out: var(--ease-out);
   --ease-spring: var(--ease-spring);
+  --ease-amicro: var(--ease-amicro);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -316,6 +320,16 @@
   select {
     font: inherit;
     letter-spacing: inherit;
+  }
+
+  /* Consistent, quiet focus transitions even on bare form fields. */
+  input:not([type="checkbox"]),
+  textarea,
+  select {
+    transition:
+      border-color var(--dur-2) var(--ease-amicro),
+      box-shadow var(--dur-2) var(--ease-amicro),
+      background-color var(--dur-2) var(--ease-amicro);
   }
 
   button:not(:disabled),
@@ -451,11 +465,12 @@
 
   .press {
     transition:
-      transform var(--dur-1) var(--ease-out),
-      background-color var(--dur-1) var(--ease-out),
-      border-color var(--dur-1) var(--ease-out),
-      color var(--dur-1) var(--ease-out),
-      opacity var(--dur-1) var(--ease-out);
+      transform var(--dur-2) var(--ease-amicro),
+      background-color var(--dur-2) var(--ease-amicro),
+      border-color var(--dur-2) var(--ease-amicro),
+      color var(--dur-2) var(--ease-amicro),
+      opacity var(--dur-2) var(--ease-amicro),
+      box-shadow var(--dur-2) var(--ease-amicro);
   }
 
   @media (hover: hover) {
@@ -465,11 +480,44 @@
   }
 
   .press:not(:disabled):active {
-    transform: scale(0.96);
+    transform: scale(0.975);
   }
 
   .row-hover {
-    transition: background-color var(--dur-1) ease-out;
+    transition: background-color var(--dur-2) var(--ease-amicro);
+  }
+
+  /* Hover-lift for clickable cards and rows — stays in the press budget. */
+  .lift-hover {
+    transition:
+      transform var(--dur-2) var(--ease-amicro),
+      box-shadow var(--dur-2) var(--ease-amicro),
+      background-color var(--dur-2) var(--ease-amicro),
+      border-color var(--dur-2) var(--ease-amicro);
+  }
+
+  @media (hover: hover) {
+    .lift-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-pop);
+    }
+  }
+
+  .lift-hover:active {
+    transform: scale(0.99);
+  }
+
+  /* Trailing arrow/chevron reveal inside any `.group`. */
+  .nudge {
+    transition:
+      transform var(--dur-2) var(--ease-amicro),
+      opacity var(--dur-2) var(--ease-amicro);
+  }
+
+  @media (hover: hover) {
+    .group:hover .nudge {
+      transform: translateX(3px);
+    }
   }
 
   @media (hover: hover) {
@@ -659,15 +707,57 @@
 }
 
 .motion-pop[data-state="open"] {
-  animation: pop-in var(--dur-2) var(--ease-spring);
+  animation: pop-in var(--dur-3) var(--ease-amicro);
 }
 
 .motion-dialog[data-state="open"] {
-  animation: dialog-in var(--dur-3) var(--ease-spring);
+  animation: dialog-in var(--dur-3) var(--ease-amicro);
 }
 
 .motion-overlay[data-state="open"] {
-  animation: overlay-in var(--dur-2) ease-out;
+  animation: overlay-in var(--dur-exit) var(--ease-exit);
+}
+
+/* List swaps: a tiny staggered rise, finishing inside the motion budget. */
+@keyframes list-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-enter > * {
+  animation: list-in var(--dur-3) var(--ease-amicro) both;
+}
+
+.list-enter > :nth-child(2) {
+  animation-delay: 15ms;
+}
+.list-enter > :nth-child(3) {
+  animation-delay: 30ms;
+}
+.list-enter > :nth-child(n + 4) {
+  animation-delay: 45ms;
+}
+
+@keyframes indicator-in {
+  from {
+    transform: scaleY(0.2);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.indicator-in {
+  transform-origin: center;
+  animation: indicator-in var(--dur-2) var(--ease-amicro) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

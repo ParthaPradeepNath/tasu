@@ -31,7 +31,7 @@ export function ActivityFeed({
   if (items.length === 0 && empty) return <>{empty}</>;
 
   return (
-    <ol className={cn("divide-y divide-separator", className)}>
+    <ol className={cn("list-enter divide-y divide-separator", className)}>
       {items.map((item) => {
         const system = item.type === "SYSTEM";
         return (
